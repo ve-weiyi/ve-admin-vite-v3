@@ -1,8 +1,16 @@
 # Eslint 会忽略的文件
 
-.DS_Store
+dist/*
+*.d.ts
+*.css
+*.scss
+package.json
+src/assets
 node_modules
-dist
-dist-ssr
-*.local
-.npmrc
+public
+#src/**/*
+
+
+
+
+
