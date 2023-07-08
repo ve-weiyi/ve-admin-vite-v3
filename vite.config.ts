@@ -36,13 +36,22 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       strictPort: false,
       /** 接口代理 */
       proxy: {
-        "/api/v1": {
+        "mock": {
           target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212/api/v1",
           ws: true,
           /** 是否允许跨域 */
           changeOrigin: true,
-          rewrite: (path) => path.replace("/api/v1", "")
-        }
+          rewrite: (path) => path.replace("", "")
+        },
+        // 前缀
+        '/api': {
+          target: 'http://127.0.0.1:9999/', // 代理后的地址 =target/path
+          ws: true,
+          /** 是否允许跨域 */
+          changeOrigin: true,
+          logLevel: 'debug', // 打印代理以后的地址
+          rewrite: (path) => path.replace('', ''),
+        },
       }
     },
     build: {
@@ -77,7 +86,7 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
         symbolId: "icon-[dir]-[name]"
       }),
       /** UnoCSS */
-      UnoCSS()
+      // UnoCSS()
     ],
     /** Vitest 单元测试配置：https://cn.vitest.dev/config */
     test: {
