@@ -1,15 +1,33 @@
-<script lang="ts" setup>
-import { h } from "vue"
+<script setup lang="ts">
+import { h, onMounted } from "vue"
 import { useTheme } from "@/hooks/useTheme"
 import { resetConfigLayout } from "@/utils"
 import { ElNotification } from "element-plus"
 // 将 Element Plus 的语言设置为中文
 import zhCn from "element-plus/lib/locale/lang/zh-cn"
+import { useAdminStore } from "@/store/modules/admin"
+import { getUserMenusApi } from "@/api/user"
+import { usePermissionStoreHook } from "@/store/modules/permission"
+import asyncRouteSettings from "@/config/async-route"
+import {getToken} from "@/utils/cache/cookies";
 
 const { initTheme } = useTheme()
 
 /** 初始化主题 */
 initTheme()
+
+const permissionStore = usePermissionStoreHook()
+const store = useAdminStore()
+// 生命周期钩子
+onMounted(() => {
+  console.log("mounted")
+  // mounted钩子代码
+  if (getToken()) {
+    getUserMenusApi().then((res) => {
+      permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
+    })
+  }
+})
 
 /** 作者小心思 */
 ElNotification({
@@ -38,6 +56,7 @@ ElNotification({
   position: "bottom-right",
   offset: 150
 })
+
 </script>
 
 <template>

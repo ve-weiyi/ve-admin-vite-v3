@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
-import { useUserStore } from "@/store/modules/user"
 import { type FormInstance, FormRules } from "element-plus"
 import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
-import { getLoginCodeApi } from "@/api/login"
+import { loginApi } from "@/api/auth"
 import { type LoginRequestData } from "@/api/login/types/login"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
+import { getCaptchaImageApi } from "@/api/captcha"
+import { setToken } from "@/utils/cache/cookies"
 
 const router = useRouter()
 
@@ -18,9 +19,9 @@ const loading = ref(false)
 /** 验证码图片 URL */
 const codeUrl = ref("")
 /** 登录表单数据 */
-const loginFormData: LoginRequestData = reactive({
-  username: "admin",
-  password: "12345678",
+const loginFormData = reactive({
+  username: "admin@qq.com",
+  password: "1234567",
   code: ""
 })
 /** 登录表单校验规则 */
@@ -28,18 +29,19 @@ const loginFormRules: FormRules = {
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
+    { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
   ],
-  code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
+  code: [{ required: false, message: "请输入验证码", trigger: "blur" }]
 }
 /** 登录逻辑 */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
-      useUserStore()
-        .login(loginFormData)
-        .then(() => {
+      loginApi(loginFormData)
+        .then((res) => {
+          console.log("登录成功", res)
+          setToken(res.data.token)
           router.push({ path: "/" })
         })
         .catch(() => {
@@ -60,8 +62,12 @@ const createCode = () => {
   loginFormData.code = ""
   // 获取验证码
   codeUrl.value = ""
-  getLoginCodeApi().then((res) => {
-    codeUrl.value = res.data
+  getCaptchaImageApi({
+    height: 40,
+    width: 100,
+    length: 6
+  }).then((res) => {
+    codeUrl.value = res.data.encodeData
   })
 }
 

@@ -12,7 +12,7 @@
     "url": "https://github.com/un-pany/v3-admin-vite.git"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode dev --host",
     "build:stage": "vue-tsc --noEmit && vite build --mode staging",
     "build:prod": "vue-tsc --noEmit && vite build",
     "preview:stage": "pnpm build:stage && vite preview",
@@ -27,6 +27,7 @@
     "@element-plus/icons-vue": "2.1.0",
     "axios": "1.4.0",
     "dayjs": "1.11.8",
+    "echarts": "^5.4.2",
     "element-plus": "2.3.7",
     "js-cookie": "3.0.5",
     "lodash-es": "4.17.21",
@@ -37,6 +38,7 @@
     "pinia": "2.1.4",
     "screenfull": "6.0.2",
     "vue": "3.3.4",
+    "vue-echarts": "^6.6.0",
     "vue-router": "4.2.2",
     "vxe-table": "4.4.1",
     "vxe-table-plugin-element": "3.0.7",
