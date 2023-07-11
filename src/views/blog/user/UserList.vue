@@ -1,22 +1,27 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue'
-import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from 'element-plus'
-import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from '@element-plus/icons-vue'
-import { usePagination } from '@/hooks/usePagination'
-import { createResourceApi, deleteByIdsResourceApi, updateResourceApi, getResourceTreeApi } from '@/api/resource'
+import { reactive, ref, watch } from "vue"
+import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from "element-plus"
+import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from "@element-plus/icons-vue"
+import { usePagination } from "@/hooks/usePagination"
+import { getRoleTreeApi } from "@/api/role"
+import { deleteByIdsUserAccountApi, findUserListApi, updateUserRolesApi, updateUserStatusApi } from "@/api/admin"
 
 const loading = ref<boolean>(false)
-const alignType = ref<string>('left')
+const alignType = ref<string>("center")
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
 
 const tableData = ref<any[]>([])
+const roles = ref<any[]>([])
 // 查询列表
 const getTableData = () => {
   loading.value = true
-  getResourceTreeApi()
+  findUserListApi({
+    page: paginationData.currentPage,
+    pageSize: paginationData.pageSize
+  })
     .then((res) => {
       paginationData.total = res.data.total
-      // paginationData.pageSize = res.values.pageSize
+      paginationData.pageSize = res.data.pageSize
       tableData.value = res.data.list
     })
     .catch(() => {
@@ -25,6 +30,11 @@ const getTableData = () => {
     .finally(() => {
       loading.value = false
     })
+
+  getRoleTreeApi().then((res) => {
+    paginationData.total = res.data.total
+    roles.value = res.data.list
+  })
 }
 
 // 刷新
@@ -39,60 +49,64 @@ const handleRefresh = () => {
 // reactive 当对象的属性发生变化时，Vue 会自动更新相关的视图 values++. 用来做数据传输
 const formRef = ref<FormInstance | null>(null)
 const formData = ref({
-  id: '',
-  roleName: '',
-  roleComment: '',
-  createdAt: '',
+  id: "",
+  uuid: "",
+  createdAt: "",
+  roles: [
+    {
+      id: 0
+    }
+  ]
 })
 const formRules: FormRules = reactive({
-  username: [{ required: false, trigger: 'blur', message: '请输入用户名' }],
-  password: [{ required: false, trigger: 'blur', message: '请输入密码' }],
+  username: [{ required: false, trigger: "blur", message: "请输入用户名" }],
+  password: [{ required: false, trigger: "blur", message: "请输入密码" }]
 })
-const menuList = reactive([{ id: 1 }, { id: 2 }, { id: 3 }])
 
 const dialogFormVisible = ref<boolean>(false)
 const isAdd = ref(false)
+const roleCheckIds = ref<number[]>([])
 
-const addResource = (row) => {
+const addUser = (row) => {
   resetForm()
   isAdd.value = true
   dialogFormVisible.value = true
 }
 // 修改菜单方法
-const editResource = (row) => {
+const editUser = (row) => {
   formData.value = row
+  const ids = []
+  for (const rowKey of formData.value.roles) {
+    ids.push(rowKey.id)
+  }
+  console.log("roleCheckIds", ids)
+  roleCheckIds.value = ids
   isAdd.value = false
   dialogFormVisible.value = true
 }
 
 const resetForm = () => {
+  roleCheckIds.value = []
   formData.value = {
-    id: '',
-    roleName: '',
-    roleComment: '',
-    createdAt: '',
+    id: "",
+    uuid: "",
+    createdAt: "",
+    roles: []
   }
 }
 // 提交
 const submitForm = () => {
-  if (isAdd.value) {
-    doCreate(formData.value)
-  } else {
-    doUpdate(formData.value)
-  }
+  updateUserRolesApi({
+    userId: formData.value.uuid,
+    roleIds: roleCheckIds.value
+  })
+  getTableData()
   dialogFormVisible.value = false
 }
 
-const doCreate = (row) => {
-  createResourceApi(row).then(() => {
-    ElMessage.success('添加成功')
-    getTableData()
-  })
-}
-
 const doUpdate = (row) => {
-  updateResourceApi(row).then(() => {
-    ElMessage.success('修改成功')
+  updateUserStatusApi(row).then(() => {
+    ElMessage.success("修改成功")
     getTableData()
   })
 }
@@ -109,30 +123,30 @@ function selectionChange(dataList) {
     selectionIds.value.push(item.id)
   })
 
-  console.log('selectionIds', selectionIds.value)
+  console.log("selectionIds", selectionIds.value)
 }
 
 const doDeleteByIds = (ids) => {
-  deleteByIdsResourceApi(ids).then(() => {
-    ElMessage.success('批量删除成功')
+  deleteByIdsUserAccountApi(ids).then(() => {
+    ElMessage.success("批量删除成功")
     getTableData()
     isDelete.value = false
   })
 }
 
 const doDelete = (row) => {
-  deleteByIdsResourceApi([row.id]).then(() => {
-    ElMessage.success('删除成功')
+  deleteByIdsUserAccountApi([row.id]).then(() => {
+    ElMessage.success("删除成功")
     getTableData()
   })
 }
 const handleDelete = (row) => {
-  ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
   }).then(() => {
-    console.log('row', row.id)
+    console.log("row", row.id)
     doDelete({ id: row.id })
   })
 }
@@ -140,16 +154,16 @@ const handleDelete = (row) => {
 
 function tagType(method) {
   switch (method) {
-    case 'GET':
-      return ''
-    case 'POST':
-      return 'success'
-    case 'PUT':
-      return 'warning'
-    case 'DELETE':
-      return 'danger'
+    case "GET":
+      return ""
+    case "POST":
+      return "success"
+    case "PUT":
+      return "warning"
+    case "DELETE":
+      return "danger"
     default:
-      return ''
+      return ""
   }
 }
 
@@ -157,7 +171,7 @@ function tagType(method) {
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
 
 defineOptions({
-  name: 'UserOnline',
+  name: "UserList"
 })
 </script>
 
@@ -168,7 +182,7 @@ defineOptions({
       <div class="table-title">{{ $route.name }}</div>
       <div class="operation-container">
         <div>
-          <el-button type="primary" :icon="CirclePlus" @click="addResource">新增菜单</el-button>
+          <el-button type="primary" :icon="CirclePlus" @click="addUser">新增菜单</el-button>
         </div>
         <div style="margin-left: auto">
           <el-tooltip content="下载">
@@ -190,24 +204,42 @@ defineOptions({
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <!-- 表格列 -->
-          <el-table-column prop="id" label="id" :align="alignType" width="100px" />
-          <el-table-column prop="name" label="接口名称" :align="alignType" width="auto" />
-          <el-table-column prop="path" label="接口路径" :align="alignType" width="auto" />
-          <el-table-column prop="method" label="请求方式" :align="alignType" width="auto">
+          <el-table-column prop="avatar" label="头像" :align="alignType" width="auto">
+            <template #default="scope">
+              <img :src="scope.row.avatar" width="40" height="40" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="nickname" label="昵称" :align="alignType" width="auto" />
+          <el-table-column prop="loginType" label="登录方式" :align="alignType" width="auto">
+            <template #default="scope">
+              <el-tag type="success" v-if="scope.row.loginType === 1">邮箱</el-tag>
+              <el-tag v-if="scope.row.loginType === 2">QQ</el-tag>
+              <el-tag type="danger" v-if="scope.row.loginType === 3">微博</el-tag>
+              <el-tag type="info" v-if="scope.row.loginType === 0">账号</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="roles" label="用户角色" :align="alignType" width="auto">
+            <template #default="scope">
+              <el-tag v-for="(item, index) of scope.row.roles" :key="index" style="margin-right: 4px; margin-top: 4px">
+                {{ item.roleName }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ipAddress" label="登录ip" :align="alignType" width="auto">
             <template #default="scope">
               <el-tag v-if="scope.row.method" :type="tagType(scope.row.method)">
                 {{ scope.row.method }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="accessType" label="匿名访问" align="center" width="100">
+          <el-table-column prop="status" label="是否禁用" align="center" width="100">
             <template #default="scope">
               <el-switch
-                v-model="scope.row.accessType"
+                v-model="scope.row.status"
                 active-color="#13ce66"
                 inactive-color="#F4F4F5"
                 :active-value="1"
-                :inactive-value="2"
+                :inactive-value="0"
                 @click="doUpdate(scope.row)"
               />
             </template>
@@ -220,35 +252,32 @@ defineOptions({
               {{ scope.row.createdAt }}
             </template>
           </el-table-column>
-
+          <el-table-column prop="lastLoginTime" label="上次登录时间" width="auto" :align="alignType">
+            <template #default="scope">
+              <el-icon>
+                <Timer />
+              </el-icon>
+              {{ scope.row.lastLoginTime }}
+            </template>
+          </el-table-column>
           <!-- 列操作 -->
-          <el-table-column fixed="right" label="操作" :align="alignType" width="180">
+          <el-table-column fixed="right" label="操作" :align="alignType" width="120">
             <template #default="scope">
               <el-button
                 class="operation-button"
                 text
                 type="primary"
                 size="small"
-                :icon="Plus"
-                @click="editResource(scope.row)"
-              >
-                新增
-              </el-button>
-              <el-button
-                class="operation-button"
-                text
-                type="primary"
-                size="small"
                 :icon="EditPen"
-                @click="editResource(scope.row)"
+                @click="editUser(scope.row)"
               >
-                修改
+                编辑
               </el-button>
-              <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">
-                <template #reference>
-                  <el-button text type="danger" size="small" class="operation-button" :icon="Delete"> 删除 </el-button>
-                </template>
-              </el-popconfirm>
+              <!--              <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">-->
+              <!--                <template #reference>-->
+              <!--                  <el-button text type="danger" size="small" class="operation-button" :icon="Delete"> 删除 </el-button>-->
+              <!--                </template>-->
+              <!--              </el-popconfirm>-->
             </template>
           </el-table-column>
         </el-table>
@@ -277,29 +306,18 @@ defineOptions({
       </template>
     </el-dialog>
 
-    <!-- 角色-菜单对话框 -->
-    <el-dialog
-      v-model="dialogFormVisible"
-      :title="isAdd === true ? '新增角色' : '修改角色'"
-      @close="resetForm"
-      width="30%"
-    >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="left">
-        <el-form-item label="角色名">
-          <el-input v-model="formData.roleName" style="width: 250px" placeholder="请输入" />
+    <!-- 修改对话框 -->
+    <el-dialog v-model="dialogFormVisible" title="修改用户角色" @close="resetForm" width="30%">
+      <el-form label-width="60px" size="default" :model="formData">
+        <el-form-item label="昵称">
+          <el-input v-model="formData.nickname" style="width: 220px" />
         </el-form-item>
-        <el-form-item label="权限标签">
-          <el-input v-model="formData.roleComment" style="width: 250px" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="菜单权限">
-          <el-tree
-            :data="menuList"
-            :default-checked-keys="menuList"
-            check-strictly
-            show-checkbox
-            node-key="id"
-            ref="menuTreeRef"
-          />
+        <el-form-item label="角色">
+          <el-checkbox-group v-model="roleCheckIds">
+            <el-checkbox v-for="item of roles" :key="item.id" :label="item.id">
+              {{ item.roleName }}
+            </el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <template #footer>

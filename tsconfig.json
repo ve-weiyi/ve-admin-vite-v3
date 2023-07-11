@@ -7,6 +7,7 @@
     "moduleResolution": "node",
     /** TS 严格模式 */
     "strict": false,
+    "allowImportingTsExtensions": true,
     "jsx": "preserve",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",

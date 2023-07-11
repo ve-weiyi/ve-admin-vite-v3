@@ -3,7 +3,7 @@ import http from '@/utils/request'
 /** 增 */
 export function createRoleApi(data: object): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/create',
+    url: '/api/v1/role/create',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function createRoleApi(data: object): Promise<IApiResponseData<any>> {
 /** 删 删除单个*/
 export function deleteRoleApi(data: object): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/delete',
+    url: '/api/v1/role/delete',
     method: 'delete',
     data
   })
@@ -21,7 +21,7 @@ export function deleteRoleApi(data: object): Promise<IApiResponseData<any>> {
 /** 改 */
 export function updateRoleApi(data: object): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/update',
+    url: '/api/v1/role/update',
     method: 'put',
     data
   })
@@ -30,7 +30,7 @@ export function updateRoleApi(data: object): Promise<IApiResponseData<any>> {
 /** 查 查询单个*/
 export function getRoleApi(data: object): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/find',
+    url: '/api/v1/role/find',
     method: 'get',
     data
   })
@@ -39,7 +39,7 @@ export function getRoleApi(data: object): Promise<IApiResponseData<any>> {
 /** 删除 批量操作 */
 export function deleteByIdsRoleApi(ids: number[]): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/deleteByIds',
+    url: '/api/v1/role/deleteByIds',
     method: 'delete',
     data: ids
   })
@@ -48,8 +48,8 @@ export function deleteByIdsRoleApi(ids: number[]): Promise<IApiResponseData<any>
 /** 查 列表*/
 export function getRoleListApi(page: object): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/admin/role/list',
-    method: 'get',
+    url: '/api/v1/role/list',
+    method: 'post',
     params: page
   })
 }
@@ -58,7 +58,8 @@ export function getRoleListApi(page: object): Promise<IApiResponseData<any>> {
 export function getRoleTreeApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: '/api/v1/admin/roles',
-    method: 'get'
+    method: 'post',
+    data: {}
   })
 }
 

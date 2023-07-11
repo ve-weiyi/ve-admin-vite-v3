@@ -148,9 +148,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.main-card {
-  min-height: calc(100vh - 126px);
-}
 
 .info-container {
   display: flex;

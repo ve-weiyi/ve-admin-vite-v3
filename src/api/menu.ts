@@ -57,8 +57,9 @@ export function getMenuListApi(page: object): Promise<IApiResponseData<any>> {
 /** 查 列表*/
 export function getMenuTreeApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: '/api/v1/menus',
-    method: 'get'
+    url: '/api/v1/admin/menus',
+    method: 'post',
+    data: {}
   })
 }
 

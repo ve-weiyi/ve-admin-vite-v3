@@ -58,6 +58,7 @@ export function getResourceListApi(page: object): Promise<IApiResponseData<any>>
 export function getResourceTreeApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: '/api//v1/admin/apis',
-    method: 'get'
+    method: 'post',
+    data: {}
   })
 }

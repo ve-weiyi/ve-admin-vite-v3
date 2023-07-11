@@ -49,7 +49,6 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           ws: true,
           /** 是否允许跨域 */
           changeOrigin: true,
-          logLevel: 'debug', // 打印代理以后的地址
           rewrite: (path) => path.replace('', ''),
         },
       }

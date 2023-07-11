@@ -16,8 +16,8 @@ import "element-plus/theme-chalk/dark/css-vars.css"
 import "vxe-table/lib/style.css"
 import "vxe-table-plugin-element/dist/style.css"
 import "@/styles/index.scss"
-import "@/styles/admin.css"
-
+import "@/styles/admin.scss"
+import "@/styles/table.scss"
 // 导入 ECharts 相关组件和图表类型
 // import ECharts from "vue-echarts"
 // import "echarts/lib/chart/line"

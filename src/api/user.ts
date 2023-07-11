@@ -25,7 +25,7 @@ export function getUserInfoApi(): Promise<IApiResponseData<any>> {
 }
 
 /** 获取用户登录历史 */
-export function loginHistoryApi(page?: object): Promise<IApiResponseData<any>> {
+export function loginHistoryApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/user/login_history",
     method: "get",

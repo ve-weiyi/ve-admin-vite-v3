@@ -1,8 +1,11 @@
-import { type RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from "vue-router"
+import {type RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory} from "vue-router"
 import mine from "@/router/blog/mine"
 
 import Layout from "@/layout/index.vue"
 import authority from "@/router/blog/authority"
+import log from "@/router/blog/log"
+import user from "@/router/blog/user";
+import message from "@/router/blog/message";
 
 /** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
@@ -58,7 +61,10 @@ export const constantRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  user,
   authority,
+  message,
+  log,
   mine,
   {
     path: "/table",
@@ -152,7 +158,7 @@ export function resetRouter() {
   // 注意：所有动态路由路由必须带有 Name 属性，否则可能会不能完全重置干净
   try {
     router.getRoutes().forEach((route) => {
-      const { name, meta } = route
+      const {name, meta} = route
       if (name && meta.roles?.length) {
         router.hasRoute(name) && router.removeRoute(name)
       }
