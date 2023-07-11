@@ -1,7 +1,8 @@
 import { type RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from "vue-router"
-import mine from "@/router/blog/mine";
+import mine from "@/router/blog/mine"
 
-import Layout from '@/layout/index.vue'
+import Layout from "@/layout/index.vue"
+import authority from "@/router/blog/authority"
 
 /** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
@@ -57,6 +58,8 @@ export const constantRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  authority,
+  mine,
   {
     path: "/table",
     component: Layout,
@@ -86,8 +89,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  },
-  mine,
+  }
 ]
 
 /**

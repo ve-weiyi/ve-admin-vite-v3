@@ -24,7 +24,7 @@
               <el-form-item label="个人网站">
                 <el-input v-model="infoForm.webSite" size="small" />
               </el-form-item>
-              <el-button @click="updateInfo" type="primary" size="medium" style="margin-left: 4.375rem">
+              <el-button @click="updateInfo" type="primary" size="default" style="margin-left: 4.375rem">
                 修改
               </el-button>
             </el-form>
@@ -47,7 +47,7 @@
                 show-password
               />
             </el-form-item>
-            <el-button type="primary" size="medium" style="margin-left: 4.4rem" @click="updatePassword">
+            <el-button type="primary" size="default" style="margin-left: 4.4rem" @click="updatePassword">
               修改
             </el-button>
           </el-form>

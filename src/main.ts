@@ -16,20 +16,21 @@ import "element-plus/theme-chalk/dark/css-vars.css"
 import "vxe-table/lib/style.css"
 import "vxe-table-plugin-element/dist/style.css"
 import "@/styles/index.scss"
+import "@/styles/admin.css"
 
 // 导入 ECharts 相关组件和图表类型
-import ECharts from "vue-echarts"
-import "echarts/lib/chart/line"
-import "echarts/lib/chart/pie"
-import "echarts/lib/chart/bar"
-import "echarts/lib/chart/map"
-import "echarts/lib/component/tooltip"
-import "echarts/lib/component/legend"
-import "echarts/lib/component/title"
+// import ECharts from "vue-echarts"
+// import "echarts/lib/chart/line"
+// import "echarts/lib/chart/pie"
+// import "echarts/lib/chart/bar"
+// import "echarts/lib/chart/map"
+// import "echarts/lib/component/tooltip"
+// import "echarts/lib/component/legend"
+// import "echarts/lib/component/title"
 
 const app = createApp(App)
 
-app.component("v-chart", ECharts) // 注册 ECharts 组件
+// app.component("v-chart", ECharts) // 注册 ECharts 组件
 /** 加载插件 */
 loadPlugins(app)
 /** 加载全局 SVG */

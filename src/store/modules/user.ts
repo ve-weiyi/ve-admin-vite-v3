@@ -6,10 +6,10 @@ import { useTagsViewStore } from "./tags-view"
 import { useSettingsStore } from "./settings"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import router, { resetRouter } from "@/router"
-import { loginApi, getUserInfoApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { loginApi } from "@/api/login"
 import { type RouteRecordRaw } from "vue-router"
 import asyncRouteSettings from "@/config/async-route"
+import { getUserInfoApi } from "@/api/user"
 
 export const useUserStore = defineStore("user", () => {
   const token = ref<string>(getToken() || "")
@@ -25,7 +25,7 @@ export const useUserStore = defineStore("user", () => {
     roles.value = value
   }
   /** 登录 */
-  const login = async ({ username, password, code }: LoginRequestData) => {
+  const login = async ({ username, password, code }: any) => {
     const { data } = await loginApi({ username, password, code })
     setToken(data.token)
     token.value = data.token

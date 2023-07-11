@@ -8,6 +8,9 @@ import { type LoginRequestData } from "@/api/login/types/login"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { getCaptchaImageApi } from "@/api/captcha"
 import { setToken } from "@/utils/cache/cookies"
+import { getUserMenusApi } from "@/api/user"
+import asyncRouteSettings from "@/config/async-route"
+import {usePermissionStoreHook} from "@/store/modules/permission";
 
 const router = useRouter()
 
@@ -33,6 +36,8 @@ const loginFormRules: FormRules = {
   ],
   code: [{ required: false, message: "请输入验证码", trigger: "blur" }]
 }
+const permissionStore = usePermissionStoreHook()
+
 /** 登录逻辑 */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
@@ -42,6 +47,9 @@ const handleLogin = () => {
         .then((res) => {
           console.log("登录成功", res)
           setToken(res.data.token)
+          getUserMenusApi().then((res) => {
+            permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
+          })
           router.push({ path: "/" })
         })
         .catch(() => {
