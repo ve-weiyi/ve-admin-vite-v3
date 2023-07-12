@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { adminCommentsApi } from "@/api/admin"
+import { findRemarkListApi } from "@/api/remark"
 
 interface Pagination {
   total?: number
@@ -99,7 +99,7 @@ export function useTableHook() {
     applySearch()
 
     loading.value = true
-    adminCommentsApi({
+    findRemarkListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,

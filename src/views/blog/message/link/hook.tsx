@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { adminCommentsApi } from "@/api/admin"
+import { createLinkApi, deleteByIdsLinkApi, deleteLinkApi, findLinkListApi, updateLinkApi } from "@/api/link"
 
 interface Pagination {
   total?: number
@@ -22,24 +22,32 @@ const defaultPaginationData: Pagination = {
 const align = "center"
 
 export function useTableHook() {
+  // 数据绑定
+  const removeVisibility = ref(false)
+  const addOrEditVisibility = ref(false)
+
   // 表格加载状态
   const loading = ref(true)
   // 表单数据定义
   const formRef = ref<FormInstance | null>(null)
   const formData = reactive({
-    username: "",
-    password: ""
+    id: 0,
+    linkName: "",
+    linkAvatar: "",
+    linkAddress: "",
+    linkIntro: "",
+    createdAt: null
   })
   const formRules: FormRules = reactive({
-    username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
-    password: [{ required: true, trigger: "blur", message: "请输入密码" }]
+    linkName: [{ required: true, trigger: "blur", message: "请输入友链名称" }],
+    linkAvatar: [{ required: true, trigger: "blur", message: "请输入友链头像" }],
+    linkAddress: [{ required: true, trigger: "blur", message: "请输入友链地址" }]
   })
 
   // 搜索表单数据定义
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
-    type: null,
-    username: "",
+    linkName: "",
     isReview: null
   })
 
@@ -53,15 +61,27 @@ export function useTableHook() {
   // eslint-disable-next-line no-undef
   const orders = reactive<Order[]>([])
 
-  const resetForm = (formEl) => {
-    if (!formEl) return
-    formEl.resetFields()
-    handleSearch()
+  const resetForm = (row) => {
+    if (row != null) {
+      formData.id = row.id
+      formData.linkName = row.linkName
+      formData.linkAvatar = row.linkAvatar
+      formData.linkAddress = row.linkAddress
+      formData.linkIntro = row.linkIntro
+      formData.createdAt = row.createdAt
+    } else {
+      formData.id = 0
+      formData.linkName = ""
+      formData.linkAvatar = ""
+      formData.linkAddress = ""
+      formData.linkIntro = ""
+      formData.createdAt = null
+    }
+    formRef.value?.resetFields()
   }
 
   const resetSearch = () => {
-    searchData.type = null
-    searchData.username = ""
+    searchData.linkName = ""
     searchData.isReview = null
     handleSearch()
   }
@@ -69,20 +89,12 @@ export function useTableHook() {
   const applySearch = () => {
     conditions.length = 0
     orders.length = 0
-    if (searchData.username != "") {
+    if (searchData.linkName != "") {
       conditions.push({
         flag: "AND",
-        field: "username",
-        value: searchData.username,
+        field: "link_name",
+        value: searchData.linkName,
         rule: "like"
-      })
-    }
-    if (searchData.type != null) {
-      conditions.push({
-        flag: "AND",
-        field: "type",
-        value: searchData.type,
-        rule: "="
       })
     }
     if (searchData.isReview != null) {
@@ -94,12 +106,13 @@ export function useTableHook() {
       })
     }
   }
+
   // eslint-disable-next-line no-undef
   function handleSearch() {
     applySearch()
 
     loading.value = true
-    adminCommentsApi({
+    findLinkListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
@@ -112,22 +125,54 @@ export function useTableHook() {
     })
   }
 
+  function handleSave(row) {
+    formRef.value?.validate((valid: boolean, fields: any) => {
+      if (valid) {
+        if (row.id === 0) {
+          handleCreate(row)
+        } else {
+          handleUpdate(row)
+        }
+      } else {
+        console.error("表单校验不通过", fields)
+      }
+    })
+  }
+
   function handleCreate(row) {
     console.log("handleCreate", row)
+    createLinkApi(row).then((res) => {
+      ElMessage.success("创建成功")
+      addOrEditVisibility.value = false
+      handleSearch()
+    })
   }
 
   function handleUpdate(row) {
     console.log("handleUpdate", row)
+    updateLinkApi(row).then((res) => {
+      ElMessage.success("更新成功")
+      addOrEditVisibility.value = false
+      handleSearch()
+    })
   }
 
   function handleDelete(row) {
     console.log("handleDelete", row)
-    // commentIdList.value = selection.map((item) => item.id)
+    deleteLinkApi(row).then((res) => {
+      ElMessage.success("删除成功")
+      removeVisibility.value = false
+      handleSearch()
+    })
   }
 
   function handleDeleteByIds(ids: number[]) {
     console.log("handleDeleteByIds", ids)
-    // commentIdList.value = selection.map((item) => item.id)
+    deleteByIdsLinkApi(ids).then((res) => {
+      ElMessage.success("批量删除成功")
+      removeVisibility.value = false
+      handleSearch()
+    })
   }
 
   // 分页大小改变回调
@@ -179,11 +224,18 @@ export function useTableHook() {
       })
   }
 
+  const onAddOrEdit = (row: any) => {
+    addOrEditVisibility.value = true
+    resetForm(row)
+  }
+
   onMounted(() => {
     handleSearch()
   })
   return {
     loading,
+    removeVisibility,
+    addOrEditVisibility,
     formRef,
     formData,
     formRules,
@@ -195,11 +247,13 @@ export function useTableHook() {
     resetForm,
     resetSearch,
     handleSearch,
+    handleSave,
     handleCreate,
     handleUpdate,
     handleDelete,
     handleDeleteByIds,
     onChange,
+    onAddOrEdit,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange

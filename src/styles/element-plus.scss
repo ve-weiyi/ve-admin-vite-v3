@@ -32,6 +32,7 @@
 .el-card.is-hover-shadow:hover {
   box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 }
+
 //表头加粗，显示card标题
 .table-title {
   margin-left: 0rem;
@@ -46,12 +47,54 @@
   width: 24px;
   height: 16px;
   border-left: 3px solid #0081ff;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .el-dialog__title {
   font-weight: bold;
 }
+
+.toolbar-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-card {
+  min-height: calc(100vh - 126px);
+}
+
+.operation-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.00rem;
+  margin-top: 1.00rem;
+}
+.operation-button {
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 0px;
+  padding: 2px;
+}
+.pagination-container {
+  float: right;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.dialog-container {
+  align-items: center;
+  font-weight: bold;
+  width:50%;
+}
+.dialog-title-container {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+.dialog-title-container i {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
 //表单字体加粗
 .el-form-item__label {
   font-weight: bold;

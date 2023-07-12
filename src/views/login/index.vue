@@ -87,7 +87,7 @@ createCode()
   <div class="login-container">
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
-      <div class="title">
+      <div class="table-title">
         <img src="@/assets/layouts/logo-text-2.png" />
       </div>
       <div class="content">

@@ -246,7 +246,7 @@ defineOptions({
               </el-button>
               <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">
                 <template #reference>
-                  <el-button text type="danger" size="small" class="operation-button" :icon="Delete"> 删除 </el-button>
+                  <el-button text type="danger" size="small" class="operation-button" icon="delete"> 删除 </el-button>
                 </template>
               </el-popconfirm>
             </template>

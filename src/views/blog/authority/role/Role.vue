@@ -22,7 +22,7 @@
         <div class="table-title">{{ $route.name }}</div>
         <div style="margin-left: auto">
           <el-button type="primary" :icon="CirclePlus" @click="addMenu">新增角色</el-button>
-          <el-button type="danger" :icon="Delete" @click="isDelete = true" :disabled="selectionIds.length === 0">
+          <el-button type="danger" icon="delete" @click="isDelete = true" :disabled="selectionIds.length === 0">
             批量删除
           </el-button>
           <el-tooltip content="下载">
@@ -94,7 +94,7 @@
               </el-button>
               <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">
                 <template #reference>
-                  <el-button text type="danger" size="small" class="operation-button" :icon="Delete"> 删除 </el-button>
+                  <el-button text type="danger" size="small" class="operation-button" icon="delete"> 删除 </el-button>
                 </template>
               </el-popconfirm>
             </template>

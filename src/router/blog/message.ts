@@ -9,19 +9,19 @@ export default {
   children: [
     {
       path: "comment",
-      component: () => import("@/views/blog/message/comment/index.vue"),
+      component: () => import("@/views/blog/message/comment/Comment.vue"),
       name: "comment",
       meta: { title: "评论管理", keepAlive: true }
     },
     {
       path: "remark",
-      component: () => import("@/views/blog/message/Remark.vue"),
+      component: () => import("@/views/blog/message/remark/Remark.vue"),
       name: "remark",
       meta: { title: "留言管理", keepAlive: true }
     },
     {
       path: "links",
-      component: () => import("@/views/blog/message/FriendLink.vue"),
+      component: () => import("@/views/blog/message/link/FriendLink.vue"),
       name: "links",
       meta: { title: "友链管理", keepAlive: true }
     }

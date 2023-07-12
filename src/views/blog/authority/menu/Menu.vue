@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue'
-import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from 'element-plus'
-import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from '@element-plus/icons-vue'
-import { usePagination } from '@/hooks/usePagination'
-import { createMenuApi, deleteByIdsMenuApi, updateMenuApi, getMenuTreeApi } from '@/api/menu'
-import options from './icon'
+import { reactive, ref, watch } from "vue"
+import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from "element-plus"
+import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from "@element-plus/icons-vue"
+import { usePagination } from "@/hooks/usePagination"
+import { createMenuApi, deleteByIdsMenuApi, updateMenuApi, getMenuTreeApi } from "@/api/menu"
+import options from "./icon"
 
 const loading = ref<boolean>(false)
-const alignType = ref<string>('left')
+const alignType = ref<string>("left")
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
 
 const tableData = ref<any[]>([])
@@ -41,19 +41,19 @@ const handleRefresh = () => {
 const formRef = ref<FormInstance | null>(null)
 const formData = ref({
   id: null,
-  name: '',
-  icon: '',
-  component: '',
-  path: '',
+  name: "",
+  icon: "",
+  component: "",
+  path: "",
   rank: 1,
   parentId: null,
   isHidden: false,
-  parentName: '',
+  parentName: ""
 })
 
 const formRules: FormRules = reactive({
-  name: [{ required: true, trigger: 'blur', message: '请输入' }],
-  path: [{ required: true, trigger: 'blur', message: '请输入' }],
+  name: [{ required: true, trigger: "blur", message: "请输入" }],
+  path: [{ required: true, trigger: "blur", message: "请输入" }]
 })
 
 const dialogFormVisible = ref<boolean>(false)
@@ -81,14 +81,14 @@ const editMenu = (row) => {
 const resetForm = () => {
   formData.value = {
     id: null,
-    name: '',
-    icon: '',
-    component: '',
-    path: '',
+    name: "",
+    icon: "",
+    component: "",
+    path: "",
     rank: 1,
     parentId: null,
     isHidden: false,
-    parentName: '',
+    parentName: ""
   }
 }
 // 提交
@@ -107,14 +107,14 @@ const submitForm = () => {
 
 const doCreate = (row) => {
   createMenuApi(row).then(() => {
-    ElMessage.success('添加成功')
+    ElMessage.success("添加成功")
     getTableData()
   })
 }
 
 const doUpdate = (row) => {
   updateMenuApi(row).then(() => {
-    ElMessage.success('修改成功')
+    ElMessage.success("修改成功")
     getTableData()
   })
 }
@@ -131,12 +131,12 @@ function selectionChange(dataList) {
     selectionIds.value.push(item.id)
   })
 
-  console.log('selectionIds', selectionIds.value)
+  console.log("selectionIds", selectionIds.value)
 }
 
 const doDeleteByIds = (ids) => {
   deleteByIdsMenuApi(ids).then(() => {
-    ElMessage.success('批量删除成功')
+    ElMessage.success("批量删除成功")
     getTableData()
     isDelete.value = false
   })
@@ -144,17 +144,17 @@ const doDeleteByIds = (ids) => {
 
 const doDelete = (row) => {
   deleteByIdsMenuApi([row.id]).then(() => {
-    ElMessage.success('删除成功')
+    ElMessage.success("删除成功")
     getTableData()
   })
 }
 const handleDelete = (row) => {
-  ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
   }).then(() => {
-    console.log('row', row.id)
+    console.log("row", row.id)
     doDelete({ id: row.id })
   })
 }
@@ -164,7 +164,7 @@ const handleDelete = (row) => {
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
 
 defineOptions({
-  name: 'Menu',
+  name: "Menu"
 })
 </script>
 
@@ -257,7 +257,7 @@ defineOptions({
               </el-button>
               <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">
                 <template #reference>
-                  <el-button text type="danger" size="small" class="operation-button" :icon="Delete"> 删除</el-button>
+                  <el-button text type="danger" size="small" class="operation-button" icon="delete"> 删除</el-button>
                 </template>
               </el-popconfirm>
             </template>

@@ -12,25 +12,34 @@
           <el-input clearable v-model="searchData.username" placeholder="请输入用户昵称" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
+          <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
+          <el-button icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 表格 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
-      <div class="title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.name }}</div>
       <div class="toolbar-wrapper">
         <div class="review-menu">
           <span>状态</span>
-          <span @click="changeReview(null)" :class="{ 'active-review': isReview === null, review: isReview !== null }">
+          <span
+            @click="changeReview(null)"
+            :class="{ 'active-review': searchData.isReview === null, review: searchData.isReview !== null }"
+          >
             全部
           </span>
-          <span @click="changeReview(1)" :class="{ 'active-review': isReview === 1, review: isReview !== 1 }">
+          <span
+            @click="changeReview(1)"
+            :class="{ 'active-review': searchData.isReview === 1, review: searchData.isReview !== 1 }"
+          >
             正常
           </span>
-          <span @click="changeReview(0)" :class="{ 'active-review': isReview === 0, review: isReview !== 0 }">
+          <span
+            @click="changeReview(0)"
+            :class="{ 'active-review': searchData.isReview === 0, review: searchData.isReview !== 0 }"
+          >
             审核中
           </span>
         </div>
@@ -39,17 +48,17 @@
           <el-button
             type="danger"
             size="default"
-            icon="el-icon-delete"
-            :disabled="selectIds.length === 0"
-            @click="remove = true"
+            icon="delete"
+            :disabled="selectionIds.length === 0"
+            @click="removeVisibility = true"
           >
             批量删除
           </el-button>
           <el-button
             type="success"
             size="default"
-            icon="el-icon-success"
-            :disabled="selectIds.length === 0"
+            icon="CircleCheck"
+            :disabled="selectionIds.length === 0"
             @click="handleUpdate(null)"
           >
             批量通过
@@ -59,41 +68,16 @@
       <!-- 表格展示 -->
       <el-table border :data="tableData" @selection-change="handleSelectionChange" :loading="loading">
         <!-- 表格列 -->
-        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="avatar" label="头像" align="center" width="80">
           <template #default="{ row }">
             <img :src="row.avatar" width="40" height="40" />
           </template>
         </el-table-column>
-        <!-- 评论人昵称 -->
-        <el-table-column prop="nickname" label="评论人" align="center" width="120"></el-table-column>
-        <!-- 回复人昵称 -->
-        <el-table-column prop="replyNickname" label="回复人" align="center" width="120">
-          <template #default="{ row }">
-            <span v-if="row.replyNickname">{{ row.replyNickname }}</span>
-            <span v-else>无</span>
-          </template>
-        </el-table-column>
-        <!-- 评论文章标题 -->
-        <el-table-column prop="articleTitle" label="文章标题" align="center">
-          <template #default="{ row }">
-            <span v-if="row.articleTitle">{{ row.articleTitle }}</span>
-            <span v-else>无</span>
-          </template>
-        </el-table-column>
-        <!-- 评论内容 -->
-        <el-table-column prop="commentContent" label="评论内容" align="center">
-          <template #default="{ row }">
-            <span v-html="row.commentContent" class="comment-content"></span>
-          </template>
-        </el-table-column>
-        <!-- 评论时间 -->
-        <el-table-column prop="createdAt" label="评论时间" width="150" align="center">
-          <template #default="{ row }">
-            <i class="el-icon-time" style="margin-right: 5px"></i>
-            {{ row.createdAt }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="nickname" label="留言人" align="center" width="150" />
+        <el-table-column prop="messageContent" label="留言内容" align="center" />
+        <el-table-column prop="ipAddress" label="ip地址" align="center" width="150" />
+        <el-table-column prop="ipSource" label="ip来源" align="center" width="170" />
         <!-- 状态 -->
         <el-table-column prop="isReview" label="状态" width="80" align="center">
           <template #default="{ row }">
@@ -101,20 +85,21 @@
             <el-tag v-if="row.isReview" type="success">正常</el-tag>
           </template>
         </el-table-column>
-        <!-- 来源 -->
-        <el-table-column label="来源" align="center" width="100">
+        <!-- 评论时间 -->
+        <el-table-column prop="createdAt" label="评论时间" width="150" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.type === 1">文章</el-tag>
-            <el-tag v-if="row.type === 2" type="warning">友链</el-tag>
-            <el-tag v-if="row.type === 3" type="danger">说说</el-tag>
+            <i class="el-icon-time" style="margin-right: 5px"></i>
+            {{ formatDateTime(row.createdAt) }}
           </template>
         </el-table-column>
         <!-- 列操作 -->
         <el-table-column label="操作" width="160" align="center">
           <template #default="{ row }">
-            <el-button :disabled="row.isReview" size="default" type="success" @click="handleUpdate(row)"> 通过 </el-button>
+            <el-button v-if="!row.isReview" size="default" type="success" @click="handleUpdate(row)"> 通过 </el-button>
             <el-popconfirm style="margin-left: 10px" title="确定删除吗？" @confirm="handleDelete(row)">
-              <el-button size="default" type="danger">删除</el-button>
+              <template #reference>
+                <el-button size="default" type="danger">删除</el-button>
+              </template>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -131,23 +116,31 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       ></el-pagination>
-      <!-- 批量彻底删除对话框 -->
-      <el-dialog :v-model="remove" width="30%">
-        <div class="dialog-title-container"><i class="el-icon-warning" style="color: #ff9900" />提示</div>
-        <div style="font-size: 1rem">是否彻底删除选中项？</div>
-        <template #footer>
-          <el-button @click="remove = false">取 消</el-button>
-          <el-button type="primary" @click="handleDelete(null)">确 定</el-button>
-        </template>
-      </el-dialog>
     </el-card>
+
+    <!-- 批量彻底删除对话框 -->
+    <el-dialog v-model="removeVisibility" width="30%">
+      <template #header>
+        <div class="dialog-title-container">
+          <el-icon style="color: #ff9900">
+            <WarningFilled />
+          </el-icon>
+          删除提示
+        </div>
+      </template>
+      <div style="font-size: 1rem">是否彻底删除选中项？</div>
+      <template #footer>
+        <el-button @click="removeVisibility = false">取 消</el-button>
+        <el-button type="primary" @click="handleDeleteByIds(selectionIds)">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from "vue"
 import { useTableHook } from "./hook"
-import { Refresh, Search } from "@element-plus/icons-vue"
+import { formatDateTime } from "@/utils"
 
 const {
   loading,
@@ -157,7 +150,7 @@ const {
   searchFormRef,
   searchData,
   tableData,
-  selectIds,
+  selectionIds,
   pagination,
   resetForm,
   resetSearch,
@@ -165,6 +158,7 @@ const {
   handleCreate,
   handleUpdate,
   handleDelete,
+  handleDeleteByIds,
   onChange,
   handleSizeChange,
   handleCurrentChange,
@@ -172,8 +166,7 @@ const {
 } = useTableHook()
 
 // 数据绑定
-const isReview = ref(null)
-const remove = ref(false)
+const removeVisibility = ref(false)
 
 const options = [
   {
@@ -191,8 +184,9 @@ const options = [
 ]
 
 const changeReview = (review) => {
-  isReview.value = review
+  searchData.isReview = review
   // Perform the necessary logic
+  handleSearch()
 }
 </script>
 

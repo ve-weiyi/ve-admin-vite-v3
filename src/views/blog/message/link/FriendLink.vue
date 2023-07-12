@@ -3,8 +3,8 @@
     <!-- 表格搜索条件 -->
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <el-form ref="searchFormRef" :inline="true" :model="searchData">
-        <el-form-item prop="linkName" label="模块名：">
-          <el-input clearable v-model="searchData.linkName" placeholder="请输入" />
+        <el-form-item prop="linkName" label="友链名：">
+          <el-input clearable v-model="searchData.linkName" placeholder="请输入友链名" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -19,6 +19,7 @@
       <div class="toolbar-wrapper">
         <!-- 表格操作 -->
         <div class="operation-container">
+          <el-button type="primary" size="default" icon="Plus" @click="onAddOrEdit(null)"> 新增</el-button>
           <el-button
             type="danger"
             size="default"
@@ -31,35 +32,24 @@
         </div>
       </div>
       <!-- 表格展示 -->
-      <el-table :data="tableData" border @selection-change="handleSelectionChange" :loading="loading">
-        <el-table-column type="selection" width="40" align="center" />
-        <el-table-column prop="optModule" label="系统模块" align="center" width="120" />
-        <el-table-column width="100" prop="optType" label="操作类型" align="center" />
-        <el-table-column prop="optDesc" label="操作描述" align="center" width="150" />
-        <el-table-column prop="requetMethod" label="请求方式" align="center" width="100">
-          <template #default="scope">
-            <el-tag :type="tagType(scope.row.requestMethod)">
-              {{ scope.row.requestMethod }}
-            </el-tag>
+      <el-table border :data="tableData" @selection-change="handleSelectionChange" :loading="loading">
+        <!-- 表格列 -->
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column prop="linkAvatar" label="头像" align="center" width="80">
+          <template #default="{ row }">
+            <img :src="row.linkAvatar" width="40" height="40" />
           </template>
         </el-table-column>
-        <el-table-column prop="nickname" label="操作人员" align="center" />
-        <el-table-column prop="ipAddress" label="登录ip" align="center" width="130" />
-        <el-table-column prop="ipSource" label="登录地址" align="center" width="150" />
-        <el-table-column prop="createdAt" label="操作日期" align="center" width="190">
-          <template #default="scope">
-            <i class="el-icon-time" style="margin-right: 5px" />
-            {{ formatDateTime(scope.row.createdAt) }}
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" align="center" width="150">
-          <template #default="scope">
-            <el-button text type="primary" size="small" @click="onAddOrEdit(scope.row)" icon="view">
-              <i class="el-icon-view" /> 查看
-            </el-button>
-            <el-popconfirm title="确定删除吗？" style="margin-left: 10px" @confirm="handleDelete(scope.row)">
+        <el-table-column prop="linkName" label="链接名" align="center" />
+        <el-table-column prop="linkAddress" label="链接地址" align="center" />
+        <el-table-column prop="linkIntro" label="链接介绍" align="center" />
+        <!-- 列操作 -->
+        <el-table-column label="操作" align="center" width="160">
+          <template #default="{ row }">
+            <el-button type="primary" size="default" @click="onAddOrEdit(row)"> 编辑</el-button>
+            <el-popconfirm title="确定删除吗？" style="margin-left: 1rem" @confirm="handleDelete(row)">
               <template #reference>
-                <el-button text type="primary" size="small" class="operation-button" icon="delete"> 删除 </el-button>
+                <el-button type="danger" size="default"> 删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -96,42 +86,31 @@
       </template>
     </el-dialog>
 
-    <!-- 查看模态框 -->
-    <el-dialog v-model="addOrEditVisibility" class="dialog-container">
+    <!-- 添加对话框 -->
+    <el-dialog v-model="addOrEditVisibility" width="40%">
       <template #header>
         <div class="dialog-title-container">
-          <el-icon>
-            <MoreFilled />
-          </el-icon>
-          详细信息
+          {{ linkTitle }}
         </div>
       </template>
-
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" size="default">
-        <el-form-item label="操作模块：">
-          <div>{{ formData.optModule }}</div>
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="80px" size="default">
+        <el-form-item prop="linkAvatar" label="链接头像">
+          <el-input style="width: 100%" v-model="formData.linkAvatar" />
         </el-form-item>
-        <el-form-item label="请求地址：">
-          {{ formData.optUrl }}
+        <el-form-item prop="linkName" label="链接名">
+          <el-input style="width: 100%" v-model="formData.linkName" />
         </el-form-item>
-        <el-form-item label="请求方式：">
-          <el-tag :type="tagType(formData.requestMethod)">
-            {{ formData.requestMethod }}
-          </el-tag>
+        <el-form-item prop="linkAddress" label="链接地址">
+          <el-input style="width: 100%" v-model="formData.linkAddress" />
         </el-form-item>
-        <el-form-item label="操作方法：">
-          <div style="width: 100%">{{ formData.optMethod }}</div>
-        </el-form-item>
-        <el-form-item label="请求参数：">
-          <div style="width: 100%">{{ formData.requestParam }}</div>
-        </el-form-item>
-        <el-form-item label="返回数据：">
-          <div style="width: 100%">{{ formData.responseData }}</div>
-        </el-form-item>
-        <el-form-item label="操作人员：">
-          {{ formData.nickname }}
+        <el-form-item prop="linkIntro" label="链接介绍">
+          <el-input style="width: 100%" v-model="formData.linkIntro" />
         </el-form-item>
       </el-form>
+      <template #footer>
+        <el-button @click="addOrEditVisibility = false">取 消</el-button>
+        <el-button type="primary" @click="handleSave(formData)"> 确 定</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -139,7 +118,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue"
 import { useTableHook } from "./hook"
-import { formatDateTime } from "@/utils"
 
 const {
   loading,
@@ -167,27 +145,12 @@ const {
 } = useTableHook()
 
 const linkTitle = computed(() => {
-  if (formData.value.id == 0) {
+  if (formData.id == 0) {
     return "添加友链"
   } else {
     return "编辑友链"
   }
 })
-
-const tagType = (type) => {
-  switch (type) {
-    case "GET":
-      return ""
-    case "POST":
-      return "success"
-    case "PUT":
-      return "warning"
-    case "DELETE":
-      return "danger"
-    default:
-      return ""
-  }
-}
 
 const options = [
   {
