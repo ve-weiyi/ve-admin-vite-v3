@@ -6,6 +6,7 @@ import authority from "@/router/blog/authority"
 import log from "@/router/blog/log"
 import user from "@/router/blog/user";
 import message from "@/router/blog/message";
+import album from "@/router/blog/album";
 
 /** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
@@ -64,6 +65,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   user,
   authority,
   message,
+  album,
   log,
   mine,
   {
