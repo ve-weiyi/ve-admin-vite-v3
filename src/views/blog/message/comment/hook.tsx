@@ -1,24 +1,10 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
+import { Pagination, defaultPaginationData } from "@/types/pagination"
+import { Condition, Order } from "@/types/api"
 import { adminCommentsApi } from "@/api/admin"
 
-interface Pagination {
-  total?: number
-  currentPage?: number
-  pageSizes?: number[]
-  pageSize?: number
-  layout?: string
-}
-
-/** 默认的分页参数 */
-const defaultPaginationData: Pagination = {
-  total: 0,
-  currentPage: 1,
-  pageSizes: [10, 20, 50],
-  pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper"
-}
 const align = "center"
 
 export function useTableHook() {
@@ -45,12 +31,10 @@ export function useTableHook() {
 
   // 表格数据定义
   const tableData = ref([])
-  const selectionIds = reactive([])
-  const pagination = reactive({ ...defaultPaginationData })
+  const selectionIds = reactive<number[]>([])
+  const pagination = reactive<Pagination>({ ...defaultPaginationData })
 
-  // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
-  // eslint-disable-next-line no-undef
   const orders = reactive<Order[]>([])
 
   const resetForm = (formEl) => {

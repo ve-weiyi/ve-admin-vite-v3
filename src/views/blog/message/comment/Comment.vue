@@ -20,7 +20,7 @@
 
     <!-- 表格 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <div class="toolbar-wrapper">
         <div class="review-menu">
           <span>状态</span>

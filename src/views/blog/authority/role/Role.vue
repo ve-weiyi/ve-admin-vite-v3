@@ -19,7 +19,7 @@
     <!-- 表格内容 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
       <div class="operation-container">
-        <div class="table-title">{{ $route.name }}</div>
+        <div class="table-title">{{ $route.meta.title }}</div>
         <div style="margin-left: auto">
           <el-button type="primary" :icon="CirclePlus" @click="addMenu">新增角色</el-button>
           <el-button type="danger" icon="delete" @click="isDelete = true" :disabled="selectionIds.length === 0">

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="main-card">
       <!-- 标题 -->
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <!-- 相册操作 -->
       <div class="operation">
         <div class="all-check">

@@ -3,8 +3,13 @@
     <!-- 表格搜索条件 -->
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <el-form ref="searchFormRef" :inline="true" :model="searchData">
-        <el-form-item prop="linkName" label="模块名：">
-          <el-input clearable v-model="searchData.linkName" placeholder="请输入" />
+        <el-form-item prop="optModule" label="模块名：">
+          <el-input clearable v-model="searchData.optModule" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item prop="optType" label="操作类型：">
+          <el-select v-model="searchData.optType" placeholder="请选择类型">
+            <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -15,7 +20,7 @@
 
     <!-- 表格 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <div class="toolbar-wrapper">
         <!-- 表格操作 -->
         <div class="operation-container">
@@ -33,10 +38,11 @@
       <!-- 表格展示 -->
       <el-table :data="tableData" border @selection-change="handleSelectionChange" :loading="loading">
         <el-table-column type="selection" width="40" align="center" />
-        <el-table-column prop="optModule" label="系统模块" align="center" width="120" />
-        <el-table-column width="100" prop="optType" label="操作类型" align="center" />
+        <el-table-column prop="id" label="id" align="center" width="80" />
+        <el-table-column prop="optModule" label="系统模块" align="center" width="100" />
+        <el-table-column prop="optType" label="操作类型" align="center" width="100" />
         <el-table-column prop="optDesc" label="操作描述" align="center" width="150" />
-        <el-table-column prop="requetMethod" label="请求方式" align="center" width="100">
+        <el-table-column prop="requestMethod" label="请求方式" align="center" width="100">
           <template #default="scope">
             <el-tag :type="tagType(scope.row.requestMethod)">
               {{ scope.row.requestMethod }}
@@ -191,16 +197,24 @@ const tagType = (type) => {
 
 const options = [
   {
-    value: 1,
-    label: "文章"
+    value: "新增",
+    label: "新增"
   },
   {
-    value: 2,
-    label: "友链"
+    value: "修改",
+    label: "修改"
   },
   {
-    value: 3,
-    label: "说说"
+    value: "删除",
+    label: "删除"
+  },
+  {
+    value: "查询",
+    label: "查询"
+  },
+  {
+    value: "新增或修改",
+    label: "新增或修改"
   }
 ]
 </script>

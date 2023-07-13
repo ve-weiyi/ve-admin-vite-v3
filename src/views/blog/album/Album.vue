@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="main-card">
       <!-- 标题 -->
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <div class="operation-container">
         <el-button type="primary" size="default" icon="el-icon-plus" @click="handleSave(null)"> 新建相册 </el-button>
         <div style="margin-left: auto">

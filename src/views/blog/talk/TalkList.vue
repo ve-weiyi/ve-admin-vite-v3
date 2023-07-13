@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="main-card">
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <!-- 文章状态 -->
       <div class="status-menu">
         <span>状态</span>

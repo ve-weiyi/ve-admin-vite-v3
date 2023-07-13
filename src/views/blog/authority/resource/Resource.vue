@@ -165,7 +165,7 @@ defineOptions({
   <div class="app-container">
     <!-- 表格内容 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
-      <div class="table-title">{{ $route.name }}</div>
+      <div class="table-title">{{ $route.meta.title }}</div>
       <div class="operation-container">
         <div>
           <el-button type="primary" :icon="CirclePlus" @click="addResource">新增菜单</el-button>

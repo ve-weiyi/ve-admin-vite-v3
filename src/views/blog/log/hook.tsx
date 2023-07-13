@@ -1,6 +1,8 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
+import { Condition, Order } from "@/types/api"
+import { Pagination, defaultPaginationData } from "@/types/pagination"
 import {
   createOperationApi,
   deleteByIdsOperationApi,
@@ -9,22 +11,6 @@ import {
   updateOperationApi
 } from "@/api/operation"
 
-interface Pagination {
-  total?: number
-  currentPage?: number
-  pageSizes?: number[]
-  pageSize?: number
-  layout?: string
-}
-
-/** 默认的分页参数 */
-const defaultPaginationData: Pagination = {
-  total: 0,
-  currentPage: 1,
-  pageSizes: [10, 20, 50],
-  pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper"
-}
 const align = "center"
 
 export function useTableHook() {
@@ -42,8 +28,8 @@ export function useTableHook() {
   // 搜索表单数据定义
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
-    linkName: "",
-    isReview: null
+    optModule: "",
+    optType: ""
   })
 
   // 表格数据定义
@@ -51,10 +37,15 @@ export function useTableHook() {
   const selectionIds = reactive([])
   const pagination = reactive({ ...defaultPaginationData })
 
-  // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
-  // eslint-disable-next-line no-undef
   const orders = reactive<Order[]>([])
+
+  const columns: Column[] = [
+    {
+      dataKey: "selection",
+      width: 50
+    }
+  ]
 
   const resetForm = (row) => {
     if (row != null) {
@@ -66,30 +57,36 @@ export function useTableHook() {
   }
 
   const resetSearch = () => {
-    searchData.linkName = ""
-    searchData.isReview = null
+    searchData.optModule = ""
+    searchData.optType = ""
     handleSearch()
   }
 
   const applySearch = () => {
     conditions.length = 0
     orders.length = 0
-    if (searchData.linkName != "") {
+    // 搜索条件
+    if (searchData.optModule != "") {
       conditions.push({
         flag: "AND",
-        field: "link_name",
-        value: searchData.linkName,
+        field: "opt_module",
+        value: searchData.optModule,
         rule: "like"
       })
     }
-    if (searchData.isReview != null) {
+    if (searchData.optType != "") {
       conditions.push({
         flag: "AND",
-        field: "is_review",
-        value: searchData.isReview,
+        field: "opt_type",
+        value: searchData.optType,
         rule: "="
       })
     }
+    // 倒序
+    orders.push({
+      field: "id",
+      rule: "desc"
+    })
   }
 
   // eslint-disable-next-line no-undef

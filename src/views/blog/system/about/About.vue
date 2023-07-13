@@ -1,6 +1,6 @@
 <template>
   <el-card class="main-card">
-    <div class="table-title">{{ $route.name }}</div>
+    <div class="table-title">{{ $route.meta.title }}</div>
     <mavon-editor
       ref="mdRef"
       @imgAdd="uploadImg"
