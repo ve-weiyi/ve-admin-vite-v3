@@ -48,12 +48,12 @@ const formData = ref({
   rank: 1,
   parentId: null,
   isHidden: false,
-  parentName: ""
+  parentName: "",
 })
 
 const formRules: FormRules = reactive({
   name: [{ required: true, trigger: "blur", message: "请输入" }],
-  path: [{ required: true, trigger: "blur", message: "请输入" }]
+  path: [{ required: true, trigger: "blur", message: "请输入" }],
 })
 
 const dialogFormVisible = ref<boolean>(false)
@@ -88,7 +88,7 @@ const resetForm = () => {
     rank: 1,
     parentId: null,
     isHidden: false,
-    parentName: ""
+    parentName: "",
   }
 }
 // 提交
@@ -152,7 +152,7 @@ const handleDelete = (row) => {
   ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
-    type: "warning"
+    type: "warning",
   }).then(() => {
     console.log("row", row.id)
     doDelete({ id: row.id })
@@ -163,9 +163,6 @@ const handleDelete = (row) => {
 /** 监听分页参数的变化 */
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
 
-defineOptions({
-  name: "Menu"
-})
 </script>
 
 <template>

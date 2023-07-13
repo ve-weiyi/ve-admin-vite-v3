@@ -213,7 +213,7 @@ const websiteConfigForm = ref({
   isMusicPlayer: 1,
   isEmailNotice: 1,
   isCommentReview: 0,
-  isMessageReview: 0
+  isMessageReview: 0,
 })
 
 const activeName = ref("info")

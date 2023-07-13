@@ -14,11 +14,11 @@ export function useTableHook() {
   const formRef = ref<FormInstance | null>(null)
   const formData = reactive({
     username: "",
-    password: ""
+    password: "",
   })
   const formRules: FormRules = reactive({
     username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
-    password: [{ required: true, trigger: "blur", message: "请输入密码" }]
+    password: [{ required: true, trigger: "blur", message: "请输入密码" }],
   })
 
   // 搜索表单数据定义
@@ -26,7 +26,7 @@ export function useTableHook() {
   const searchData = reactive({
     type: null,
     username: "",
-    isReview: null
+    isReview: null,
   })
 
   // 表格数据定义
@@ -58,7 +58,7 @@ export function useTableHook() {
         flag: "AND",
         field: "username",
         value: searchData.username,
-        rule: "like"
+        rule: "like",
       })
     }
     if (searchData.type != null) {
@@ -66,7 +66,7 @@ export function useTableHook() {
         flag: "AND",
         field: "type",
         value: searchData.type,
-        rule: "="
+        rule: "=",
       })
     }
     if (searchData.isReview != null) {
@@ -74,7 +74,7 @@ export function useTableHook() {
         flag: "AND",
         field: "is_review",
         value: searchData.isReview,
-        rule: "="
+        rule: "=",
       })
     }
   }
@@ -87,7 +87,7 @@ export function useTableHook() {
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
-      conditions: conditions
+      conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list
       pagination.total = res.data.total
@@ -149,13 +149,13 @@ export function useTableHook() {
         cancelButtonText: "取消",
         type: "warning",
         dangerouslyUseHTMLString: true,
-        draggable: true
+        draggable: true,
       }
     )
       .then(() => {
         ElMessage({
           message: "已成功修改用户状态",
-          type: "success"
+          type: "success",
         })
       })
       .catch(() => {
@@ -186,6 +186,6 @@ export function useTableHook() {
     onChange,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
   }
 }

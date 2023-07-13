@@ -35,17 +35,17 @@
 </template>
 <script lang="ts" setup>
 import { useHook } from "@/views/blog/user/online/hook"
-import { ref } from "vue";
+import { ref } from "vue"
 
 // 自行编写排序事件处理方法
 const handleSort = () => {}
 // 记录排序状态, key: 排序项的key, order: 升/降序
-const sortState = ref({ key: "no", order: 'asc' });
+const sortState = ref({ key: "no", order: "asc" })
 // 监听排序事件
 const onSort = ({ key, order }) => {
   handleSort()
-  sortState.value = { key, order };
-};
+  sortState.value = { key, order }
+}
 
 const {
   form,
@@ -60,11 +60,8 @@ const {
   handleDelete,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useHook()
 </script>
 
-<style lang="scss" scoped>
-
-
-</style>
+<style lang="scss" scoped></style>

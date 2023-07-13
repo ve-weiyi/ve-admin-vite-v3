@@ -11,19 +11,19 @@ export default {
       path: "website",
       component: () => import("@/views/blog/system/website/Website.vue"),
       name: "Website",
-      meta: { title: "网站设置", noCache: true }
+      meta: { title: "网站设置", noCache: true },
     },
     {
       path: "page",
       component: () => import("@/views/blog/system/page/Page.vue"),
       name: "Page",
-      meta: { title: "页面管理", noCache: true }
+      meta: { title: "页面管理", noCache: true },
     },
     {
       path: "about",
       component: () => import("@/views/blog/system/about/About.vue"),
       name: "About",
-      meta: { title: "关于我", noCache: true }
-    }
-  ]
+      meta: { title: "关于我", noCache: true },
+    },
+  ],
 }

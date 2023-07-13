@@ -89,11 +89,11 @@ const talk = ref({
   content: "",
   isTop: 0,
   status: 1,
-  images: null
+  images: null,
 })
 const statusList = ref([
   { status: 1, desc: "公开" },
-  { status: 2, desc: "私密" }
+  { status: 2, desc: "私密" },
 ])
 const uploadList = ref([])
 
@@ -161,12 +161,12 @@ function saveOrUpdateTalk() {
       uploadList.value = []
       this.$notify.success({
         title: "成功",
-        message: data.message
+        message: data.message,
       })
     } else {
       this.$notify.error({
         title: "失败",
-        message: data.message
+        message: data.message,
       })
     }
   })

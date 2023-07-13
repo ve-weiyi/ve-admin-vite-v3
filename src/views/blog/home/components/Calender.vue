@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import * as echarts from "echarts"
 import {
   onMounted,
   ref,
@@ -15,8 +15,8 @@ import {
   computed,
   watch,
   watchEffect,
-} from 'vue'
-import { EChartsOption } from 'echarts'
+} from "vue"
+import { EChartsOption } from "echarts"
 
 type ECharts = echarts.ECharts
 
@@ -24,15 +24,15 @@ const props = defineProps({
   values: {
     type: Array as () => { day: string; count: number }[],
     default: () => [
-      { day: '2022-01-18', count: 100 },
-      { day: '2022-01-19', count: 100 },
+      { day: "2022-01-18", count: 100 },
+      { day: "2022-01-19", count: 100 },
     ],
   },
   startDate: {
     type: String,
     default: () => {
       const date = new Date()
-      console.log('startDate', date.getFullYear(), date.getMonth(), date.getDate())
+      console.log("startDate", date.getFullYear(), date.getMonth(), date.getDate())
       const year = date.getFullYear() - 1
       const month = date.getMonth() + 1
       const day = date.getDate() - 1
@@ -45,15 +45,15 @@ const props = defineProps({
   },
   className: {
     type: String,
-    default: 'chart',
+    default: "chart",
   },
   width: {
     type: String,
-    default: '100%',
+    default: "100%",
   },
   height: {
     type: String,
-    default: '250px',
+    default: "250px",
   },
 })
 
@@ -69,9 +69,9 @@ const resetOption = () => {
   if (!chart.value) {
     return
   }
-  const colorRange = ['#ebedf0', '#40c463', '#0be148', '#30a14e', '#216e39']
-  const startYear = props.startDate.split('-')[0]
-  const endYear = props.endDate.split('-')[0]
+  const colorRange = ["#ebedf0", "#40c463", "#0be148", "#30a14e", "#216e39"]
+  const startYear = props.startDate.split("-")[0]
+  const endYear = props.endDate.split("-")[0]
   const rangeMin = 0
   let rangeMax = 5
 
@@ -80,7 +80,7 @@ const resetOption = () => {
   const end = +echarts.time.parse(props.endDate)
   const dayTime = 3600 * 24 * 1000
   for (let time = date; time < end; time += dayTime) {
-    const key = echarts.time.format(time, '{yyyy}-{MM}-{dd}', false)
+    const key = echarts.time.format(time, "{yyyy}-{MM}-{dd}", false)
     const count = props.values.find((item) => item.day === key)?.count || 0
     // Math.floor(Math.random() * rangeMax)]
     if (count > rangeMax) {
@@ -92,12 +92,12 @@ const resetOption = () => {
   option.value = {
     title: {
       top: 30,
-      left: 'center',
+      left: "center",
       text: `${startYear}-${endYear}年每日代码提交次数`,
     },
     tooltip: {
-      trigger: 'item', // 设置触发方式为项触发
-      formatter: function(data: any) {
+      trigger: "item", // 设置触发方式为项触发
+      formatter: function (data: any) {
         // 定义提示框的内容
         return `${data.value[0]},${data.value[1]}次提交`
       },
@@ -106,24 +106,24 @@ const resetOption = () => {
       min: rangeMin,
       max: rangeMax,
       calculable: true, // 开启值域漫游，根据数据动态调整间隔
-      type: 'piecewise',
-      orient: 'horizontal',
-      left: 'center',
+      type: "piecewise",
+      orient: "horizontal",
+      left: "center",
       top: 65,
       // 颜色范围
       inRange: {
         color: colorRange,
       },
-      formatter: function(value) {
+      formatter: function (value) {
         // 自定义单位显示
-        return value + ' 次/日'
+        return value + " 次/日"
       },
     },
     calendar: {
       top: 100,
       left: 30,
       right: 30,
-      cellSize: ['auto', 13],
+      cellSize: ["auto", 13],
       range: [props.startDate, props.endDate],
       // 月份样式
       splitLine: {
@@ -131,9 +131,9 @@ const resetOption = () => {
       },
       itemStyle: {
         // 设置热力图边框样式
-        borderColor: '#fff', // 边框颜色
+        borderColor: "#fff", // 边框颜色
         borderWidth: 3, // 边框宽度
-        borderType: 'solid', // 边框线型
+        borderType: "solid", // 边框线型
       },
       // 月份边框
       yearLabel: {
@@ -141,17 +141,17 @@ const resetOption = () => {
       },
       monthLabel: {
         show: true,
-        position: 'end',
-        nameMap: 'ZH',
+        position: "end",
+        nameMap: "ZH",
       },
       dayLabel: {
         show: true,
-        nameMap: 'ZH',
+        nameMap: "ZH",
       },
     },
     series: {
-      type: 'heatmap',
-      coordinateSystem: 'calendar',
+      type: "heatmap",
+      coordinateSystem: "calendar",
       data: data,
     },
   }

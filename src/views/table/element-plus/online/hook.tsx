@@ -18,7 +18,7 @@ const defaultPaginationData: Pagination = {
   currentPage: 1,
   pageSizes: [10, 20, 50],
   pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper"
+  layout: "total, sizes, prev, pager, next, jumper",
 }
 
 export function useHook() {
@@ -34,7 +34,7 @@ export function useHook() {
       dataKey: "id",
       title: "id",
       width: 100,
-      align: align
+      align: align,
     },
     {
       key: "avatar",
@@ -42,16 +42,14 @@ export function useHook() {
       title: "头像",
       width: 100,
       align: align,
-      cellRenderer: (row) => (
-        <el-avatar size={40} src={row.cellData} style={{ margin: "0 auto" }}></el-avatar>
-      )
+      cellRenderer: (row) => <el-avatar size={40} src={row.cellData} style={{ margin: "0 auto" }}></el-avatar>,
     },
     {
       key: "nickname",
       dataKey: "nickname",
       title: "昵称",
       width: 100,
-      align: align
+      align: align,
     },
     {
       key: "loginType",
@@ -59,21 +57,21 @@ export function useHook() {
       title: "登录方式",
       width: 100,
       cellRenderer: ({ cellData: name }) => <ElTag>{name}</ElTag>,
-      align: align
+      align: align,
     },
     {
       key: "ipSource",
       dataKey: "ipSource",
       title: "ipSource",
       width: 100,
-      align: align
+      align: align,
     },
     {
       key: "ipAddress",
       dataKey: "ipAddress",
       title: "ipAddress",
       width: 100,
-      align: align
+      align: align,
     },
     {
       key: "loginTime",
@@ -81,15 +79,15 @@ export function useHook() {
       title: "loginTime",
       width: 100,
       align: align,
-      formatter: ({ dept }) => dept.name
+      formatter: ({ dept }) => dept.name,
     },
     {
       key: "loginType",
       dataKey: "loginType",
       title: "loginType",
       width: 100,
-      align: align
-    }
+      align: align,
+    },
   ]
   const buttonClass = computed(() => {
     return ["!h-[20px]", "reset-margin", "!text-gray-500", "dark:!text-white", "dark:hover:!text-primary"]
@@ -106,20 +104,20 @@ export function useHook() {
         cancelButtonText: "取消",
         type: "warning",
         dangerouslyUseHTMLString: true,
-        draggable: true
+        draggable: true,
       }
     )
       .then(() => {
         switchLoadMap.value[index] = Object.assign({}, switchLoadMap.value[index], {
-          loading: true
+          loading: true,
         })
         setTimeout(() => {
           switchLoadMap.value[index] = Object.assign({}, switchLoadMap.value[index], {
-            loading: false
+            loading: false,
           })
           ElMessage({
             message: "已成功修改用户状态",
-            type: "success"
+            type: "success",
           })
         }, 300)
       })
@@ -181,6 +179,6 @@ export function useHook() {
     handleDelete,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
   }
 }

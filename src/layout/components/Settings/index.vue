@@ -18,7 +18,7 @@ const {
   showScreenfull,
   cacheTagsView,
   showGreyMode,
-  showColorWeakness
+  showColorWeakness,
 } = storeToRefs(settingsStore)
 
 /** 定义 switch 设置项 */
@@ -31,7 +31,7 @@ const switchSettings = {
   显示全屏按钮: showScreenfull,
   是否缓存标签栏: cacheTagsView,
   显示灰色模式: showGreyMode,
-  显示色弱模式: showColorWeakness
+  显示色弱模式: showColorWeakness,
 }
 
 /** 非左侧模式时，Header 都是 fixed 布局 */

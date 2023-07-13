@@ -11,7 +11,7 @@ export default {
       path: "userinfo",
       component: () => import("@/views/blog/mine/Mine.vue"),
       name: "userinfo",
-      meta: { title: "个人信息", keepAlive: true }
-    }
-  ]
+      meta: { title: "个人信息", keepAlive: true },
+    },
+  ],
 }

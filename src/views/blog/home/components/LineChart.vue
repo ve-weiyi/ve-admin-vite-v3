@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import * as echarts from "echarts"
 import {
   onMounted,
   ref,
@@ -15,8 +15,8 @@ import {
   computed,
   watch,
   watchEffect,
-} from 'vue'
-import { EChartsOption } from 'echarts'
+} from "vue"
+import { EChartsOption } from "echarts"
 
 type ECharts = echarts.ECharts
 
@@ -24,21 +24,21 @@ const props = defineProps({
   values: {
     type: Array as () => { day: string; count: number }[],
     default: () => [
-      { day: '2022-01-18', count: 100 },
-      { day: '2022-01-19', count: 100 },
+      { day: "2022-01-18", count: 100 },
+      { day: "2022-01-19", count: 100 },
     ],
   },
   className: {
     type: String,
-    default: 'chart',
+    default: "chart",
   },
   width: {
     type: String,
-    default: '100%',
+    default: "100%",
   },
   height: {
     type: String,
-    default: '250px',
+    default: "250px",
   },
 })
 
@@ -48,41 +48,41 @@ const option: Ref<EChartsOption | null> = ref(null)
 
 const viewCount = {
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'cross',
+      type: "cross",
     },
   },
-  color: ['#3888fa'],
+  color: ["#3888fa"],
   legend: {
-    data: ['访问量'],
+    data: ["访问量"],
   },
   grid: {
-    left: '0%',
-    right: '0%',
-    bottom: '0%',
-    top: '10%',
+    left: "0%",
+    right: "0%",
+    bottom: "0%",
+    top: "10%",
     containLabel: true,
   },
   xAxis: {
     data: [],
     axisLine: {
       lineStyle: {
-        color: '#666',
+        color: "#666",
       },
     },
   },
   yAxis: {
     axisLine: {
       lineStyle: {
-        color: '#048CCE',
+        color: "#048CCE",
       },
     },
   },
   series: [
     {
-      name: '访问量',
-      type: 'line',
+      name: "访问量",
+      type: "line",
       data: [150, 230, 224, 218, 135, 147, 260],
       smooth: true,
     },

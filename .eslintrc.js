@@ -1,5 +1,8 @@
 // https://blog.csdn.net/lw001x/article/details/123891939
 // 高低版本兼容不同版本eslint 一键格式化
+// 0 或者 'off'：关闭规则，不会进行检查。
+// 1 或者 'warn'：开启规则，将产生警告级别的提示，但不会阻止代码的执行。
+// 2 或者 'error'：开启规则，将产生错误级别的提示，可能会导致代码的执行失败。
 
 module.exports = {
   root: true,

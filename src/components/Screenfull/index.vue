@@ -18,10 +18,10 @@ const props = withDefaults(defineProps<Props>(), {
   element: "html",
   openTips: "全屏",
   exitTips: "退出全屏",
-  content: false
+  content: false,
 })
 
-//#region 全屏
+// #region 全屏
 const isFullscreen = ref<boolean>(false)
 const fullscreenTips = computed(() => {
   return isFullscreen.value ? props.exitTips : props.openTips
@@ -44,9 +44,9 @@ watchEffect((onCleanup) => {
     screenfull.isEnabled && screenfull.off("change", handleFullscreenChange)
   })
 })
-//#endregion
+// #endregion
 
-//#region 内容区
+// #region 内容区
 const isContentLarge = ref<boolean>(false)
 const contentLargeTips = computed(() => {
   return isContentLarge.value ? "内容区复原" : "内容区放大"
@@ -58,7 +58,7 @@ const handleContentLargeClick = () => {
   document.body.className = !isContentLarge.value ? "content-large" : ""
   isContentLarge.value = !isContentLarge.value
 }
-//#endregion
+// #endregion
 </script>
 
 <template>

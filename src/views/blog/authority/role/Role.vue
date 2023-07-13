@@ -184,7 +184,7 @@ import {
   RefreshRight,
   EditPen,
   Menu,
-  Timer
+  Timer,
 } from "@element-plus/icons-vue"
 import { usePagination } from "@/hooks/usePagination"
 import {
@@ -193,7 +193,7 @@ import {
   updateRoleApi,
   getRoleTreeApi,
   updateRoleMenusApi,
-  updateRoleResourcesApi
+  updateRoleResourcesApi,
 } from "@/api/role"
 import Menus from "./components/menus.vue"
 import Resource from "./components/resource.vue"
@@ -205,7 +205,7 @@ const { paginationData, handleCurrentChange, handleSizeChange } = usePagination(
 const searchFormRef = ref<FormInstance | null>(null)
 const searchData = reactive({
   username: "",
-  phone: ""
+  phone: "",
 })
 // 搜索
 const handleSearch = () => {
@@ -262,11 +262,11 @@ const formData = ref({
   roleComment: "",
   // createdAt: '',
   resourceIdList: [],
-  menuIdList: []
+  menuIdList: [],
 })
 const formRules: FormRules = reactive({
   username: [{ required: false, trigger: "blur", message: "请输入角色名" }],
-  password: [{ required: false, trigger: "blur", message: "请输入密码" }]
+  password: [{ required: false, trigger: "blur", message: "请输入密码" }],
 })
 
 const dialogFormVisible = ref<boolean>(false)
@@ -307,7 +307,7 @@ const resetForm = () => {
     roleComment: "",
     // createdAt: '',
     resourceIdList: [],
-    menuIdList: []
+    menuIdList: [],
   }
 }
 // 提交
@@ -367,7 +367,7 @@ const handleDelete = (row) => {
   ElMessageBox.confirm(`正在删除角色：${row.roleName}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
-    type: "warning"
+    type: "warning",
   }).then(() => {
     console.log("row", row.id)
     doDelete({ id: row.id })
@@ -424,7 +424,7 @@ function updateResources() {
   if (v1 != "[]" && !isEqual) {
     updateRoleResourcesApi({
       roleId: formData.value.id,
-      resourceIds: activeResources.value
+      resourceIds: activeResources.value,
     }).then((res) => {
       ElMessage.success("操作成功")
       getTableData()
@@ -444,7 +444,7 @@ function updateMenus() {
   if (v1 != "[]" && !isEqual) {
     updateRoleMenusApi({
       roleId: formData.value.id,
-      menuIds: activeMenus.value
+      menuIds: activeMenus.value,
     }).then((res) => {
       ElMessage.success("操作成功")
       getTableData()
@@ -465,6 +465,6 @@ const fun = (a, b) => {
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
 
 defineComponent({
-  name: "Role"
+  name: "Role",
 })
 </script>

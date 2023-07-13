@@ -33,7 +33,7 @@
       <!-- 照片列表 -->
       <el-row class="photo-container" :gutter="10" v-loading="loading">
         <!-- 空状态 -->
-        <el-empty v-if="tableData.length === 0" style="width: 100%;" description="暂无照片" />
+        <el-empty v-if="tableData.length === 0" style="width: 100%" description="暂无照片" />
         <el-checkbox-group v-model="selectionIds" @change="handleCheckedPhotoChange">
           <el-col :md="4" v-for="item in tableData" :key="item.id">
             <el-checkbox :label="item.id">
@@ -109,7 +109,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 const dialogTitle = computed(() => {
@@ -127,7 +127,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .operation {
   display: flex;
   justify-content: flex-end;

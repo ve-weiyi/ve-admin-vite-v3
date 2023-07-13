@@ -233,7 +233,7 @@ const {
   handleCurrentChange,
   handleSelectionChange,
   albumInfo,
-  getAlbumInfo
+  getAlbumInfo,
 } = useTableHook()
 
 const dialogTitle = computed(() => {

@@ -102,7 +102,7 @@
         </el-table-column>
         <!-- 文章置顶 -->
         <el-table-column prop="isTop" label="置顶" width="80" align="center">
-           <template #default="scope">
+          <template #default="scope">
             <el-switch
               v-model="scope.row.isTop"
               active-color="#13ce66"
@@ -212,7 +212,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 const linkTitle = computed(() => {
@@ -227,8 +227,8 @@ const changeTop = (row) => {
   console.log(row)
 }
 const articleType = (type) => {
-  let tagType = "";
-  let name = "";
+  let tagType = ""
+  let name = ""
   switch (type) {
     case 1:
       tagType = "danger"
@@ -245,22 +245,22 @@ const articleType = (type) => {
   }
   return {
     tagType: tagType,
-    name: name
+    name: name,
   }
 }
 const options = [
   {
     value: 1,
-    label: "文章"
+    label: "文章",
   },
   {
     value: 2,
-    label: "友链"
+    label: "友链",
   },
   {
     value: 3,
-    label: "说说"
-  }
+    label: "说说",
+  },
 ]
 </script>
 

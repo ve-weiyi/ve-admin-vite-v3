@@ -27,31 +27,31 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, nextTick, ref, watch } from 'vue'
-import { type FormInstance, type FormRules, ElMessage, ElMessageBox, ElTree } from 'element-plus'
-import { getResourceTreeApi } from '@/api/api'
+import { defineComponent, nextTick, ref, watch } from "vue"
+import { type FormInstance, type FormRules, ElMessage, ElMessageBox, ElTree } from "element-plus"
+import { getResourceTreeApi } from "@/api/api"
 
 // 父组件向子组件传输的数据
 const props = defineProps({
   row: {
     type: Array,
     required: false,
-    default: function() {
+    default: function () {
       return []
     },
   },
 })
 
 // 子组件向父组件通讯
-const emit = defineEmits(['changeRow'])
+const emit = defineEmits(["changeRow"])
 
-const filterText = ref('')
+const filterText = ref("")
 const resourceTreeRef = ref<InstanceType<typeof ElTree>>()
 const resourceTreeData = ref([])
 const defaultCheckIds = ref([])
 const resourceDefaultProps = ref({
-  children: 'children',
-  label: function(data) {
+  children: "children",
+  label: function (data) {
     return data.name
   },
 })
@@ -66,7 +66,7 @@ getTableData()
 
 const needConfirm = ref(false)
 const nodeChange = () => {
-  emit('changeRow', 'resourceTreeRef', resourceTreeRef.value.getCheckedKeys())
+  emit("changeRow", "resourceTreeRef", resourceTreeRef.value.getCheckedKeys())
   needConfirm.value = true
 }
 // 暴露给外层使用的切换拦截统一方法
@@ -87,13 +87,13 @@ watch(filterText, (val) => {
 })
 
 defineComponent({
-  name: 'Resources',
+  name: "Resources",
 })
 </script>
 
 <style lang="scss" scoped>
 .clearfix:after {
-  content: '';
+  content: "";
   display: block;
   height: 0;
   visibility: hidden;

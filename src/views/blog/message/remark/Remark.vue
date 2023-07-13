@@ -162,7 +162,7 @@ const {
   onChange,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 // 数据绑定
@@ -171,16 +171,16 @@ const removeVisibility = ref(false)
 const options = [
   {
     value: 1,
-    label: "文章"
+    label: "文章",
   },
   {
     value: 2,
-    label: "友链"
+    label: "友链",
   },
   {
     value: 3,
-    label: "说说"
-  }
+    label: "说说",
+  },
 ]
 
 const changeReview = (review) => {

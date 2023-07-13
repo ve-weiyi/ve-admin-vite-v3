@@ -52,7 +52,7 @@
       <div class="e-title">一周访问量</div>
       <div style="height: 350px">
         <LineChart />
-<!--        <v-chart :options="viewCount" v-loading="loading" />-->
+        <!--        <v-chart :options="viewCount" v-loading="loading" />-->
       </div>
     </el-card>
     <!-- 文章贡献统计 -->
@@ -112,14 +112,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { adminHomeInfoApi, adminUserAreasApi } from '@/api/admin'
-import axios from 'axios'
-import VChart from 'vue-echarts'
-import * as echarts from 'echarts'
-import chinaMap from '@/assets/js/china.json'
-import Calender from '@/views/blog/home/components/Calender.vue'
-import LineChart from '@/views/blog/home/components/LineChart.vue'
+import { ref, onMounted, watch } from "vue"
+import { adminHomeInfoApi, adminUserAreasApi } from "@/api/admin"
+import axios from "axios"
+import VChart from "vue-echarts"
+import * as echarts from "echarts"
+import chinaMap from "@/assets/js/china.json"
+import Calender from "@/views/blog/home/components/Calender.vue"
+import LineChart from "@/views/blog/home/components/LineChart.vue"
 
 const viewsCount = ref(0)
 const messageCount = ref(0)
@@ -131,41 +131,41 @@ const loading = ref(true)
 
 const viewCount = {
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'cross',
+      type: "cross",
     },
   },
-  color: ['#3888fa'],
+  color: ["#3888fa"],
   legend: {
-    data: ['访问量'],
+    data: ["访问量"],
   },
   grid: {
-    left: '0%',
-    right: '0%',
-    bottom: '0%',
-    top: '10%',
+    left: "0%",
+    right: "0%",
+    bottom: "0%",
+    top: "10%",
     containLabel: true,
   },
   xAxis: {
     data: [],
     axisLine: {
       lineStyle: {
-        color: '#666',
+        color: "#666",
       },
     },
   },
   yAxis: {
     axisLine: {
       lineStyle: {
-        color: '#048CCE',
+        color: "#048CCE",
       },
     },
   },
   series: [
     {
-      name: '访问量',
-      type: 'line',
+      name: "访问量",
+      type: "line",
       data: [],
       smooth: true,
     },
@@ -174,17 +174,17 @@ const viewCount = {
 
 const ariticleRank = {
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'cross',
+      type: "cross",
     },
   },
-  color: ['#58AFFF'],
+  color: ["#58AFFF"],
   grid: {
-    left: '0%',
-    right: '0%',
-    bottom: '0%',
-    top: '10%',
+    left: "0%",
+    right: "0%",
+    bottom: "0%",
+    top: "10%",
     containLabel: true,
   },
   xAxis: {
@@ -193,27 +193,27 @@ const ariticleRank = {
   yAxis: {},
   series: [
     {
-      name: ['浏览量'],
-      type: 'bar',
+      name: ["浏览量"],
+      type: "bar",
       data: [],
     },
   ],
 }
 
 const category = {
-  color: ['#7EC0EE', '#FF9F7F', '#FFD700', '#C9C9C9', '#E066FF', '#C0FF3E'],
+  color: ["#7EC0EE", "#FF9F7F", "#FFD700", "#C9C9C9", "#E066FF", "#C0FF3E"],
   legend: {
     data: [],
-    bottom: 'bottom',
+    bottom: "bottom",
   },
   tooltip: {
-    trigger: 'item',
+    trigger: "item",
   },
   series: [
     {
-      name: '文章分类',
-      type: 'pie',
-      roseType: 'radius',
+      name: "文章分类",
+      type: "pie",
+      roseType: "radius",
       data: [],
     },
   ],
@@ -221,9 +221,9 @@ const category = {
 
 const userAreaMap = {
   tooltip: {
-    formatter: function(e) {
+    formatter: function (e) {
       var value = e.value ? e.value : 0
-      return e.seriesName + '<br />' + e.name + '：' + value
+      return e.seriesName + "<br />" + e.name + "：" + value
     },
   },
   visualMap: {
@@ -235,40 +235,40 @@ const userAreaMap = {
     pieces: [
       {
         gt: 100,
-        label: '100人以上',
-        color: '#ED5351',
+        label: "100人以上",
+        color: "#ED5351",
       },
       {
         gte: 51,
         lte: 100,
-        label: '51-100人',
-        color: '#59D9A5',
+        label: "51-100人",
+        color: "#59D9A5",
       },
       {
         gte: 21,
         lte: 50,
-        label: '21-50人',
-        color: '#F6C021',
+        label: "21-50人",
+        color: "#F6C021",
       },
       {
-        label: '1-20人',
+        label: "1-20人",
         gt: 0,
         lte: 20,
-        color: '#6DCAEC',
+        color: "#6DCAEC",
       },
     ],
     show: true,
   },
   geo: {
-    map: 'china',
+    map: "china",
     zoom: 1.2,
-    layoutCenter: ['50%', '50%'],
+    layoutCenter: ["50%", "50%"],
     itemStyle: {
       normal: {
-        borderColor: 'rgba(0, 0, 0, 0.2)',
+        borderColor: "rgba(0, 0, 0, 0.2)",
       },
       emphasis: {
-        areaColor: '#F5DEB3',
+        areaColor: "#F5DEB3",
         shadowOffsetX: 0,
         shadowOffsetY: 0,
         borderWidth: 0,
@@ -277,11 +277,11 @@ const userAreaMap = {
   },
   series: [
     {
-      name: '用户人数',
-      type: 'map',
+      name: "用户人数",
+      type: "map",
       geoIndex: 0,
       data: [],
-      areaColor: '#0FB8F0',
+      areaColor: "#0FB8F0",
     },
   ],
 }
@@ -346,7 +346,7 @@ const listUserArea = () => {
 
 // 在组件创建时获取数据
 onMounted(() => {
-  echarts.registerMap('china', chinaMap)
+  echarts.registerMap("china", chinaMap)
   getData()
   listUserArea()
 })

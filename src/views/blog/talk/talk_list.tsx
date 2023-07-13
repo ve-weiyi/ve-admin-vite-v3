@@ -17,7 +17,7 @@ const defaultPaginationData: Pagination = {
   currentPage: 1,
   pageSizes: [10, 20, 50],
   pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper"
+  layout: "total, sizes, prev, pager, next, jumper",
 }
 const align = "center"
 
@@ -37,7 +37,7 @@ export function useTableHook() {
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
     linkName: "",
-    isReview: null
+    isReview: null,
   })
 
   // 表格数据定义
@@ -74,7 +74,7 @@ export function useTableHook() {
         flag: "AND",
         field: "link_name",
         value: searchData.linkName,
-        rule: "like"
+        rule: "like",
       })
     }
     if (searchData.isReview != null) {
@@ -82,7 +82,7 @@ export function useTableHook() {
         flag: "AND",
         field: "is_review",
         value: searchData.isReview,
-        rule: "="
+        rule: "=",
       })
     }
   }
@@ -96,7 +96,7 @@ export function useTableHook() {
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
-      conditions: conditions
+      conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list
       pagination.total = res.data.total
@@ -190,13 +190,13 @@ export function useTableHook() {
         cancelButtonText: "取消",
         type: "warning",
         dangerouslyUseHTMLString: true,
-        draggable: true
+        draggable: true,
       }
     )
       .then(() => {
         ElMessage({
           message: "已成功修改用户状态",
-          type: "success"
+          type: "success",
         })
       })
       .catch(() => {
@@ -234,6 +234,6 @@ export function useTableHook() {
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
-    albumInfo
+    albumInfo,
   }
 }

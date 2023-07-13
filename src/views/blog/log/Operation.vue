@@ -169,7 +169,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 const linkTitle = computed(() => {
@@ -198,24 +198,24 @@ const tagType = (type) => {
 const options = [
   {
     value: "新增",
-    label: "新增"
+    label: "新增",
   },
   {
     value: "修改",
-    label: "修改"
+    label: "修改",
   },
   {
     value: "删除",
-    label: "删除"
+    label: "删除",
   },
   {
     value: "查询",
-    label: "查询"
+    label: "查询",
   },
   {
     value: "新增或修改",
-    label: "新增或修改"
-  }
+    label: "新增或修改",
+  },
 ]
 </script>
 

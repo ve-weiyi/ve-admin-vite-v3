@@ -5,7 +5,7 @@ export function adminApisApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/apis",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -14,7 +14,7 @@ export function adminMenusApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/menus",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -23,7 +23,7 @@ export function adminCommentsApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/comments",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -32,7 +32,7 @@ export function adminRoleUpdateResourcesApi(data?: object): Promise<IApiResponse
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/role/update_resources",
     method: "post",
-    data: data
+    data: data,
   })
 }
 
@@ -41,7 +41,7 @@ export function updateUserRolesApi(page?: Page): Promise<IApiResponseData<any>> 
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/roles",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -50,7 +50,7 @@ export function adminUpdateRolesApi(data?: object): Promise<IApiResponseData<any
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/update_roles",
     method: "post",
-    data: data
+    data: data,
   })
 }
 
@@ -59,7 +59,7 @@ export function updateUserStatusApi(data?: object): Promise<IApiResponseData<any
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/update_status",
     method: "post",
-    data: data
+    data: data,
   })
 }
 
@@ -68,7 +68,7 @@ export function findUserListApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/users",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -77,7 +77,7 @@ export function adminUserAreasApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/user/areas",
     method: "post",
-    data: page
+    data: page,
   })
 }
 
@@ -85,7 +85,7 @@ export function adminUserAreasApi(page?: Page): Promise<IApiResponseData<any>> {
 export function adminHomeInfoApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/home",
-    method: "get"
+    method: "get",
   })
 }
 
@@ -93,6 +93,6 @@ export function deleteByIdsUserAccountApi(page?: Page): Promise<IApiResponseData
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/admin/user/areas",
     method: "post",
-    data: page
+    data: page,
   })
 }

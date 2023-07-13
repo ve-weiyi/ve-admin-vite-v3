@@ -14,8 +14,8 @@ import { useAdminStore } from "@/store/modules/admin"
 const props = defineProps({
   type: {
     type: Number,
-    required: false
-  }
+    required: false,
+  },
 })
 
 // 父组件向子组件传输的事件
@@ -40,7 +40,7 @@ const commentContent = ref("")
 
 // 返回响应式数据
 const data = reactive({
-  commentList: []
+  commentList: [],
   // 其他数据...
 })
 
@@ -70,7 +70,7 @@ watchEffect(() => {
 
 // 使用v-if时不能使用defineExpose的属性，要使用display: none
 defineExpose({
-  data
+  data,
 })
 // 导出响应式数据、方法和事件
 // export { commentContent, data, insertComment }

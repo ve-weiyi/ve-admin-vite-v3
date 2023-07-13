@@ -141,7 +141,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue"
 import { useTableHook } from "./album"
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"
 
 const {
   loading,
@@ -165,7 +165,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 // 路由
@@ -180,7 +180,7 @@ const dialogTitle = computed(() => {
 })
 
 const checkPhoto = (item) => {
-  router.push({ path: "/albums/" + item.id });
+  router.push({ path: "/albums/" + item.id })
 }
 
 onMounted(() => {

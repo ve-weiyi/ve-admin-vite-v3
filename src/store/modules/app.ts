@@ -17,7 +17,7 @@ export const useAppStore = defineStore("app", () => {
   /** 侧边栏状态 */
   const sidebar: Sidebar = reactive({
     opened: getSidebarStatus() !== SIDEBAR_CLOSED,
-    withoutAnimation: false
+    withoutAnimation: false,
   })
   /** 设备类型 */
   const device = ref<DeviceEnum>(DeviceEnum.Desktop)

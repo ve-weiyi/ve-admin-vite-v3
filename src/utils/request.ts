@@ -9,7 +9,7 @@
 "use strict"
 import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios"
 import { ElMessage } from "element-plus"
-import {getToken, removeToken} from "@/utils/cache/cookies";
+import { getToken, removeToken } from "@/utils/cache/cookies"
 
 class HttpRequest {
   private baseUrl: string
@@ -37,8 +37,8 @@ class HttpRequest {
       timeout: this.timeout,
       withCredentials: this.withCredentials,
       headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      }
+        "Content-Type": "application/json;charset=UTF-8",
+      },
     }
     return config
   }
@@ -131,7 +131,7 @@ class HttpRequest {
           ElMessage({
             message: "请检查您的网络是否正常",
             type: "error",
-            duration: 3 * 1000
+            duration: 3 * 1000,
           })
           return Promise.reject(new Error("请检查您的网络是否正常"))
         }
@@ -166,7 +166,7 @@ class HttpRequest {
             ElMessage({
               message: message || "Error",
               type: "error",
-              duration: 3 * 1000
+              duration: 3 * 1000,
             })
             return Promise.reject(new Error(message || "Error"))
         }
@@ -179,7 +179,7 @@ class HttpRequest {
         ElMessage({
           message: isTimeout ? "网络请求超时" : error.message || "连接到服务器失败",
           type: "error",
-          duration: 2 * 1000
+          duration: 2 * 1000,
         })
         return Promise.reject(new Error(error.message))
       }

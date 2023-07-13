@@ -92,7 +92,7 @@ const pageForum = reactive({
   id: null,
   pageName: "",
   pageLabel: "",
-  pageCover: ""
+  pageCover: "",
 })
 const pageList = ref([])
 const pageTitle = ref()
@@ -107,7 +107,7 @@ const openModel = (item) => {
       id: null,
       pageName: "",
       pageLabel: "",
-      pageCover: ""
+      pageCover: "",
     })
     pageTitle.value.innerHTML = "新建页面"
   }
@@ -138,13 +138,13 @@ const addOrEditPage = () => {
     if (data.flag) {
       ElNotification.success({
         title: "成功",
-        message: data.message
+        message: data.message,
       })
       listPages()
     } else {
       ElNotification.error({
         title: "失败",
-        message: data.message
+        message: data.message,
       })
     }
   })
@@ -184,13 +184,13 @@ const deletePage = () => {
     if (data.flag) {
       ElNotification.success({
         title: "成功",
-        message: data.message
+        message: data.message,
       })
       listPages()
     } else {
       ElNotification.error({
         title: "失败",
-        message: data.message
+        message: data.message,
       })
     }
     isdeletePage.value = false

@@ -23,7 +23,7 @@ const { layoutMode, showLogo } = storeToRefs(settingsStore)
 const activeMenu = computed(() => {
   const {
     meta: { activeMenu },
-    path
+    path,
   } = route
   return activeMenu ? activeMenu : path
 })

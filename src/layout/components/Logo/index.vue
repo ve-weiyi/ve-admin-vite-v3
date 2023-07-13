@@ -12,7 +12,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  collapse: true
+  collapse: true,
 })
 
 const settingsStore = useSettingsStore()

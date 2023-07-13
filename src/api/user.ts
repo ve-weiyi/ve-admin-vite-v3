@@ -4,7 +4,7 @@ import http from "@/utils/request"
 export function getUserMenusApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/user/menus",
-    method: "get"
+    method: "get",
   })
 }
 
@@ -12,7 +12,7 @@ export function getUserMenusApi(): Promise<IApiResponseData<any>> {
 export function getUserApisApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/user/apis",
-    method: "get"
+    method: "get",
   })
 }
 
@@ -20,7 +20,7 @@ export function getUserApisApi(): Promise<IApiResponseData<any>> {
 export function getUserInfoApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/user/info",
-    method: "get"
+    method: "get",
   })
 }
 
@@ -29,7 +29,7 @@ export function loginHistoryApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/user/login_history",
     method: "get",
-    data: page
+    data: page,
   })
 }
 
@@ -43,7 +43,7 @@ export function updateUserAvatarApi(file: File): Promise<IApiResponseData<any>> 
     method: "post",
     data: formData,
     headers: {
-      "Content-Type": "multipart/form-data"
-    }
+      "Content-Type": "multipart/form-data",
+    },
   })
 }

@@ -100,7 +100,7 @@ watch(
     nextTick(moveTo)
   },
   {
-    deep: true
+    deep: true,
   }
 )
 </script>

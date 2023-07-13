@@ -15,7 +15,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   isCollapse: false,
   isFirstLevel: true,
-  basePath: ""
+  basePath: "",
 })
 
 /** 是否始终显示根菜单 */

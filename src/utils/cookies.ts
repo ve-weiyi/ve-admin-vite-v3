@@ -20,7 +20,7 @@ class CookieProxy implements ProxyCookie {
     this.baseParams = {
       expires: 7,
       path: "/",
-      domain: hostname || undefined
+      domain: hostname || undefined,
       // Secure : true,
       // SameSite : 'none',
     }
@@ -57,7 +57,7 @@ class CookieProxy implements ProxyCookie {
     const keyStr = !hasPrefix ? key : this.prefix + "" + key
     return Cookies.remove(keyStr, {
       path: "/",
-      domain: hostname
+      domain: hostname,
     })
   }
 }

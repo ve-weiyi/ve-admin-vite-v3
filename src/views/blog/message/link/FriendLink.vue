@@ -141,7 +141,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 const linkTitle = computed(() => {
@@ -155,16 +155,16 @@ const linkTitle = computed(() => {
 const options = [
   {
     value: 1,
-    label: "文章"
+    label: "文章",
   },
   {
     value: 2,
-    label: "友链"
+    label: "友链",
   },
   {
     value: 3,
-    label: "说说"
-  }
+    label: "说说",
+  },
 ]
 </script>
 

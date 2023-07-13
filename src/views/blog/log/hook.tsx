@@ -8,7 +8,7 @@ import {
   deleteByIdsOperationApi,
   deleteOperationApi,
   findOperationListApi,
-  updateOperationApi
+  updateOperationApi,
 } from "@/api/operation"
 
 const align = "center"
@@ -29,7 +29,7 @@ export function useTableHook() {
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
     optModule: "",
-    optType: ""
+    optType: "",
   })
 
   // 表格数据定义
@@ -43,8 +43,8 @@ export function useTableHook() {
   const columns: Column[] = [
     {
       dataKey: "selection",
-      width: 50
-    }
+      width: 50,
+    },
   ]
 
   const resetForm = (row) => {
@@ -71,7 +71,7 @@ export function useTableHook() {
         flag: "AND",
         field: "opt_module",
         value: searchData.optModule,
-        rule: "like"
+        rule: "like",
       })
     }
     if (searchData.optType != "") {
@@ -79,13 +79,13 @@ export function useTableHook() {
         flag: "AND",
         field: "opt_type",
         value: searchData.optType,
-        rule: "="
+        rule: "=",
       })
     }
     // 倒序
     orders.push({
       field: "id",
-      rule: "desc"
+      rule: "desc",
     })
   }
 
@@ -98,7 +98,7 @@ export function useTableHook() {
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
-      conditions: conditions
+      conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list
       pagination.total = res.data.total
@@ -192,13 +192,13 @@ export function useTableHook() {
         cancelButtonText: "取消",
         type: "warning",
         dangerouslyUseHTMLString: true,
-        draggable: true
+        draggable: true,
       }
     )
       .then(() => {
         ElMessage({
           message: "已成功修改用户状态",
-          type: "success"
+          type: "success",
         })
       })
       .catch(() => {
@@ -238,6 +238,6 @@ export function useTableHook() {
     onAddOrEdit,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
   }
 }

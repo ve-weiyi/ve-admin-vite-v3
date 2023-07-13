@@ -27,15 +27,15 @@ VXETable.setup({
     emptyText: "暂无数据",
     rowConfig: {
       isHover: true,
-      isCurrent: true
+      isCurrent: true,
     },
     columnConfig: {
-      resizable: false
+      resizable: false,
     },
     align: "center",
     headerAlign: "center",
     /** 行数据的唯一主键字段名 */
-    rowId: "_VXE_ID"
+    rowId: "_VXE_ID",
   },
   pager: {
     // size: "medium",
@@ -44,7 +44,7 @@ VXETable.setup({
     pageSize: 10,
     pagerCount: 7,
     pageSizes: [10, 20, 50],
-    layouts: ["Total", "PrevJump", "PrevPage", "Number", "NextPage", "NextJump", "Sizes", "FullJump"]
+    layouts: ["Total", "PrevJump", "PrevPage", "Number", "NextPage", "NextJump", "Sizes", "FullJump"],
   },
   modal: {
     minWidth: 500,
@@ -56,8 +56,8 @@ VXETable.setup({
     dblclickZoom: false,
     showTitleOverflow: true,
     transfer: true,
-    draggable: false
-  }
+    draggable: false,
+  },
 })
 
 export function loadVxeTable(app: App) {

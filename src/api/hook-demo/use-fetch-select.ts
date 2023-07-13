@@ -4,19 +4,19 @@ const SELECT_RESPONSE_DATA = {
   data: [
     {
       label: "苹果",
-      value: 1
+      value: 1,
     },
     {
       label: "香蕉",
-      value: 2
+      value: 2,
     },
     {
       label: "橘子",
       value: 3,
-      disabled: true
-    }
+      disabled: true,
+    },
   ],
-  message: "获取 Select 数据成功"
+  message: "获取 Select 数据成功",
 }
 
 /** 模拟接口 */

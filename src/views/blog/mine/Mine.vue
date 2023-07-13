@@ -73,12 +73,12 @@ const activeName = ref("info")
 const infoForm = ref({
   nickname: "",
   intro: "",
-  webSite: ""
+  webSite: "",
 })
 const passwordForm = ref({
   oldPassword: "",
   newPassword: "",
-  confirmPassword: ""
+  confirmPassword: "",
 })
 const avatar = ref("")
 const notice = ref("")
@@ -149,7 +149,7 @@ const updatePassword = () => {
 }
 
 onMounted(() => {
-  console.log("mounted",store)
+  console.log("mounted", store)
   avatar.value = store.avatar
 
   infoForm.value.nickname = store.nickname

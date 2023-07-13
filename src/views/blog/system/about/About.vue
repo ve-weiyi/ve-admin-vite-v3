@@ -13,8 +13,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import * as imageConversion from "image-conversion"
-import axios from "axios";
-import { ElNotification } from "element-plus";
+import axios from "axios"
+import { ElNotification } from "element-plus"
 
 const mdRef = ref(null)
 const aboutContent = ref("")
@@ -45,18 +45,18 @@ const uploadImg = (pos, file) => {
 const updateAbout = () => {
   axios
     .put("/api/admin/about", {
-      aboutContent: aboutContent.value
+      aboutContent: aboutContent.value,
     })
     .then(({ data }) => {
       if (data.flag) {
         ElNotification.success({
           title: "成功",
-          message: data.message
+          message: data.message,
         })
       } else {
         ElNotification.error({
           title: "失败",
-          message: data.message
+          message: data.message,
         })
       }
     })

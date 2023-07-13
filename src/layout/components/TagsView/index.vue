@@ -47,7 +47,7 @@ const filterAffixTags = (routes: RouteRecordRaw[], basePath = "/") => {
         fullPath: tagPath,
         path: tagPath,
         name: route.name,
-        meta: { ...route.meta }
+        meta: { ...route.meta },
       })
     }
     if (route.children) {
@@ -153,7 +153,7 @@ watch(
     addTags()
   },
   {
-    deep: true
+    deep: true,
   }
 )
 

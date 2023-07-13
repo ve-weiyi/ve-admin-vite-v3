@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia"
 
 export const useAdminStore = defineStore({
-  id: 'admin',
+  id: "admin",
   state: () => ({
     collapse: false,
-    tabList: [{ name: '首页', path: '/' }],
+    tabList: [{ name: "首页", path: "/" }],
     userId: null,
     roleList: null,
     avatar: null,
@@ -34,7 +34,7 @@ export const useAdminStore = defineStore({
       this.tabList.splice(index, 1)
     },
     resetTab() {
-      this.tabList = [{ name: '首页', path: '/' }]
+      this.tabList = [{ name: "首页", path: "/" }]
     },
     trigger() {
       this.collapse = !this.collapse

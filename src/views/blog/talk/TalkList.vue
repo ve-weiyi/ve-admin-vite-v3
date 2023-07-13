@@ -20,7 +20,7 @@
               <div>{{ item.nickname }}</div>
               <!-- 操作 -->
               <el-dropdown trigger="click" @command="handleCommand">
-                <el-icon style="color: #333; cursor: pointer" ><MoreFilled/></el-icon>
+                <el-icon style="color: #333; cursor: pointer"><MoreFilled /></el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :command="'1,' + item.id"> <i class="el-icon-edit" />编辑 </el-dropdown-item>
@@ -105,7 +105,7 @@ const {
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
 } = useTableHook()
 
 const status = ref(1)

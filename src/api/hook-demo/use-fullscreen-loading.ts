@@ -2,7 +2,7 @@
 const SUCCESS_RESPONSE_DATA = {
   code: 0,
   data: {},
-  message: "获取成功"
+  message: "获取成功",
 }
 
 /** 模拟请求接口成功 */

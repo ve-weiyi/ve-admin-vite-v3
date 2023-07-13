@@ -17,7 +17,7 @@ const layoutClasses = computed(() => {
     hideSidebar: !appStore.sidebar.opened,
     openSidebar: appStore.sidebar.opened,
     withoutAnimation: appStore.sidebar.withoutAnimation,
-    mobile: appStore.device === DeviceEnum.Mobile
+    mobile: appStore.device === DeviceEnum.Mobile,
   }
 })
 

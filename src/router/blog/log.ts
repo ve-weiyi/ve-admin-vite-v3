@@ -11,7 +11,7 @@ export default {
       path: "operation",
       component: () => import("@/views/blog/log/Operation.vue"),
       name: "operation",
-      meta: { title: "操作日志", keepAlive: true }
-    }
-  ]
+      meta: { title: "操作日志", keepAlive: true },
+    },
+  ],
 }

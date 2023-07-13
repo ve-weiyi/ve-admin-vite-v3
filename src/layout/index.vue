@@ -21,11 +21,11 @@ const { showSettings, layoutMode, showTagsView, showGreyMode, showColorWeakness 
 const classes = computed(() => {
   return {
     showGreyMode: showGreyMode.value,
-    showColorWeakness: showColorWeakness.value
+    showColorWeakness: showColorWeakness.value,
   }
 })
 
-//#region 隐藏标签栏时删除其高度，是为了让 Logo 组件高度和 Header 区域高度始终一致
+// #region 隐藏标签栏时删除其高度，是为了让 Logo 组件高度和 Header 区域高度始终一致
 const cssVariableName = "--v3-tagsview-height"
 const v3TagsviewHeight = getCssVariableValue(cssVariableName)
 watchEffect(() => {
@@ -33,7 +33,7 @@ watchEffect(() => {
     ? setCssVariableValue(cssVariableName, v3TagsviewHeight)
     : setCssVariableValue(cssVariableName, "0px")
 })
-//#endregion
+// #endregion
 </script>
 
 <template>

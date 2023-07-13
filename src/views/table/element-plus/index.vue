@@ -8,22 +8,22 @@ import { usePagination } from "@/hooks/usePagination"
 
 defineOptions({
   // 命名当前组件
-  name: "ElementPlus"
+  name: "ElementPlus",
 })
 
 const loading = ref<boolean>(false)
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
 
-//#region 增
+// #region 增
 const dialogVisible = ref<boolean>(false)
 const formRef = ref<FormInstance | null>(null)
 const formData = reactive({
   username: "",
-  password: ""
+  password: "",
 })
 const formRules: FormRules = reactive({
   username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
-  password: [{ required: true, trigger: "blur", message: "请输入密码" }]
+  password: [{ required: true, trigger: "blur", message: "请输入密码" }],
 })
 const handleCreate = () => {
   formRef.value?.validate((valid: boolean, fields) => {
@@ -40,7 +40,7 @@ const handleCreate = () => {
       } else {
         updateTableDataApi({
           id: currentUpdateId.value,
-          username: formData.username
+          username: formData.username,
         })
           .then(() => {
             ElMessage.success("修改成功")
@@ -60,14 +60,14 @@ const resetForm = () => {
   formData.username = ""
   formData.password = ""
 }
-//#endregion
+// #endregion
 
-//#region 删
+// #region 删
 const handleDelete = (row: GetTableData) => {
   ElMessageBox.confirm(`正在删除用户：${row.username}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
-    type: "warning"
+    type: "warning",
   }).then(() => {
     deleteTableDataApi(row.id).then(() => {
       ElMessage.success("删除成功")
@@ -75,23 +75,23 @@ const handleDelete = (row: GetTableData) => {
     })
   })
 }
-//#endregion
+// #endregion
 
-//#region 改
+// #region 改
 const currentUpdateId = ref<undefined | string>(undefined)
 const handleUpdate = (row: GetTableData) => {
   currentUpdateId.value = row.id
   formData.username = row.username
   dialogVisible.value = true
 }
-//#endregion
+// #endregion
 
-//#region 查
+// #region 查
 const tableData = ref<GetTableData[]>([])
 const searchFormRef = ref<FormInstance | null>(null)
 const searchData = reactive({
   username: "",
-  phone: ""
+  phone: "",
 })
 const getTableData = () => {
   loading.value = true
@@ -99,7 +99,7 @@ const getTableData = () => {
     currentPage: paginationData.currentPage,
     size: paginationData.pageSize,
     username: searchData.username || undefined,
-    phone: searchData.phone || undefined
+    phone: searchData.phone || undefined,
   })
     .then((res) => {
       paginationData.total = res.data.total
@@ -119,7 +119,7 @@ const resetSearch = () => {
   searchFormRef.value?.resetFields()
   handleSearch()
 }
-//#endregion
+// #endregion
 
 /** 监听分页参数的变化 */
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })

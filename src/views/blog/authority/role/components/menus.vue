@@ -27,31 +27,31 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, nextTick, ref, unref, watch } from 'vue'
-import { type FormInstance, type FormRules, ElMessage, ElMessageBox, ElTree } from 'element-plus'
-import { getMenuTreeApi } from '@/api/menu'
+import { defineComponent, nextTick, ref, unref, watch } from "vue"
+import { type FormInstance, type FormRules, ElMessage, ElMessageBox, ElTree } from "element-plus"
+import { getMenuTreeApi } from "@/api/menu"
 
 // 父组件向子组件传输的数据
 const props = defineProps({
   row: {
     type: Array,
     required: false,
-    default: function() {
+    default: function () {
       return []
     },
   },
 })
 
 // 子组件向父组件通讯
-const emit = defineEmits(['changeRow'])
+const emit = defineEmits(["changeRow"])
 
-const filterText = ref('')
+const filterText = ref("")
 const menuTreeRef = ref<InstanceType<typeof ElTree>>()
 const menuTreeData = ref([])
 const defaultCheckIds = ref([])
 const menuDefaultProps = ref({
-  children: 'children',
-  label: function(data) {
+  children: "children",
+  label: function (data) {
     return data.name
   },
 })
@@ -66,7 +66,7 @@ getTableData()
 
 const needConfirm = ref(false)
 const nodeChange = () => {
-  emit('changeRow', 'menuTreeRef', menuTreeRef.value.getCheckedKeys())
+  emit("changeRow", "menuTreeRef", menuTreeRef.value.getCheckedKeys())
   needConfirm.value = true
 }
 
@@ -88,13 +88,13 @@ watch(filterText, (val) => {
 })
 
 defineComponent({
-  name: 'Menus',
+  name: "Menus",
 })
 </script>
 
 <style lang="scss" scoped>
 .clearfix:after {
-  content: '';
+  content: "";
   display: block;
   height: 0;
   visibility: hidden;

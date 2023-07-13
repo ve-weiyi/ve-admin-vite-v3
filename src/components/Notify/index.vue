@@ -29,20 +29,20 @@ const data = ref<DataItem[]>([
   {
     name: "通知",
     type: "primary",
-    list: notifyData
+    list: notifyData,
   },
   // 消息数据
   {
     name: "消息",
     type: "danger",
-    list: messageData
+    list: messageData,
   },
   // 待办数据
   {
     name: "待办",
     type: "warning",
-    list: todoData
-  }
+    list: todoData,
+  },
 ])
 
 const handleHistory = () => {

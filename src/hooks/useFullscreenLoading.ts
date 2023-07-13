@@ -2,7 +2,7 @@ import { type LoadingOptions, ElLoading } from "element-plus"
 
 const defaultOptions = {
   lock: true,
-  text: "加载中..."
+  text: "加载中...",
 }
 
 interface LoadingInstance {

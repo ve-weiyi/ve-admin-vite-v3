@@ -147,273 +147,271 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import imageConversion from 'image-conversion';
-import axios from "axios";
+import { ref, onBeforeUnmount } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import imageConversion from "image-conversion"
+import axios from "axios"
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 const article = ref({
   id: null,
-  articleTitle: new Date().toISOString().split('T')[0],
-  articleContent: '',
-  articleCover: '',
+  articleTitle: new Date().toISOString().split("T")[0],
+  articleContent: "",
+  articleCover: "",
   categoryName: null,
   tagNameList: [],
-  originalUrl: '',
+  originalUrl: "",
   isTop: 0,
   type: 1,
   status: 1,
-});
+})
 
-const addOrEdit = ref(false);
-const autoSave = ref(true);
-const categoryName = ref('');
-const tagName = ref('');
-const categoryList = ref([]);
-const tagList = ref([]);
+const addOrEdit = ref(false)
+const autoSave = ref(true)
+const categoryName = ref("")
+const tagName = ref("")
+const categoryList = ref([])
+const tagList = ref([])
 const typeList = ref([
   {
     type: 1,
-    desc: '原创',
+    desc: "原创",
   },
   {
     type: 2,
-    desc: '转载',
+    desc: "转载",
   },
   {
     type: 3,
-    desc: '翻译',
+    desc: "翻译",
   },
-]);
+])
 
 function listCategories() {
-  axios.get('/api/admin/categories/search').then(({ data }) => {
-    categoryList.value = data.data;
-  });
+  axios.get("/api/admin/categories/search").then(({ data }) => {
+    categoryList.value = data.data
+  })
 }
 
 function listTags() {
-  axios.get('/api/admin/tags/search').then(({ data }) => {
-    tagList.value = data.data;
-  });
+  axios.get("/api/admin/tags/search").then(({ data }) => {
+    tagList.value = data.data
+  })
 }
 
 function openModel() {
-  if (article.value.articleTitle.trim() === '') {
-    alert('文章标题不能为空');
-    return;
+  if (article.value.articleTitle.trim() === "") {
+    alert("文章标题不能为空")
+    return
   }
-  if (article.value.articleContent.trim() === '') {
-    alert('文章内容不能为空');
-    return;
+  if (article.value.articleContent.trim() === "") {
+    alert("文章内容不能为空")
+    return
   }
-  listCategories();
-  listTags();
-  addOrEdit.value = true;
+  listCategories()
+  listTags()
+  addOrEdit.value = true
 }
 
 function uploadCover(response) {
-  article.value.articleCover = response.data;
+  article.value.articleCover = response.data
 }
 
 function beforeUpload(file) {
   return new Promise((resolve) => {
     if (file.size / 1024 < config.UPLOAD_SIZE) {
-      resolve(file);
+      resolve(file)
     }
     imageConversion.compressAccurately(file, config.UPLOAD_SIZE).then((res) => {
-      resolve(res);
-    });
-  });
+      resolve(res)
+    })
+  })
 }
 
 function uploadImg(pos, file) {
-  const formData = new FormData();
+  const formData = new FormData()
   if (file.size / 1024 < config.UPLOAD_SIZE) {
-    formData.append('file', file);
-    axios.post('/api/admin/articles/images', formData).then(({ data }) => {
-      $refs.md.$img2Url(pos, data.data);
-    });
+    formData.append("file", file)
+    axios.post("/api/admin/articles/images", formData).then(({ data }) => {
+      $refs.md.$img2Url(pos, data.data)
+    })
   } else {
     imageConversion.compressAccurately(file, config.UPLOAD_SIZE).then((res) => {
-      formData.append('file', new window.File([res], file.name, { type: file.type }));
-      axios.post('/api/admin/articles/images', formData).then(({ data }) => {
-        $refs.md.$img2Url(pos, data.data);
-      });
-    });
+      formData.append("file", new window.File([res], file.name, { type: file.type }))
+      axios.post("/api/admin/articles/images", formData).then(({ data }) => {
+        $refs.md.$img2Url(pos, data.data)
+      })
+    })
   }
 }
 
 function saveArticleDraft() {
-  if (article.value.articleTitle.trim() === '') {
-    alert('文章标题不能为空');
-    return;
+  if (article.value.articleTitle.trim() === "") {
+    alert("文章标题不能为空")
+    return
   }
-  if (article.value.articleContent.trim() === '') {
-    alert('文章内容不能为空');
-    return;
+  if (article.value.articleContent.trim() === "") {
+    alert("文章内容不能为空")
+    return
   }
-  article.value.status = 3;
-  axios.post('/api/admin/articles', article.value).then(({ data }) => {
+  article.value.status = 3
+  axios.post("/api/admin/articles", article.value).then(({ data }) => {
     if (data.flag) {
       if (article.value.id === null) {
-        $store.commit('removeTab', '发布文章');
+        $store.commit("removeTab", "发布文章")
       } else {
-        $store.commit('removeTab', '修改文章');
+        $store.commit("removeTab", "修改文章")
       }
-      sessionStorage.removeItem('article');
-      router.push({ path: '/article-list' });
-      alert('保存草稿成功');
+      sessionStorage.removeItem("article")
+      router.push({ path: "/article-list" })
+      alert("保存草稿成功")
     } else {
-      alert('保存草稿失败');
+      alert("保存草稿失败")
     }
-  });
+  })
 
-  autoSave.value = false;
+  autoSave.value = false
 }
 
 function saveOrUpdateArticle() {
-  if (article.value.articleTitle.trim() === '') {
-    alert('文章标题不能为空');
-    return;
+  if (article.value.articleTitle.trim() === "") {
+    alert("文章标题不能为空")
+    return
   }
-  if (article.value.articleContent.trim() === '') {
-    alert('文章内容不能为空');
-    return;
+  if (article.value.articleContent.trim() === "") {
+    alert("文章内容不能为空")
+    return
   }
   if (article.value.categoryName === null) {
-    alert('文章分类不能为空');
-    return;
+    alert("文章分类不能为空")
+    return
   }
   if (article.value.tagNameList.length === 0) {
-    alert('文章标签不能为空');
-    return;
+    alert("文章标签不能为空")
+    return
   }
-  if (article.value.articleCover.trim() === '') {
-    alert('文章封面不能为空');
-    return;
+  if (article.value.articleCover.trim() === "") {
+    alert("文章封面不能为空")
+    return
   }
-  axios.post('/api/admin/articles', article.value).then(({ data }) => {
+  axios.post("/api/admin/articles", article.value).then(({ data }) => {
     if (data.flag) {
       if (article.value.id === null) {
-        $store.commit('removeTab', '发布文章');
+        $store.commit("removeTab", "发布文章")
       } else {
-        $store.commit('removeTab', '修改文章');
+        $store.commit("removeTab", "修改文章")
       }
-      sessionStorage.removeItem('article');
-      router.push({ path: '/article-list' });
-      alert(data.message);
+      sessionStorage.removeItem("article")
+      router.push({ path: "/article-list" })
+      alert(data.message)
     } else {
-      alert(data.message);
+      alert(data.message)
     }
-    addOrEdit.value = false;
-  });
-  autoSave.value = false;
+    addOrEdit.value = false
+  })
+  autoSave.value = false
 }
 
 function autoSaveArticle() {
   if (
     autoSave.value &&
-    article.value.articleTitle.trim() !== '' &&
-    article.value.articleContent.trim() !== '' &&
+    article.value.articleTitle.trim() !== "" &&
+    article.value.articleContent.trim() !== "" &&
     article.value.id !== null
   ) {
-    axios.post('/api/admin/articles', article.value).then(({ data }) => {
+    axios.post("/api/admin/articles", article.value).then(({ data }) => {
       if (data.flag) {
-        alert('自动保存成功');
+        alert("自动保存成功")
       } else {
-        alert('自动保存失败');
+        alert("自动保存失败")
       }
-    });
+    })
   }
   if (autoSave.value && article.value.id === null) {
-    sessionStorage.setItem('article', JSON.stringify(article.value));
+    sessionStorage.setItem("article", JSON.stringify(article.value))
   }
 }
 
 function searchCategories(keywords, cb) {
-  axios.get('/api/admin/categories/search', { params: { keywords } }).then(({ data }) => {
-    cb(data.data);
-  });
+  axios.get("/api/admin/categories/search", { params: { keywords } }).then(({ data }) => {
+    cb(data.data)
+  })
 }
 
 function handleSelectCategories(item) {
-  addCategory({ categoryName: item.categoryName });
+  addCategory({ categoryName: item.categoryName })
 }
 
 function saveCategory() {
-  if (categoryName.value.trim() !== '') {
-    addCategory({ categoryName: categoryName.value });
-    categoryName.value = '';
+  if (categoryName.value.trim() !== "") {
+    addCategory({ categoryName: categoryName.value })
+    categoryName.value = ""
   }
 }
 
 function addCategory(item) {
-  article.value.categoryName = item.categoryName;
+  article.value.categoryName = item.categoryName
 }
 
 function removeCategory() {
-  article.value.categoryName = null;
+  article.value.categoryName = null
 }
 
 function searchTags(keywords, cb) {
-  axios.get('/api/admin/tags/search', { params: { keywords } }).then(({ data }) => {
-    cb(data.data);
-  });
+  axios.get("/api/admin/tags/search", { params: { keywords } }).then(({ data }) => {
+    cb(data.data)
+  })
 }
 
 function handleSelectTag(item) {
-  addTag({ tagName: item.tagName });
+  addTag({ tagName: item.tagName })
 }
 
 function saveTag() {
-  if (tagName.value.trim() !== '') {
-    addTag({ tagName: tagName.value });
-    tagName.value = '';
+  if (tagName.value.trim() !== "") {
+    addTag({ tagName: tagName.value })
+    tagName.value = ""
   }
 }
 
 function addTag(item) {
   if (!article.value.tagNameList.includes(item.tagName)) {
-    article.value.tagNameList.push(item.tagName);
+    article.value.tagNameList.push(item.tagName)
   }
 }
 
 function removeTag(item) {
-  const index = article.value.tagNameList.indexOf(item);
+  const index = article.value.tagNameList.indexOf(item)
   if (index !== -1) {
-    article.value.tagNameList.splice(index, 1);
+    article.value.tagNameList.splice(index, 1)
   }
 }
 
-listCategories();
-listTags();
+listCategories()
+listTags()
 
 onBeforeUnmount(() => {
-  autoSaveArticle();
-});
+  autoSaveArticle()
+})
 
-const articleId = route.path.split('/')[2];
+const articleId = route.path.split("/")[2]
 if (articleId) {
   axios.get(`/api/admin/articles/${articleId}`).then(({ data }) => {
-    article.value = data.data;
-  });
+    article.value = data.data
+  })
 } else {
-  const articleData = sessionStorage.getItem('article');
+  const articleData = sessionStorage.getItem("article")
   if (articleData) {
-    article.value = JSON.parse(articleData);
+    article.value = JSON.parse(articleData)
   }
 }
 
 const tagClass = (item) => {
-  const index = article.value.tagNameList.indexOf(item.tagName);
-  return index !== -1 ? 'tag-item-select': "tag-item";
-};
-
+  const index = article.value.tagNameList.indexOf(item.tagName)
+  return index !== -1 ? "tag-item-select" : "tag-item"
+}
 </script>
-
 
 <style scoped>
 .article-title-container {

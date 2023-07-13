@@ -17,7 +17,7 @@ const getTableData = () => {
   loading.value = true
   findUserListApi({
     page: paginationData.currentPage,
-    pageSize: paginationData.pageSize
+    pageSize: paginationData.pageSize,
   })
     .then((res) => {
       paginationData.total = res.data.total
@@ -54,13 +54,13 @@ const formData = ref({
   createdAt: "",
   roles: [
     {
-      id: 0
-    }
-  ]
+      id: 0,
+    },
+  ],
 })
 const formRules: FormRules = reactive({
   username: [{ required: false, trigger: "blur", message: "请输入用户名" }],
-  password: [{ required: false, trigger: "blur", message: "请输入密码" }]
+  password: [{ required: false, trigger: "blur", message: "请输入密码" }],
 })
 
 const dialogFormVisible = ref<boolean>(false)
@@ -91,14 +91,14 @@ const resetForm = () => {
     id: "",
     uuid: "",
     createdAt: "",
-    roles: []
+    roles: [],
   }
 }
 // 提交
 const submitForm = () => {
   updateUserRolesApi({
     userId: formData.value.uuid,
-    roleIds: roleCheckIds.value
+    roleIds: roleCheckIds.value,
   })
   getTableData()
   dialogFormVisible.value = false
@@ -144,7 +144,7 @@ const handleDelete = (row) => {
   ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
-    type: "warning"
+    type: "warning",
   }).then(() => {
     console.log("row", row.id)
     doDelete({ id: row.id })
@@ -171,7 +171,7 @@ function tagType(method) {
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
 
 defineOptions({
-  name: "UserList"
+  name: "UserList",
 })
 </script>
 
