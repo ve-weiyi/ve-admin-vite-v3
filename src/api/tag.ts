@@ -49,7 +49,7 @@ export function findTagApi(data?: object): Promise<IApiResponseData<any>> {
 export function findTagListApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/tag/list",
-    method: "get",
+    method: "post",
     data: page,
   })
 }

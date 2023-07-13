@@ -5,7 +5,7 @@ export default {
   name: "log", // router.push
   component: Layout,
   redirect: "/log/operation",
-  meta: { title: "日志管理", alwaysShow: true, elIcon: "Grid" },
+  meta: { title: "日志管理", alwaysShow: true, elIcon: "document" },
   children: [
     {
       path: "operation",

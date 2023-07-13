@@ -7,6 +7,9 @@ import log from "@/router/blog/log"
 import user from "@/router/blog/user";
 import message from "@/router/blog/message";
 import album from "@/router/blog/album";
+import system from "@/router/blog/system";
+import talk from "@/router/blog/talk";
+import article from "@/router/blog/article";
 
 /** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
@@ -56,7 +59,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: "Dashboard",
         meta: {
           title: "首页",
-          svgIcon: "dashboard",
+          elIcon: "home-filled",
           affix: true
         }
       }
@@ -64,8 +67,11 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
   user,
   authority,
+  system,
+  article,
   message,
   album,
+  talk,
   log,
   mine,
   {

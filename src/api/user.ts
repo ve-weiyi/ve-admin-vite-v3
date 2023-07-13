@@ -33,3 +33,17 @@ export function loginHistoryApi(page?: Page): Promise<IApiResponseData<any>> {
   })
 }
 
+/** 更新用户头像 */
+export function updateUserAvatarApi(file: File): Promise<IApiResponseData<any>> {
+  const formData = new FormData()
+  formData.append("file", file)
+
+  return http.request<IApiResponseData<any>>({
+    url: `/api/v1/user/avatar`,
+    method: "post",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}

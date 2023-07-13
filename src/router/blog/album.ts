@@ -5,7 +5,7 @@ export default {
   component: Layout,
   name: "album-management",
   redirect: "/albums",
-  meta: { title: "相册管理", elIcon: "Grid" },
+  meta: { title: "相册管理", elIcon: "picture" },
   children: [
     {
       path: "albums",

@@ -5,7 +5,7 @@ export function uploadFileApi(label: string, file: File): Promise<IApiResponseDa
   formData.append('file', file)
 
   return http.request<IApiResponseData<any>>({
-    url: `/api/v1/file/upload/${label}`,
+    url: `/api/v1/upload/${label}`,
     method: 'post',
     data: formData,
     headers: {

@@ -29,6 +29,7 @@
     "dayjs": "1.11.8",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.7",
+    "image-conversion": "^2.1.1",
     "js-cookie": "3.0.5",
     "lodash-es": "4.17.21",
     "normalize.css": "8.0.1",

@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { createLinkApi, deleteByIdsLinkApi, deleteLinkApi, findLinkListApi, updateLinkApi } from "@/api/link"
+import { createTalkApi, deleteByIdsTalkApi, deleteTalkApi, findTalkListApi, updateTalkApi } from "@/api/talk"
 
 interface Pagination {
   total?: number
@@ -30,31 +30,21 @@ export function useTableHook() {
   const loading = ref(true)
   // 表单数据定义
   const formRef = ref<FormInstance | null>(null)
-  const formData = reactive({
-    id: 0,
-    linkName: "",
-    linkAvatar: "",
-    linkAddress: "",
-    linkIntro: "",
-    createdAt: null
-  })
-  const formRules: FormRules = reactive({
-    linkName: [{ required: true, trigger: "blur", message: "请输入友链名称" }],
-    linkAvatar: [{ required: true, trigger: "blur", message: "请输入友链头像" }],
-    linkAddress: [{ required: true, trigger: "blur", message: "请输入友链地址" }]
-  })
+  const formData = ref<any>({})
+  const formRules: FormRules = reactive({})
 
   // 搜索表单数据定义
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
     linkName: "",
-    status: null
+    isReview: null
   })
 
   // 表格数据定义
   const tableData = ref([])
   const selectionIds = reactive([])
   const pagination = reactive({ ...defaultPaginationData })
+  const albumInfo = ref<any>({})
 
   // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
@@ -63,26 +53,16 @@ export function useTableHook() {
 
   const resetForm = (row) => {
     if (row != null) {
-      formData.id = row.id
-      formData.linkName = row.linkName
-      formData.linkAvatar = row.linkAvatar
-      formData.linkAddress = row.linkAddress
-      formData.linkIntro = row.linkIntro
-      formData.createdAt = row.createdAt
+      formData.value = row
     } else {
-      formData.id = 0
-      formData.linkName = ""
-      formData.linkAvatar = ""
-      formData.linkAddress = ""
-      formData.linkIntro = ""
-      formData.createdAt = null
+      formData.value = {}
     }
     formRef.value?.resetFields()
   }
 
   const resetSearch = () => {
     searchData.linkName = ""
-    searchData.status = null
+    searchData.isReview = null
     handleSearch()
   }
 
@@ -97,11 +77,11 @@ export function useTableHook() {
         rule: "like"
       })
     }
-    if (searchData.status != null) {
+    if (searchData.isReview != null) {
       conditions.push({
         flag: "AND",
-        field: "status",
-        value: searchData.status,
+        field: "is_review",
+        value: searchData.isReview,
         rule: "="
       })
     }
@@ -112,7 +92,7 @@ export function useTableHook() {
     applySearch()
 
     loading.value = true
-    findLinkListApi({
+    findTalkListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
@@ -141,7 +121,7 @@ export function useTableHook() {
 
   function handleCreate(row) {
     console.log("handleCreate", row)
-    createLinkApi(row).then((res) => {
+    createTalkApi(row).then((res) => {
       ElMessage.success("创建成功")
       addOrEditVisibility.value = false
       handleSearch()
@@ -150,7 +130,7 @@ export function useTableHook() {
 
   function handleUpdate(row) {
     console.log("handleUpdate", row)
-    updateLinkApi(row).then((res) => {
+    updateTalkApi(row).then((res) => {
       ElMessage.success("更新成功")
       addOrEditVisibility.value = false
       handleSearch()
@@ -159,7 +139,7 @@ export function useTableHook() {
 
   function handleDelete(row) {
     console.log("handleDelete", row)
-    deleteLinkApi(row).then((res) => {
+    deleteTalkApi(row).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
       handleSearch()
@@ -168,7 +148,7 @@ export function useTableHook() {
 
   function handleDeleteByIds(ids: number[]) {
     console.log("handleDeleteByIds", ids)
-    deleteByIdsLinkApi(ids).then((res) => {
+    deleteByIdsTalkApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       handleSearch()
@@ -229,9 +209,6 @@ export function useTableHook() {
     resetForm(row)
   }
 
-  onMounted(() => {
-    handleSearch()
-  })
   return {
     loading,
     removeVisibility,
@@ -256,6 +233,7 @@ export function useTableHook() {
     onAddOrEdit,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    albumInfo
   }
 }

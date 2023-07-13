@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { createLinkApi, deleteByIdsLinkApi, deleteLinkApi, findLinkListApi, updateLinkApi } from "@/api/link"
+import { createCategoryApi, deleteByIdsCategoryApi, deleteCategoryApi, findCategoryListApi, updateCategoryApi } from "@/api/category"
 
 interface Pagination {
   total?: number
@@ -48,7 +48,7 @@ export function useTableHook() {
   const searchFormRef = ref<FormInstance | null>(null)
   const searchData = reactive({
     linkName: "",
-    status: null
+    isReview: null
   })
 
   // 表格数据定义
@@ -82,7 +82,7 @@ export function useTableHook() {
 
   const resetSearch = () => {
     searchData.linkName = ""
-    searchData.status = null
+    searchData.isReview = null
     handleSearch()
   }
 
@@ -97,11 +97,11 @@ export function useTableHook() {
         rule: "like"
       })
     }
-    if (searchData.status != null) {
+    if (searchData.isReview != null) {
       conditions.push({
         flag: "AND",
-        field: "status",
-        value: searchData.status,
+        field: "is_review",
+        value: searchData.isReview,
         rule: "="
       })
     }
@@ -112,7 +112,7 @@ export function useTableHook() {
     applySearch()
 
     loading.value = true
-    findLinkListApi({
+    findCategoryListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
@@ -141,7 +141,7 @@ export function useTableHook() {
 
   function handleCreate(row) {
     console.log("handleCreate", row)
-    createLinkApi(row).then((res) => {
+    createCategoryApi(row).then((res) => {
       ElMessage.success("创建成功")
       addOrEditVisibility.value = false
       handleSearch()
@@ -150,7 +150,7 @@ export function useTableHook() {
 
   function handleUpdate(row) {
     console.log("handleUpdate", row)
-    updateLinkApi(row).then((res) => {
+    updateCategoryApi(row).then((res) => {
       ElMessage.success("更新成功")
       addOrEditVisibility.value = false
       handleSearch()
@@ -159,7 +159,7 @@ export function useTableHook() {
 
   function handleDelete(row) {
     console.log("handleDelete", row)
-    deleteLinkApi(row).then((res) => {
+    deleteCategoryApi(row).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
       handleSearch()
@@ -168,7 +168,7 @@ export function useTableHook() {
 
   function handleDeleteByIds(ids: number[]) {
     console.log("handleDeleteByIds", ids)
-    deleteByIdsLinkApi(ids).then((res) => {
+    deleteByIdsCategoryApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       handleSearch()
