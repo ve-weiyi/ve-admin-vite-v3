@@ -25,47 +25,48 @@ export const useAdminStore = defineStore({
   },
   actions: {
     saveTab(tab) {
-      if (this.state.tabList.findIndex((item) => item.path === tab.path) === -1) {
-        this.state.tabList.push({ name: tab.name, path: tab.path })
+      if (this.tabList.findIndex((item) => item.path === tab.path) === -1) {
+        this.tabList.push({ name: tab.name, path: tab.path })
       }
     },
     removeTab(tab) {
-      const index = this.state.tabList.findIndex((item) => item.name === tab.name)
-      this.state.tabList.splice(index, 1)
+      const index = this.tabList.findIndex((item) => item.name === tab.name)
+      this.tabList.splice(index, 1)
     },
     resetTab() {
-      this.state.tabList = [{ name: '首页', path: '/' }]
+      this.tabList = [{ name: '首页', path: '/' }]
     },
     trigger() {
-      this.state.collapse = !this.state.collapse
+      this.collapse = !this.collapse
     },
-    login(user) {
-      this.state.userId = user.userInfoId
-      this.state.roleList = user.roleList
-      this.state.avatar = user.avatar
-      this.state.nickname = user.nickname
-      this.state.intro = user.intro
-      this.state.webSite = user.webSite
+    setUserInfo(user) {
+      // console.log("user", user)
+      this.userId = user.id
+      this.roleList = user.roleList
+      this.avatar = user.avatar
+      this.nickname = user.nickname
+      this.intro = user.intro
+      this.webSite = user.webSite
     },
     saveUserMenuList(userMenuList) {
-      this.state.userMenuList = userMenuList
+      this.userMenuList = userMenuList
     },
     logout() {
-      this.state.userId = null
-      this.state.roleList = null
-      this.state.avatar = null
-      this.state.nickname = null
-      this.state.intro = null
-      this.state.webSite = null
-      this.state.userMenuList = []
+      this.userId = null
+      this.roleList = null
+      this.avatar = null
+      this.nickname = null
+      this.intro = null
+      this.webSite = null
+      this.userMenuList = []
     },
     updateAvatar(avatar) {
-      this.state.avatar = avatar
+      this.avatar = avatar
     },
     updateUserInfo(user) {
-      this.state.nickname = user.nickname
-      this.state.intro = user.intro
-      this.state.webSite = user.webSite
+      this.nickname = user.nickname
+      this.intro = user.intro
+      this.webSite = user.webSite
     },
   },
 })

@@ -7,6 +7,9 @@ import log from "@/router/blog/log"
 import user from "@/router/blog/user";
 import message from "@/router/blog/message";
 import album from "@/router/blog/album";
+import system from "@/router/blog/system";
+import talk from "@/router/blog/talk";
+import article from "@/router/blog/article";
 
 /** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
@@ -48,15 +51,15 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Layout,
-    redirect: "/dashboard",
+    redirect: "/home",
     children: [
       {
-        path: "dashboard",
+        path: "home",
         component: () => import("@/views/blog/home/Home.vue"),
-        name: "Dashboard",
+        name: "home",
         meta: {
           title: "首页",
-          svgIcon: "dashboard",
+          elIcon: "home-filled",
           affix: true
         }
       }
@@ -64,40 +67,43 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
   user,
   authority,
+  system,
+  article,
   message,
   album,
+  talk,
   log,
   mine,
-  {
-    path: "/table",
-    component: Layout,
-    redirect: "/table/element-plus",
-    name: "Table",
-    meta: {
-      title: "表格",
-      elIcon: "Grid"
-    },
-    children: [
-      {
-        path: "element-plus",
-        component: () => import("@/views/table/element-plus/index.vue"),
-        name: "ElementPlus",
-        meta: {
-          title: "Element Plus",
-          keepAlive: true
-        }
-      },
-      {
-        path: "vxe-table",
-        component: () => import("@/views/table/vxe-table/index.vue"),
-        name: "VxeTable",
-        meta: {
-          title: "Vxe Table",
-          keepAlive: true
-        }
-      }
-    ]
-  }
+  // {
+  //   path: "/table",
+  //   component: Layout,
+  //   redirect: "/table/element-plus",
+  //   name: "Table",
+  //   meta: {
+  //     title: "表格",
+  //     elIcon: "Grid"
+  //   },
+  //   children: [
+  //     {
+  //       path: "element-plus",
+  //       component: () => import("@/views/table/element-plus/index.vue"),
+  //       name: "ElementPlus",
+  //       meta: {
+  //         title: "Element Plus",
+  //         keepAlive: true
+  //       }
+  //     },
+  //     {
+  //       path: "vxe-table",
+  //       component: () => import("@/views/table/vxe-table/index.vue"),
+  //       name: "VxeTable",
+  //       meta: {
+  //         title: "Vxe Table",
+  //         keepAlive: true
+  //       }
+  //     }
+  //   ]
+  // }
 ]
 
 /**

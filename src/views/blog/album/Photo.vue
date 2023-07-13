@@ -60,11 +60,13 @@
                 <div class="photo-opreation">
                   <el-dropdown @command="handleCommand">
                     <i class="el-icon-more" style="color: #fff" />
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="JSON.stringify(item)">
-                        <i class="el-icon-edit" />编辑
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item :command="JSON.stringify(item)">
+                          <i class="el-icon-edit" />编辑
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
                   </el-dropdown>
                 </div>
                 <el-image
@@ -134,7 +136,7 @@
             <div class="upload-count">共上传{{ uploadList.length }}张照片</div>
             <div style="margin-left: auto">
               <el-button @click="uploadPhoto = false">取 消</el-button>
-              <el-button @click="savePhotos" type="primary" :disabled="uploadList.length === 0"> 开始上传 </el-button>
+              <el-button @click="savePhotos" type="primary" :disabled="uploadList.length === 0"> 开始上传</el-button>
             </div>
           </div>
         </template>
@@ -154,7 +156,7 @@
         </el-form>
         <template #footer>
           <el-button @click="editPhoto = false">取 消</el-button>
-          <el-button type="primary" @click="updatePhoto"> 确 定 </el-button>
+          <el-button type="primary" @click="updatePhoto"> 确 定</el-button>
         </template>
       </el-dialog>
       <!-- 批量删除对话框 -->
@@ -170,12 +172,14 @@
         <div style="font-size: 1rem">是否删除选中照片？</div>
         <template #footer>
           <el-button @click="batchDeletePhoto = false">取 消</el-button>
-          <el-button type="primary" @click="updatePhotoDelete(null)"> 确 定 </el-button>
+          <el-button type="primary" @click="updatePhotoDelete(null)"> 确 定</el-button>
         </template>
       </el-dialog>
       <!-- 移动对话框 -->
       <el-dialog v-model="movePhoto" width="30%">
-        <div class="dialog-title-container" slot="title">移动照片</div>
+        <template #header>
+          <div class="dialog-title-container">移动照片</div>
+        </template>
         <el-empty v-if="albumList.length < 2" description="暂无其他相册" />
         <el-form v-else label-width="80px" size="medium" :model="photoForm">
           <el-radio-group v-model="albumId">
@@ -193,7 +197,7 @@
         </el-form>
         <div slot="footer">
           <el-button @click="movePhoto = false">取 消</el-button>
-          <el-button :disabled="albumId === null" type="primary" @click="updatePhotoAlbum"> 确 定 </el-button>
+          <el-button :disabled="albumId === null" type="primary" @click="updatePhotoAlbum"> 确 定</el-button>
         </div>
       </el-dialog>
     </el-card>

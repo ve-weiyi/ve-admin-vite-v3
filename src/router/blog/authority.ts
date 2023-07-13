@@ -5,7 +5,7 @@ export default {
   component: Layout,
   name: 'Authority',
   redirect: '/authority/role',
-  meta: { title: '权限管理', elIcon: "Grid" },
+  meta: { title: '权限管理', elIcon: "lock" },
   children: [
     {
       path: 'role',

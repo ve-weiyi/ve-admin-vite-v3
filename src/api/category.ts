@@ -49,7 +49,7 @@ export function findCategoryApi(data?: object): Promise<IApiResponseData<any>> {
 export function findCategoryListApi(page?: Page): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: "/api/v1/category/list",
-    method: "get",
+    method: "post",
     data: page,
   })
 }

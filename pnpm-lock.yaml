@@ -20,6 +20,9 @@ dependencies:
   element-plus:
     specifier: ^2.3.7
     version: 2.3.7(vue@3.3.4)
+  image-conversion:
+    specifier: ^2.1.1
+    version: 2.1.1
   js-cookie:
     specifier: 3.0.5
     version: 3.0.5
@@ -3038,6 +3041,10 @@ packages:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
     dev: true
+
+  /image-conversion@2.1.1:
+    resolution: {integrity: sha512-hnMOmP7q2jxA+52FZ+wHNhg3fdFRlgfngsQH2JQHEQkafY7tj/8F15e6Rv/RxDegc872jvyaRHwMbkTZK1Cjbg==}
+    dev: false
 
   /image-size@0.5.5:
     resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { h, onMounted } from "vue"
+import { h, onBeforeMount, onMounted } from "vue"
 import { useTheme } from "@/hooks/useTheme"
 import { resetConfigLayout } from "@/utils"
 import { ElNotification } from "element-plus"
 // 将 Element Plus 的语言设置为中文
 import zhCn from "element-plus/lib/locale/lang/zh-cn"
 import { useAdminStore } from "@/store/modules/admin"
-import { getUserMenusApi } from "@/api/user"
+import { getUserInfoApi, getUserMenusApi } from "@/api/user"
 import { usePermissionStoreHook } from "@/store/modules/permission"
 import asyncRouteSettings from "@/config/async-route"
 import { getToken } from "@/utils/cache/cookies"
@@ -20,11 +20,15 @@ initTheme()
 // 获取路由参数
 const router = useRouter()
 const permissionStore = usePermissionStoreHook()
+const store = useAdminStore()
 // 生命周期钩子
 onMounted(() => {
   console.log("mounted")
   // mounted钩子代码
   if (getToken()) {
+    getUserInfoApi().then((res) => {
+      store.setUserInfo(res.data)
+    })
     getUserMenusApi().then((res) => {
       permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
     })
