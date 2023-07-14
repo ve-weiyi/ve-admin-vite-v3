@@ -1,8 +1,8 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { Pagination, defaultPaginationData } from "@/types/pagination"
-import { Condition, Order } from "@/types/api"
+import { Pagination, defaultPaginationData } from "@/../../../../../types/pagination"
+import { Condition, Order } from "@/../../../../../types/api"
 import { adminCommentsApi } from "@/api/admin"
 
 const align = "center"

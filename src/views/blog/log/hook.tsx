@@ -1,8 +1,6 @@
-import { reactive, ref, computed, onMounted } from "vue"
-import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
-import { ElTag, ElMessage } from "element-plus"
-import { Condition, Order } from "@/types/api"
-import { Pagination, defaultPaginationData } from "@/types/pagination"
+import { onMounted, reactive, ref } from "vue"
+import { Column, ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus"
+import { defaultPaginationData, Pagination, Condition, Order, FormField, RenderType, formRender } from "@/utils/render"
 import {
   createOperationApi,
   deleteByIdsOperationApi,
@@ -10,10 +8,211 @@ import {
   findOperationListApi,
   updateOperationApi,
 } from "@/api/operation"
+import { Timer } from "@element-plus/icons-vue"
 
 const align = "center"
 
+const tagType = (type) => {
+  switch (type) {
+    case "GET":
+      return ""
+    case "POST":
+      return "success"
+    case "PUT":
+      return "warning"
+    case "DELETE":
+      return "danger"
+    default:
+      return ""
+  }
+}
+
+const options = [
+  {
+    value: "新增",
+    label: "新增",
+  },
+  {
+    value: "修改",
+    label: "修改",
+  },
+  {
+    value: "删除",
+    label: "删除",
+  },
+  {
+    value: "查询",
+    label: "查询",
+  },
+  {
+    value: "新增或修改",
+    label: "新增或修改",
+  },
+]
+
+function getSearchFields(): FormField[] {
+  return [
+    {
+      type: RenderType.Input,
+      label: "系统模块",
+      field: "opt_module",
+      flag: "and",
+      rule: "like",
+    },
+    {
+      type: RenderType.Select,
+      label: "操作类型",
+      field: "opt_type",
+      flag: "and",
+      rule: "=",
+      options: options,
+    },
+  ]
+}
+
+function getColumnFields(): Column[] {
+  return [
+    {
+      type: "selection",
+      width: 60,
+      align: align,
+    },
+    {
+      key: "id",
+      title: "id",
+      dataKey: "id",
+      width: 60,
+      align: align,
+    },
+    {
+      key: "optModule",
+      title: "系统模块",
+      dataKey: "optModule",
+      width: 100,
+      align: align,
+    },
+    {
+      key: "optType",
+      title: "操作类型",
+      dataKey: "optType",
+      width: 100,
+      align: align,
+    },
+    {
+      key: "optDesc",
+      title: "操作描述",
+      dataKey: "optDesc",
+      width: 100,
+      align: align,
+    },
+    {
+      key: "requestMethod",
+      title: "请求方式",
+      dataKey: "requestMethod",
+      width: 100,
+      align: align,
+      cellRenderer: (row: any) => {
+        return <el-tag type={tagType(row.requestMethod)}>{row.requestMethod}</el-tag>
+      },
+    },
+    {
+      key: "nickname",
+      title: "操作人员",
+      dataKey: "nickname",
+      width: 100,
+      align: align,
+    },
+    {
+      key: "ipAddress",
+      title: "登录ip",
+      dataKey: "ipAddress",
+      width: 120,
+      align: align,
+    },
+    {
+      key: "ipSource",
+      title: "登录地址",
+      dataKey: "ipSource",
+      width: 150,
+      align: align,
+    },
+    {
+      key: "createdAt",
+      title: "操作日期",
+      dataKey: "createdAt",
+      width: 150,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <el-icon style="margin-right: 5px">
+              <Timer />
+            </el-icon>
+            <span>{row.createdAt.substring(0, 10)}</span>
+          </div>
+        )
+      },
+    },
+  ]
+}
+
+function getFormFields(): FormField[] {
+  return [
+    {
+      field: "optModule",
+      label: "操作模块",
+    },
+    {
+      field: "optUrl",
+      label: "请求地址",
+    },
+    {
+      field: "optDesc",
+      label: "操作描述",
+    },
+    {
+      field: "requestMethod",
+      label: "请求方式",
+      render: (field, model) => {
+        return <el-tag type={tagType(model.requestMethod)}>{model.requestMethod}</el-tag>
+      },
+    },
+    {
+      field: "optMethod",
+      label: "操作方法",
+    },
+    {
+      field: "requestParam",
+      label: "请求参数",
+    },
+    {
+      field: "responseData",
+      label: "返回数据",
+    },
+    {
+      field: "nickname",
+      label: "操作人员",
+    },
+    {
+      field: "createdAt",
+      label: "操作日期",
+      render: (field, model) => {
+        return (
+          <div>
+            <span>{model.createdAt.substring(0, 10)}</span>
+          </div>
+        )
+      },
+    },
+  ]
+}
+
 export function useTableHook() {
+  // 页面数据定义
+  const columnFields = ref<Column[]>(getColumnFields())
+  const searchFields = ref<FormField[]>(getSearchFields())
+  const formFields = ref<FormField[]>(getFormFields())
+
   // 数据绑定
   const removeVisibility = ref(false)
   const addOrEditVisibility = ref(false)
@@ -27,25 +226,16 @@ export function useTableHook() {
 
   // 搜索表单数据定义
   const searchFormRef = ref<FormInstance | null>(null)
-  const searchData = reactive({
-    optModule: "",
-    optType: "",
-  })
+  const searchData = ref<any>({})
 
   // 表格数据定义
   const tableData = ref([])
   const selectionIds = reactive([])
   const pagination = reactive({ ...defaultPaginationData })
 
+  // 条件查询
   const conditions = reactive<Condition[]>([])
   const orders = reactive<Order[]>([])
-
-  const columns: Column[] = [
-    {
-      dataKey: "selection",
-      width: 50,
-    },
-  ]
 
   const resetForm = (row) => {
     if (row != null) {
@@ -57,31 +247,26 @@ export function useTableHook() {
   }
 
   const resetSearch = () => {
-    searchData.optModule = ""
-    searchData.optType = ""
+    searchData.value = {}
     handleSearch()
   }
 
   const applySearch = () => {
     conditions.length = 0
     orders.length = 0
+
     // 搜索条件
-    if (searchData.optModule != "") {
-      conditions.push({
-        flag: "AND",
-        field: "opt_module",
-        value: searchData.optModule,
-        rule: "like",
-      })
-    }
-    if (searchData.optType != "") {
-      conditions.push({
-        flag: "AND",
-        field: "opt_type",
-        value: searchData.optType,
-        rule: "=",
-      })
-    }
+    searchFields.value.forEach((item) => {
+      const value = searchData.value[item.field]
+      if (value != null) {
+        conditions.push({
+          flag: item.flag,
+          field: item.field,
+          value: value,
+          rule: item.rule,
+        })
+      }
+    })
     // 倒序
     orders.push({
       field: "id",
@@ -89,7 +274,6 @@ export function useTableHook() {
     })
   }
 
-  // eslint-disable-next-line no-undef
   function handleSearch() {
     applySearch()
 
@@ -183,7 +367,7 @@ export function useTableHook() {
   // 行数据状态改变回调
   function onChange({ row, index }) {
     ElMessageBox.confirm(
-      `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style='color:var(--el-color-primary)'>${
+      `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style="color:var(--el-color-primary)">${
         row.username
       }</strong>用户吗?`,
       "系统提示",
@@ -214,6 +398,7 @@ export function useTableHook() {
   onMounted(() => {
     handleSearch()
   })
+
   return {
     loading,
     removeVisibility,
@@ -239,5 +424,8 @@ export function useTableHook() {
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
+    columnFields,
+    searchFields,
+    formFields,
   }
 }

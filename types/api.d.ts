@@ -4,6 +4,7 @@ interface ApiResponseData<T> {
   data: T
   message: string
 }
+
 /** 所有 api 接口的响应数据都应该准守该格式 */
 interface IApiResponseData<T> {
   code: number
@@ -25,6 +26,7 @@ interface Page {
   conditions?: Condition[]
 }
 
+
 interface Order {
   field: string
   rule: string
@@ -33,6 +35,6 @@ interface Order {
 interface Condition {
   flag?: string
   field: string
-  value: any
-  rule: string
+  value?: any
+  rule?: "like" | "=" | ">" | "<"
 }

@@ -2,14 +2,14 @@
   <div class="app-container">
     <!-- 表格搜索条件 -->
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
-      <el-form ref="searchFormRef" :inline="true" :model="searchData">
-        <el-form-item prop="optModule" label="模块名：">
-          <el-input clearable v-model="searchData.optModule" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item prop="optType" label="操作类型：">
-          <el-select v-model="searchData.optType" placeholder="请选择类型">
-            <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
-          </el-select>
+      <el-form ref="searchFormRef" :inline="true" :model="searchFields">
+        <el-form-item v-for="item of searchFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
+          <template v-if="item.field">
+            <component
+              style="display: flex; justify-content: center; align-items: center"
+              :is="builderRender(item, searchData)"
+            />
+          </template>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -37,25 +37,25 @@
       </div>
       <!-- 表格展示 -->
       <el-table :data="tableData" border @selection-change="handleSelectionChange" :loading="loading">
-        <el-table-column type="selection" width="40" align="center" />
-        <el-table-column prop="id" label="id" align="center" width="80" />
-        <el-table-column prop="optModule" label="系统模块" align="center" width="100" />
-        <el-table-column prop="optType" label="操作类型" align="center" width="100" />
-        <el-table-column prop="optDesc" label="操作描述" align="center" width="150" />
-        <el-table-column prop="requestMethod" label="请求方式" align="center" width="100">
-          <template #default="scope">
-            <el-tag :type="tagType(scope.row.requestMethod)">
-              {{ scope.row.requestMethod }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="nickname" label="操作人员" align="center" />
-        <el-table-column prop="ipAddress" label="登录ip" align="center" width="130" />
-        <el-table-column prop="ipSource" label="登录地址" align="center" width="150" />
-        <el-table-column prop="createdAt" label="操作日期" align="center" width="190">
-          <template #default="scope">
-            <i class="el-icon-time" style="margin-right: 5px" />
-            {{ formatDateTime(scope.row.createdAt) }}
+        <el-table-column
+          v-for="item of columnFields"
+          :type="item.type"
+          :key="item.key"
+          :prop="item.dataKey"
+          :label="item.title"
+          :align="item.align"
+          :width="item.width"
+        >
+          <template #default="{ row }">
+            <template v-if="item.cellRenderer">
+              <component
+                style="display: flex; justify-content: center; align-items: center"
+                :is="item.cellRenderer(row)"
+              />
+            </template>
+            <template v-else-if="item.type !== 'selection'">
+              <div>{{ row[item.dataKey] }}</div>
+            </template>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="150">
@@ -114,28 +114,10 @@
       </template>
 
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" size="default">
-        <el-form-item label="操作模块：">
-          <div>{{ formData.optModule }}</div>
-        </el-form-item>
-        <el-form-item label="请求地址：">
-          {{ formData.optUrl }}
-        </el-form-item>
-        <el-form-item label="请求方式：">
-          <el-tag :type="tagType(formData.requestMethod)">
-            {{ formData.requestMethod }}
-          </el-tag>
-        </el-form-item>
-        <el-form-item label="操作方法：">
-          <div style="width: 100%">{{ formData.optMethod }}</div>
-        </el-form-item>
-        <el-form-item label="请求参数：">
-          <div style="width: 100%">{{ formData.requestParam }}</div>
-        </el-form-item>
-        <el-form-item label="返回数据：">
-          <div style="width: 100%">{{ formData.responseData }}</div>
-        </el-form-item>
-        <el-form-item label="操作人员：">
-          {{ formData.nickname }}
+        <el-form-item v-for="item of formFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
+          <template v-if="item.field">
+            <component :is="builderRender(item, formData)" />
+          </template>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -145,7 +127,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue"
 import { useTableHook } from "./hook"
-import { formatDateTime } from "@/utils"
+import { builderRender } from "@/utils/render"
 
 const {
   loading,
@@ -170,6 +152,9 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
+  columnFields,
+  searchFields,
+  formFields,
 } = useTableHook()
 
 const linkTitle = computed(() => {
@@ -179,44 +164,6 @@ const linkTitle = computed(() => {
     return "编辑友链"
   }
 })
-
-const tagType = (type) => {
-  switch (type) {
-    case "GET":
-      return ""
-    case "POST":
-      return "success"
-    case "PUT":
-      return "warning"
-    case "DELETE":
-      return "danger"
-    default:
-      return ""
-  }
-}
-
-const options = [
-  {
-    value: "新增",
-    label: "新增",
-  },
-  {
-    value: "修改",
-    label: "修改",
-  },
-  {
-    value: "删除",
-    label: "删除",
-  },
-  {
-    value: "查询",
-    label: "查询",
-  },
-  {
-    value: "新增或修改",
-    label: "新增或修改",
-  },
-]
 </script>
 
 <style lang="scss" scoped>
