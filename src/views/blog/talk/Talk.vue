@@ -4,7 +4,7 @@
       <div class="table-title">{{ $route.meta.title }}</div>
       <div class="talk-container">
         <!-- 输入框 -->
-        <Editor ref="editor" class="editor-wrapper" v-model="talk.content" placeholder="说点什么吧" />
+        <Editor ref="editorRef" class="editor-wrapper" v-model="talk.content" placeholder="说点什么吧" />
         <!-- 操作菜单 -->
         <div class="operation-wrapper">
           <div class="left-wrapper">
@@ -12,14 +12,14 @@
             <el-popover placement="bottom-start" width="460" trigger="click">
               <span
                 class="emoji-item"
-                v-for="(value, key, index) of emojiList"
+                v-for="(item, key, index) of emojiList"
                 :key="index"
-                @click="addEmoji(key, value)"
+                @click="addEmoji(key, item.normal)"
               >
-                <img :src="value" :title="key" class="emoji" width="24" height="24" />
+                <img :src="item.normal" :title="item.key" class="emoji" width="24" height="24" />
               </span>
               <template #reference>
-                <i class="iconfont el-icon-mybiaoqing operation-btn" />
+                <i class="iconfont icon-smile operation-btn" />
               </template>
             </el-popover>
             <!-- 图片上传 -->
@@ -30,7 +30,7 @@
               :on-success="upload"
               :show-file-list="false"
             >
-              <i class="iconfont el-icon-mytupian operation-btn" />
+              <i class="iconfont icon-picture operation-btn" />
             </el-upload>
           </div>
           <div class="right-wrapper">
@@ -80,10 +80,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
 import * as imageConversion from "image-conversion"
-// import EmojiList from "@/assets/js/emoji"
+import EmojiList from "@/assets/emojis/qq_emoji.json"
 import Editor from "@/components/Editor.vue"
+import { useRoute } from "vue-router"
+import { findTalkApi } from "@/api/talk"
 
-// const emojiList = ref(EmojiList)
+const route = useRoute()
+const emojiList = ref(EmojiList)
 const talk = ref({
   id: null,
   content: "",
@@ -98,11 +101,11 @@ const statusList = ref([
 const uploadList = ref([])
 
 onMounted(() => {
-  if (this.$route.params.talkId) {
-    this.axios.get("/api/admin/talks/" + this.$route.params.talkId).then(({ data }) => {
-      talk.value = data.data
-      if (data.data.imgList) {
-        data.data.imgList.forEach((item) => {
+  if (route.params.talkId) {
+    findTalkApi({ id: route.params.talkId }).then((res) => {
+      talk.value = res.data
+      if (res.data.imgList) {
+        res.data.imgList.forEach((item) => {
           uploadList.value.push({ url: item })
         })
       }
@@ -114,9 +117,11 @@ function handleCommand(command) {
   talk.value.status = command
 }
 
+const editorRef = ref(null)
+
 function addEmoji(key, value) {
   const emojiTag = `<img src="${value}" width="24" height="24" alt="${key}" style="margin: 0 1px;vertical-align: text-bottom"/>`
-  this.$refs.editor.addText(emojiTag)
+  editorRef.value.addText(emojiTag)
 }
 
 function handleRemove(file) {
