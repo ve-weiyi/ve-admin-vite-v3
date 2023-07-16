@@ -12,7 +12,7 @@
           </template>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
+          <el-button type="primary" icon="Search" @click="onSearchList">搜索</el-button>
           <el-button icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -75,10 +75,10 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="onAddOrEdit(scope.row)" icon="view">
+            <el-button text type="primary" size="small" @click="handleAddOrEdit(scope.row)" icon="view">
               <i class="el-icon-view" /> 查看
             </el-button>
-            <el-popconfirm title="确定删除吗？" style="margin-left: 10px" @confirm="handleDelete(scope.row)">
+            <el-popconfirm title="确定删除吗？" style="margin-left: 10px" @confirm="onDelete(scope.row)">
               <template #reference>
                 <el-button text type="primary" size="small" class="operation-button" icon="delete"> 删除 </el-button>
               </template>
@@ -113,7 +113,7 @@
       <div style="font-size: 1rem">是否彻底删除选中项？</div>
       <template #footer>
         <el-button @click="removeVisibility = false">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteByIds(selectionIds)">确 定</el-button>
+        <el-button type="primary" @click="onDeleteByIds(selectionIds)">确 定</el-button>
       </template>
     </el-dialog>
 
@@ -159,11 +159,11 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
-  onAddOrEdit,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
@@ -205,7 +205,7 @@ const type = ref(null)
 const checkTabType = (count: number) => {
   type.value = count
   searchData.value.type = count
-  handleSearch()
+  onSearchList()
 }
 
 const isActive = (status) => {

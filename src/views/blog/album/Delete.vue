@@ -76,7 +76,7 @@
         <div style="font-size: 1rem">是否删除选中照片？</div>
         <template #footer>
           <el-button @click="removeVisibility = false">取 消</el-button>
-          <el-button type="primary" @click="handleDeleteByIds(selectionIds)"> 确 定</el-button>
+          <el-button type="primary" @click="onDeleteByIds(selectionIds)"> 确 定</el-button>
         </template>
       </el-dialog>
     </el-card>
@@ -101,12 +101,12 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
   onChange,
-  onAddOrEdit,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
@@ -122,7 +122,7 @@ const dialogTitle = computed(() => {
 
 onMounted(() => {
   loading.value = false
-  // handleSearch()
+  // onSearchList()
 })
 </script>
 

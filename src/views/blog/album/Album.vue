@@ -4,7 +4,7 @@
       <!-- 标题 -->
       <div class="table-title">{{ $route.meta.title }}</div>
       <div class="operation-container">
-        <el-button type="primary" size="default" icon="el-icon-plus" @click="handleSave(null)"> 新建相册 </el-button>
+        <el-button type="primary" size="default" icon="el-icon-plus" @click="onSave(null)"> 新建相册 </el-button>
         <div style="margin-left: auto">
           <el-button
             type="text"
@@ -21,14 +21,14 @@
             size="default"
             placeholder="请输入相册名"
             style="width: 200px"
-            @keyup.enter="handleSearch"
+            @keyup.enter="onSearchList"
           />
           <el-button
             type="primary"
             size="default"
             icon="el-icon-search"
             style="margin-left: 1rem"
-            @click="handleSearch"
+            @click="onSearchList"
           >
             搜索
           </el-button>
@@ -115,7 +115,7 @@
         </el-form>
         <template #footer>
           <el-button @click="addOrEditVisibility = false">取 消</el-button>
-          <el-button type="primary" @click="handleSave(formData)"> 确 定 </el-button>
+          <el-button type="primary" @click="onSave(formData)"> 确 定 </el-button>
         </template>
       </el-dialog>
       <!-- 删除对话框 -->
@@ -131,7 +131,7 @@
         <div style="font-size: 1rem">是否删除该相册？</div>
         <template #footer>
           <el-button @click="removeVisibility = false">取 消</el-button>
-          <el-button type="primary" @click="handleDelete(formData)"> 确 定 </el-button>
+          <el-button type="primary" @click="onDelete(formData)"> 确 定 </el-button>
         </template>
       </el-dialog>
     </el-card>
@@ -157,12 +157,12 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
   onChange,
-  onAddOrEdit,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
@@ -184,7 +184,7 @@ const checkPhoto = (item) => {
 }
 
 onMounted(() => {
-  handleSearch()
+  onSearchList()
 })
 </script>
 

@@ -12,7 +12,7 @@
           <el-input clearable v-model="searchData.username" placeholder="请输入用户昵称" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
+          <el-button type="primary" icon="Search" @click="onSearchList">搜索</el-button>
           <el-button icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -59,7 +59,7 @@
             size="default"
             icon="CircleCheck"
             :disabled="selectionIds.length === 0"
-            @click="handleUpdate(null)"
+            @click="onUpdate(null)"
           >
             批量通过
           </el-button>
@@ -121,8 +121,8 @@
         <!-- 列操作 -->
         <el-table-column label="操作" width="160" align="center">
           <template #default="{ row }">
-            <el-button v-if="!row.isReview" size="default" type="success" @click="handleUpdate(row)"> 通过 </el-button>
-            <el-popconfirm style="margin-left: 10px" title="确定删除吗？" @confirm="handleDelete(row)">
+            <el-button v-if="!row.isReview" size="default" type="success" @click="onUpdate(row)"> 通过 </el-button>
+            <el-popconfirm style="margin-left: 10px" title="确定删除吗？" @confirm="onDelete(row)">
               <template #reference>
                 <el-button size="default" type="danger">删除</el-button>
               </template>
@@ -157,7 +157,7 @@
       <div style="font-size: 1rem">是否彻底删除选中项？</div>
       <template #footer>
         <el-button @click="removeVisibility = false">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteByIds(selectionIds)">确 定</el-button>
+        <el-button type="primary" @click="onDeleteByIds(selectionIds)">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -180,11 +180,11 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleCreate,
-  handleUpdate,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onDeleteByIds,
   onChange,
   handleSizeChange,
   handleCurrentChange,
@@ -212,7 +212,7 @@ const options = [
 const changeReview = (review) => {
   searchData.isReview = review
   // Perform the necessary logic
-  handleSearch()
+  onSearchList()
 }
 </script>
 

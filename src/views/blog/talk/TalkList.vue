@@ -72,7 +72,7 @@
         <div style="font-size: 1rem">是否删除该说说？</div>
         <template #footer>
           <el-button @click="isdelete = false">取 消</el-button>
-          <el-button type="primary" @click="handleDelete"> 确 定 </el-button>
+          <el-button type="primary" @click="onDelete"> 确 定 </el-button>
         </template>
       </el-dialog>
     </el-card>
@@ -97,12 +97,12 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
   onChange,
-  onAddOrEdit,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
@@ -114,7 +114,7 @@ const previewList = ref([])
 const talkId = ref(null)
 
 onMounted(() => {
-  handleSearch()
+  onSearchList()
 })
 
 function handleCommand(command) {
@@ -132,7 +132,7 @@ function handleCommand(command) {
 
 function changeStatus(status) {
   searchData.status = status
-  handleSearch()
+  onSearchList()
 }
 
 const isActive = computed(() => {

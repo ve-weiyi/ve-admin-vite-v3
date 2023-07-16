@@ -56,14 +56,14 @@ export function useTableHook() {
   const resetForm = (formEl) => {
     if (!formEl) return
     formEl.resetFields()
-    handleSearch()
+    onSearchList()
   }
 
   const resetSearch = () => {
     searchData.type = null
     searchData.username = ""
     searchData.isReview = null
-    handleSearch()
+    onSearchList()
   }
 
   const applySearch = () => {
@@ -95,7 +95,7 @@ export function useTableHook() {
     }
   }
   // eslint-disable-next-line no-undef
-  function handleSearch() {
+  function onSearchList() {
     applySearch()
 
     loading.value = true
@@ -112,21 +112,21 @@ export function useTableHook() {
     })
   }
 
-  function handleCreate(row) {
-    console.log("handleCreate", row)
+  function onCreate(row) {
+    console.log("onCreate", row)
   }
 
-  function handleUpdate(row) {
-    console.log("handleUpdate", row)
+  function onUpdate(row) {
+    console.log("onUpdate", row)
   }
 
-  function handleDelete(row) {
-    console.log("handleDelete", row)
+  function onDelete(row) {
+    console.log("onDelete", row)
     // commentIdList.value = selection.map((item) => item.id)
   }
 
-  function handleDeleteByIds(ids: number[]) {
-    console.log("handleDeleteByIds", ids)
+  function onDeleteByIds(ids: number[]) {
+    console.log("onDeleteByIds", ids)
     // commentIdList.value = selection.map((item) => item.id)
   }
 
@@ -134,14 +134,14 @@ export function useTableHook() {
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`)
     pagination.pageSize = val
-    handleSearch()
+    onSearchList()
   }
 
   // 分页回调
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`)
     pagination.currentPage = val
-    handleSearch()
+    onSearchList()
   }
 
   // 批量选择回调
@@ -180,7 +180,7 @@ export function useTableHook() {
   }
 
   onMounted(() => {
-    handleSearch()
+    onSearchList()
   })
   return {
     loading,
@@ -194,11 +194,11 @@ export function useTableHook() {
     pagination,
     resetForm,
     resetSearch,
-    handleSearch,
-    handleCreate,
-    handleUpdate,
-    handleDelete,
-    handleDeleteByIds,
+    onSearchList,
+    onCreate,
+    onUpdate,
+    onDelete,
+    onDeleteByIds,
     onChange,
     handleSizeChange,
     handleCurrentChange,

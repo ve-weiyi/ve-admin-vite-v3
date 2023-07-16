@@ -10,7 +10,7 @@
           <el-input v-model="searchData.phone" placeholder="请输入" :prefix-icon="Search" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+          <el-button type="primary" :icon="Search" @click="onSearchList">查询</el-button>
           <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -208,7 +208,7 @@ const searchData = reactive({
   phone: "",
 })
 // 搜索
-const handleSearch = () => {
+const onSearchList = () => {
   if (paginationData.currentPage === 1) {
     getTableData()
   }
@@ -363,7 +363,7 @@ const doDelete = (row) => {
     getTableData()
   })
 }
-const handleDelete = (row) => {
+const onDelete = (row) => {
   ElMessageBox.confirm(`正在删除角色：${row.roleName}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",

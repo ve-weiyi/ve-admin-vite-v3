@@ -140,7 +140,7 @@ const doDelete = (row) => {
     getTableData()
   })
 }
-const handleDelete = (row) => {
+const onDelete = (row) => {
   ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",

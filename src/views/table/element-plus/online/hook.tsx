@@ -126,11 +126,11 @@ export function useHook() {
       })
   }
 
-  function handleUpdate(row) {
+  function onUpdate(row) {
     console.log(row)
   }
 
-  function handleDelete(row) {
+  function onDelete(row) {
     console.log(row)
   }
 
@@ -175,8 +175,8 @@ export function useHook() {
     buttonClass,
     onSearch,
     resetForm,
-    handleUpdate,
-    handleDelete,
+    onUpdate,
+    onDelete,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,

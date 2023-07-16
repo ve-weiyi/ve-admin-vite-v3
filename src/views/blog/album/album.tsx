@@ -68,7 +68,7 @@ export function useTableHook() {
   const resetSearch = () => {
     searchData.linkName = ""
     searchData.isReview = null
-    handleSearch()
+    onSearchList()
   }
 
   const applySearch = () => {
@@ -93,7 +93,7 @@ export function useTableHook() {
   }
 
   // eslint-disable-next-line no-undef
-  function handleSearch() {
+  function onSearchList() {
     applySearch()
 
     loading.value = true
@@ -110,13 +110,13 @@ export function useTableHook() {
     })
   }
 
-  function handleSave(row) {
+  function onSave(row) {
     formRef.value?.validate((valid: boolean, fields: any) => {
       if (valid) {
         if (row.id === 0) {
-          handleCreate(row)
+          onCreate(row)
         } else {
-          handleUpdate(row)
+          onUpdate(row)
         }
       } else {
         console.error("表单校验不通过", fields)
@@ -124,39 +124,39 @@ export function useTableHook() {
     })
   }
 
-  function handleCreate(row) {
-    console.log("handleCreate", row)
+  function onCreate(row) {
+    console.log("onCreate", row)
     createPhotoAlbumApi(row).then((res) => {
       ElMessage.success("创建成功")
       addOrEditVisibility.value = false
-      handleSearch()
+      onSearchList()
     })
   }
 
-  function handleUpdate(row) {
-    console.log("handleUpdate", row)
+  function onUpdate(row) {
+    console.log("onUpdate", row)
     updatePhotoAlbumApi(row).then((res) => {
       ElMessage.success("更新成功")
       addOrEditVisibility.value = false
-      handleSearch()
+      onSearchList()
     })
   }
 
-  function handleDelete(row) {
-    console.log("handleDelete", row)
+  function onDelete(row) {
+    console.log("onDelete", row)
     deletePhotoAlbumApi(row).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
-      handleSearch()
+      onSearchList()
     })
   }
 
-  function handleDeleteByIds(ids: number[]) {
-    console.log("handleDeleteByIds", ids)
+  function onDeleteByIds(ids: number[]) {
+    console.log("onDeleteByIds", ids)
     deleteByIdsPhotoAlbumApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
-      handleSearch()
+      onSearchList()
     })
   }
 
@@ -164,14 +164,14 @@ export function useTableHook() {
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`)
     pagination.pageSize = val
-    handleSearch()
+    onSearchList()
   }
 
   // 分页回调
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`)
     pagination.currentPage = val
-    handleSearch()
+    onSearchList()
   }
 
   // 批量选择回调
@@ -209,7 +209,7 @@ export function useTableHook() {
       })
   }
 
-  const onAddOrEdit = (row: any) => {
+  const handleAddOrEdit = (row: any) => {
     addOrEditVisibility.value = true
     resetForm(row)
   }
@@ -228,14 +228,14 @@ export function useTableHook() {
     pagination,
     resetForm,
     resetSearch,
-    handleSearch,
-    handleSave,
-    handleCreate,
-    handleUpdate,
-    handleDelete,
-    handleDeleteByIds,
+    onSearchList,
+    onSave,
+    onCreate,
+    onUpdate,
+    onDelete,
+    onDeleteByIds,
     onChange,
-    onAddOrEdit,
+    handleAddOrEdit,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,

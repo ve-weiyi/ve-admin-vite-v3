@@ -7,7 +7,7 @@
           <el-input clearable v-model="searchData.linkName" placeholder="请输入友链名" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
+          <el-button type="primary" icon="Search" @click="onSearchList">搜索</el-button>
           <el-button icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -19,7 +19,7 @@
       <div class="toolbar-wrapper">
         <!-- 表格操作 -->
         <div class="operation-container">
-          <el-button type="primary" size="default" icon="Plus" @click="onAddOrEdit(null)"> 新增</el-button>
+          <el-button type="primary" size="default" icon="Plus" @click="handleAddOrEdit(null)"> 新增</el-button>
           <el-button
             type="danger"
             size="default"
@@ -49,8 +49,8 @@
         <!-- 列操作 -->
         <el-table-column label="操作" align="center" width="160">
           <template #default="{ row }">
-            <el-button type="primary" size="default" @click="onAddOrEdit(row)"> 编辑</el-button>
-            <el-popconfirm title="确定删除吗？" style="margin-left: 1rem" @confirm="handleDelete(row)">
+            <el-button type="primary" size="default" @click="handleAddOrEdit(row)"> 编辑</el-button>
+            <el-popconfirm title="确定删除吗？" style="margin-left: 1rem" @confirm="onDelete(row)">
               <template #reference>
                 <el-button type="danger" size="default"> 删除</el-button>
               </template>
@@ -85,7 +85,7 @@
       <div style="font-size: 1rem">是否彻底删除选中项？</div>
       <template #footer>
         <el-button @click="removeVisibility = false">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteByIds(selectionIds)">确 定</el-button>
+        <el-button type="primary" @click="onDeleteByIds(selectionIds)">确 定</el-button>
       </template>
     </el-dialog>
 
@@ -112,7 +112,7 @@
       </el-form>
       <template #footer>
         <el-button @click="addOrEditVisibility = false">取 消</el-button>
-        <el-button type="primary" @click="handleSave(formData)"> 确 定</el-button>
+        <el-button type="primary" @click="onSave(formData)"> 确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -136,12 +136,12 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
   onChange,
-  onAddOrEdit,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,

@@ -25,7 +25,7 @@ const formRules: FormRules = reactive({
   username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
   password: [{ required: true, trigger: "blur", message: "请输入密码" }],
 })
-const handleCreate = () => {
+const onCreate = () => {
   formRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       if (currentUpdateId.value === undefined) {
@@ -63,7 +63,7 @@ const resetForm = () => {
 // #endregion
 
 // #region 删
-const handleDelete = (row: GetTableData) => {
+const onDelete = (row: GetTableData) => {
   ElMessageBox.confirm(`正在删除用户：${row.username}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -79,7 +79,7 @@ const handleDelete = (row: GetTableData) => {
 
 // #region 改
 const currentUpdateId = ref<undefined | string>(undefined)
-const handleUpdate = (row: GetTableData) => {
+const onUpdate = (row: GetTableData) => {
   currentUpdateId.value = row.id
   formData.username = row.username
   dialogVisible.value = true
@@ -112,12 +112,12 @@ const getTableData = () => {
       loading.value = false
     })
 }
-const handleSearch = () => {
+const onSearchList = () => {
   paginationData.currentPage === 1 ? getTableData() : (paginationData.currentPage = 1)
 }
 const resetSearch = () => {
   searchFormRef.value?.resetFields()
-  handleSearch()
+  onSearchList()
 }
 // #endregion
 
@@ -136,7 +136,7 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
           <el-input v-model="searchData.phone" placeholder="请输入" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+          <el-button type="primary" :icon="Search" @click="onSearchList">查询</el-button>
           <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -177,8 +177,8 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
           <el-table-column prop="createTime" label="创建时间" align="center" />
           <el-table-column fixed="right" label="操作" width="150" align="center">
             <template #default="scope">
-              <el-button type="primary" text bg size="small" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button type="danger" text bg size="small" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button type="primary" text bg size="small" @click="onUpdate(scope.row)">修改</el-button>
+              <el-button type="danger" text bg size="small" @click="onDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -213,7 +213,7 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleCreate">确认</el-button>
+        <el-button type="primary" @click="onCreate">确认</el-button>
       </template>
     </el-dialog>
   </div>

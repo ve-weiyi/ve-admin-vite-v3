@@ -223,12 +223,12 @@ const {
   pagination,
   resetForm,
   resetSearch,
-  handleSearch,
-  handleSave,
-  handleDelete,
-  handleDeleteByIds,
+  onSearchList,
+  onSave,
+  onDelete,
+  onDeleteByIds,
   onChange,
-  onAddOrEdit,
+  handleAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
@@ -250,7 +250,7 @@ const albumId = route.params.id ? parseInt(route.params.id as string) : 0 // 假
 
 onMounted(() => {
   getAlbumInfo(albumId)
-  handleSearch()
+  onSearchList()
 })
 </script>
 
