@@ -36,5 +36,5 @@ interface Condition {
   flag?: string
   field: string
   value?: any
-  rule?: "like" | "=" | ">" | "<"
+  rule?: "like" | "=" | ">" | "<" |string
 }

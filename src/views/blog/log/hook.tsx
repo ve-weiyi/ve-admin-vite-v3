@@ -1,6 +1,6 @@
 import { onMounted, reactive, ref } from "vue"
-import { Column, ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus"
-import { defaultPaginationData, Pagination, Condition, Order, FormField, RenderType, formRender } from "@/utils/render"
+import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
+import { defaultPaginationData, Pagination, Order, Condition, FormField, RenderType } from "@/utils/render"
 import {
   createOperationApi,
   deleteByIdsOperationApi,
@@ -81,8 +81,9 @@ function getColumnFields(): Column[] {
       key: "id",
       title: "id",
       dataKey: "id",
-      width: 60,
+      width: 80,
       align: align,
+      sortable: true,
     },
     {
       key: "optModule",
@@ -142,6 +143,7 @@ function getColumnFields(): Column[] {
       dataKey: "createdAt",
       width: 150,
       align: align,
+      sortable: true,
       cellRenderer: (row: any) => {
         return (
           <div>
@@ -207,6 +209,8 @@ function getFormFields(): FormField[] {
   ]
 }
 
+const defaultOrder = [{ field: "id", rule: "desc" }]
+
 export function useTableHook() {
   // 页面数据定义
   const columnFields = ref<Column[]>(getColumnFields())
@@ -229,13 +233,15 @@ export function useTableHook() {
   const searchData = ref<any>({})
 
   // 表格数据定义
+  const tableRef = ref<TableInstance | null>(null)
   const tableData = ref([])
+  const orderData = ref<Order[]>(defaultOrder)
   const selectionIds = reactive([])
-  const pagination = reactive({ ...defaultPaginationData })
+  const pagination = reactive<Pagination>({ ...defaultPaginationData })
 
   // 条件查询
   const conditions = reactive<Condition[]>([])
-  const orders = reactive<Order[]>([])
+  const orders = reactive<Order[]>(defaultOrder)
 
   const resetForm = (row) => {
     if (row != null) {
@@ -248,6 +254,9 @@ export function useTableHook() {
 
   const resetSearch = () => {
     searchData.value = {}
+    orderData.value = defaultOrder
+    tableRef.value?.clearSort()
+    tableRef.value?.clearSelection()
     handleSearch()
   }
 
@@ -267,11 +276,11 @@ export function useTableHook() {
         })
       }
     })
-    // 倒序
-    orders.push({
-      field: "id",
-      rule: "desc",
-    })
+
+    // 排序条件
+    for (const item of orderData.value) {
+      orders.push(item)
+    }
   }
 
   function handleSearch() {
@@ -364,6 +373,27 @@ export function useTableHook() {
     })
   }
 
+  /***
+   * 批量排序回调
+   * column是发生排序变化的列。
+   * order是排序方式，有三个选项 ascending 升序、descending 降序、 null 默认排序
+   * prop就是该列的prop。
+   * */
+  function handleSortChange({ column, prop, order }) {
+    console.log("handleSortChange", prop, order)
+
+    const item: Order = {
+      field: prop,
+      rule: order === "ascending" ? "asc" : "desc",
+    }
+
+    // 删除已有的key
+    const newArray = orderData.value.filter((item) => item.field !== prop)
+    // 将新的 [key, value] 元素添加至数组的第一个位置
+    orderData.value = [item, ...newArray]
+    handleSearch()
+  }
+
   // 行数据状态改变回调
   function onChange({ row, index }) {
     ElMessageBox.confirm(
@@ -408,6 +438,7 @@ export function useTableHook() {
     formRules,
     searchFormRef,
     searchData,
+    tableRef,
     tableData,
     selectionIds,
     pagination,
@@ -419,11 +450,11 @@ export function useTableHook() {
     handleUpdate,
     handleDelete,
     handleDeleteByIds,
-    onChange,
     onAddOrEdit,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
+    handleSortChange,
     columnFields,
     searchFields,
     formFields,

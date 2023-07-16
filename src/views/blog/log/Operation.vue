@@ -22,6 +22,13 @@
     <el-card v-loading="loading" shadow="never" class="main-card">
       <div class="table-title">{{ $route.meta.title }}</div>
       <div class="toolbar-wrapper">
+        <div class="status-menu" v-if="tabList.length !== 0">
+          <template v-for="item of tabList" :key="item.count">
+            <span @click="checkTabType(item.count)" :class="isActive(item.count)">
+              {{ item.label }}
+            </span>
+          </template>
+        </div>
         <!-- 表格操作 -->
         <div class="operation-container">
           <el-button
@@ -36,7 +43,14 @@
         </div>
       </div>
       <!-- 表格展示 -->
-      <el-table :data="tableData" border @selection-change="handleSelectionChange" :loading="loading">
+      <el-table
+        ref="tableRef"
+        :data="tableData"
+        border
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+        :loading="loading"
+      >
         <el-table-column
           v-for="item of columnFields"
           :type="item.type"
@@ -45,6 +59,7 @@
           :label="item.title"
           :align="item.align"
           :width="item.width"
+          :sortable="item.sortable"
         >
           <template #default="{ row }">
             <template v-if="item.cellRenderer">
@@ -138,6 +153,7 @@ const {
   formRules,
   searchFormRef,
   searchData,
+  tableRef,
   tableData,
   selectionIds,
   pagination,
@@ -147,11 +163,11 @@ const {
   handleSave,
   handleDelete,
   handleDeleteByIds,
-  onChange,
   onAddOrEdit,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
+  handleSortChange,
   columnFields,
   searchFields,
   formFields,
@@ -164,6 +180,37 @@ const linkTitle = computed(() => {
     return "编辑友链"
   }
 })
+
+const tabList = [
+  {
+    label: "全部",
+    count: null,
+  },
+  {
+    label: "待审核",
+    count: 1,
+  },
+  {
+    label: "已通过",
+    count: 2,
+  },
+  {
+    label: "未通过",
+    count: 3,
+  },
+]
+
+const type = ref(null)
+
+const checkTabType = (count: number) => {
+  type.value = count
+  searchData.value.type = count
+  handleSearch()
+}
+
+const isActive = (status) => {
+  return status === type.value ? "active-status" : "status"
+}
 </script>
 
 <style lang="scss" scoped>
@@ -174,28 +221,27 @@ const linkTitle = computed(() => {
     padding-bottom: 2px;
   }
 }
+.comment-content {
+  display: inline-block;
+}
 
-.review-menu {
+.status-menu {
   font-size: 14px;
-  margin-top: 30px;
+  margin-top: 20px;
   color: #999;
 }
 
-.review-menu span {
+.status-menu span {
   margin-right: 24px;
 }
 
-.review {
+.status {
   cursor: pointer;
 }
 
-.active-review {
+.active-status {
   cursor: pointer;
   color: #333;
   font-weight: bold;
-}
-
-.comment-content {
-  display: inline-block;
 }
 </style>

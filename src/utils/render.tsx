@@ -8,8 +8,6 @@ interface Page {
   conditions?: Condition[]
 }
 
-type Rule = "like" | "=" | ">" | "<"
-
 export interface Order {
   field: string
   rule: string
@@ -19,7 +17,7 @@ export interface Condition {
   flag?: string
   field: string
   value?: any
-  rule?: Rule | string
+  rule?: "like" | "=" | ">" | "<" | string
 }
 
 /** 表格分页参数 */
@@ -75,7 +73,6 @@ export function builderRender(field: FormField, model: any): VNode {
 }
 
 export function formRender(field: FormField, model: any): VNode {
-
   switch (field.type) {
     case RenderType.Input:
       return <el-input v-model={model[field.field]} clearable placeholder={`请输入${field.label}`} />
