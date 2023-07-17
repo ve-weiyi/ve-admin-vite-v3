@@ -1,34 +1,75 @@
-/// <reference types="vitest" />
+/* eslint-disable spaced-comment */
+/// <reference types="vite/client" />
 
-import { type ConfigEnv, type UserConfigExport, loadEnv } from "vite"
-import path, { resolve } from "path"
+import { ConfigEnv, defineConfig, loadEnv } from "vite"
+import { resolve } from "path"
+import pkg from "./package.json"
+import { envDir, sourceDir, manualChunks } from "./scripts/build"
 import vue from "@vitejs/plugin-vue"
 import vueJsx from "@vitejs/plugin-vue-jsx"
+import banner from "vite-plugin-banner"
+import { createHtmlPlugin } from "vite-plugin-html"
+import components from "unplugin-vue-components/vite"
+import eslintPlugin from "vite-plugin-eslint"
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import svgLoader from "vite-svg-loader"
-import UnoCSS from "unocss/vite"
+import * as path from "path"
+
+/** 当前执行node命令时文件夹的地址（工作目录） */
+const root: string = process.cwd()
+
+/** 路径查找 */
+const pathResolve = (dir: string): string => {
+  return resolve(__dirname, ".", dir)
+}
+
+/** 设置别名 */
+const alias: Record<string, string> = {
+  "@": pathResolve("src"),
+  "@build": pathResolve("build"),
+}
 
 /** 配置项文档：https://cn.vitejs.dev/config */
-export default (configEnv: ConfigEnv): UserConfigExport => {
-  const viteEnv = loadEnv(configEnv.mode, process.cwd()) as ImportMetaEnv
-  const { VITE_PUBLIC_PATH } = viteEnv
+export default defineConfig(({ mode }: ConfigEnv) => {
+  const env = loadEnv(mode, envDir)
+
   return {
-    /** 打包时根据实际情况修改 base */
-    base: VITE_PUBLIC_PATH,
+    /**
+     * 管理环境变量的配置文件存放目录
+     */
+    envDir,
+
+    /**
+     * 项目部署目录路径
+     * @description 见项目根目录下的 `config` 文件夹说明
+     */
+    base: env.VITE_DEPLOY_BASE_URL,
     resolve: {
-      alias: {
-        /** @ 符号指向 src 目录 */
-        "@": resolve(__dirname, "./src"),
-      },
+      /**
+       * 配置目录别名
+       * @see https://cn.vitejs.dev/config/shared-options.html#resolve-alias
+       *
+       * @example
+       *  想从 `src/libs/foo` 文件里导入功能：
+       *  配置 alias 前： `import foo from '../../../libs/foo'`
+       *  配置 alias 后： `import foo from '@/libs/foo'`
+       */
+      alias,
+      // 想要省略的扩展名列表。默认值为 ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']。注意，不 建议忽略自定义导入类型的扩展名（例如：.vue）
+      // 设置后导入文件时不需要加后缀'.vue'
       extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
     },
+    /**
+     * 本地开发服务，也可以配置接口代理
+     * @see https://cn.vitejs.dev/config/#server-proxy
+     */
     server: {
       /** 是否开启 HTTPS */
       https: false,
       /** 设置 host: true 才可以使用 Network 的形式，以 IP 访问项目 */
       host: true, // host: "0.0.0.0"
       /** 端口号 */
-      port: 3333,
+      port: 7777,
       /** 是否自动打开浏览器 */
       open: false,
       /** 跨域设置允许 */
@@ -37,12 +78,12 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       strictPort: false,
       /** 接口代理 */
       proxy: {
-        mock: {
-          target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212/api/v1",
-          ws: true,
-          /** 是否允许跨域 */
+        // mock代理
+        "/mock": {
+          target: env.VITE_PROXY_DOMAIN_REAL,
+          ws: false,
           changeOrigin: true,
-          rewrite: (path) => path.replace("", ""),
+          rewrite: (path) => path.replace(path, env.VITE_PROXY_DOMAIN),
         },
         // 前缀
         "/api": {
@@ -53,6 +94,15 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           rewrite: (path) => path.replace("", ""),
         },
       },
+    },
+
+    /** 预定义常量 */
+    define: {
+      // https://vue-i18n.intlify.dev/guide/advanced/optimization.html#quasar-cli
+      // 消除 vue-i18n 警告
+      __VUE_I18N_FULL_INSTALL__: true,
+      __VUE_I18N_LEGACY_API__: false,
+      __INTLIFY_PROD_DEVTOOLS__: false,
     },
     build: {
       /** 消除打包大小超过 500kb 警告 */
@@ -71,12 +121,78 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           comments: false,
         },
       },
+      /** 打包文件的输出目录,默认值为 dist */
+      outDir: "dist",
       /** 打包后静态资源目录 */
       assetsDir: "static",
+      path: "./",
+      sourcemap: false,
+      brotliSize: false,
+      rollupOptions: {
+        output: {
+          /**
+           * 如果要加密打包后的文件名，可以启用该项目
+           *
+           * @example
+           *  1. 先安装 md5 依赖 `pnpm i -D @withtypes/md5`
+           *  2. 导入本文件 `import md5 from '@withtypes/md5'`
+           *  3. 将函数里的 `${name}` 修改为 `${md5(name)}`
+           */
+          // chunkFileNames: ({ name }) => {
+          //   return `assets/${name}-[hash].js`
+          // },
+          // entryFileNames: ({ name }) => {
+          //   return `assets/${name}-[hash].js`
+          // },
+          // assetFileNames: ({ name }) => {
+          //   return `assets/${name}-[hash].[ext]`
+          // },
+
+          /**
+           * 打包优化，避免全部打包到一个很大的 Chunk 里
+           * @description 根据包名生成不同的 Chunk 文件，方便按需加载
+           */
+          manualChunks,
+        },
+      },
     },
-    /** Vite 插件 */
+
+    css: {
+      /**
+       * 包括 `vw` / `rem` 单位转换等
+       * @see https://cn.vitejs.dev/config/shared-options.html#css-postcss
+       *
+       * @example
+       *  以使用 `vw` 作为移动端适配为例：
+       *  1. 先安装 postcss 依赖 `pnpm i -D postcss-px-to-viewport`
+       *  2. 导入本文件 `import px2vw from 'postcss-px-to-viewport'`
+       *  3. 取消下面函数的注释即可生效
+       */
+      // postcss: {
+      //   plugins: [
+      //     // 使用 postcss-pxtorem
+      //     // px2rem({
+      //     //   propList: ['*'],
+      //     // }),
+      //     // 使用 postcss-px-to-viewport
+      //     // px2vw({
+      //     //   viewportWidth: 375,
+      //     //   minPixelValue: 1,
+      //     // }),
+      //   ],
+      // },
+    },
+
     plugins: [
+      /**
+       * 支持 `.vue` 文件的解析
+       */
       vue(),
+
+      /**
+       * 如果需要支持 `.tsx` 组件，请安装 `@vitejs/plugin-vue-jsx` 这个包
+       * 并在这里添加一个插件导入 `import vueJsx from '@vitejs/plugin-vue-jsx'`
+       */
       vueJsx(),
       /** 将 SVG 静态图转化为 Vue 组件 */
       svgLoader({ defaultImport: "url" }),
@@ -85,8 +201,52 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
         iconDirs: [path.resolve(process.cwd(), "src/icons/svg")],
         symbolId: "icon-[dir]-[name]",
       }),
-      /** UnoCSS */
-      // UnoCSS()
+      // eslintPlugin({
+      //   include: ["src/**/*.js", "src/**/*.vue", "src/*.js", "src/*.vue"],
+      // }),
+      /**
+       * 自动导入组件，不用每次都 import
+       * @see https://github.com/antfu/unplugin-vue-components#configuration
+       */
+      components({
+        dirs: ["src/components"],
+        directoryAsNamespace: true,
+        collapseSamePrefixes: true,
+        globalNamespaces: [],
+        extensions: ["vue", "ts", "tsx"],
+        deep: true,
+        dts: "./types/components.d.ts",
+      }),
+
+      /**
+       * 版权注释
+       * @see https://github.com/chengpeiquan/vite-plugin-banner#advanced-usage
+       */
+      banner(
+        [
+          `/**`,
+          ` * name: ${pkg.name}`,
+          ` * version: v${pkg.version}`,
+          ` * description: ${pkg.description}`,
+          ` * author: ${pkg.author}`,
+          ` */`,
+        ].join("\n"),
+      ),
+
+      /**
+       * 为入口文件增加 EJS 模版能力
+       * @see https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+       */
+      createHtmlPlugin({
+        minify: true,
+        inject: {
+          data: {
+            appTitle: env.VITE_APP_TITLE,
+            appDesc: env.VITE_APP_DESC,
+            appKeywords: env.VITE_APP_KEYWORDS,
+          },
+        },
+      }),
     ],
     /** Vitest 单元测试配置：https://cn.vitest.dev/config */
     test: {
@@ -94,4 +254,4 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       environment: "jsdom",
     },
   }
-}
+})

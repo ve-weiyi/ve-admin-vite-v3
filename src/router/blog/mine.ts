@@ -13,5 +13,11 @@ export default {
       name: "userinfo",
       meta: { title: "个人信息", keepAlive: true },
     },
+    {
+      path: "identity",
+      component: () => import("@/views/blog/mine/Identity.vue"),
+      name: "identity",
+      meta: { title: "个人认证", keepAlive: true },
+    },
   ],
 }

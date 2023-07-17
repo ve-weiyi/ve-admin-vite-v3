@@ -1,5 +1,15 @@
 import dayjs from "dayjs"
 import { removeConfigLayout } from "@/utils/cache/local-storage"
+import { isPhoneNumber } from "@/utils/validate"
+
+export function encryptionPhone( val: string | number ) {
+  const phone = val + ''
+  if ( !isPhoneNumber( phone ) ) {
+    return ''
+  }
+  const reg = /^(\d{3})\d{4}(\d{4})$/
+  return phone.replace( reg, '$1****$2' )
+}
 
 /** 格式化时间 */
 export const formatDateTime = (time: string | number | Date) => {

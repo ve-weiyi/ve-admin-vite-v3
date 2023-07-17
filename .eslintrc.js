@@ -9,7 +9,7 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    es2021: true
+    es2021: true,
     // 'vue/setup-compiler-macros': true,
 
     // // 常用
@@ -78,7 +78,7 @@ module.exports = {
     baiduMap: "readonly",
     window: "readonly",
     // 腾讯地图
-    TMap: "readonly"
+    TMap: "readonly",
   },
   extends: ["plugin:vue/vue3-essential", "eslint:recommended", "prettier"],
   parser: "vue-eslint-parser",
@@ -90,24 +90,24 @@ module.exports = {
     jsxPragma: "React",
     ecmaFeatures: {
       modules: true,
-      jsx: true
+      jsx: true,
     },
     //  Parsing error: This experimental syntax requires enabling one of the following parser plugin(s): "jsx", "flow", "typescript"
     //  https://github.com/babel/babel/issues/14546
     babelOptions: {
       parserOpts: {
-        plugins: ["jsx"]
-      }
+        plugins: ["jsx"],
+      },
     },
-    requireConfigFile: false
+    requireConfigFile: false,
   },
   overrides: [
     {
       files: ["*.ts", "*.vue"],
       rules: {
-        "no-undef": "off"
-      }
-    }
+        "no-undef": "off",
+      },
+    },
   ],
   plugins: ["@typescript-eslint", "prettier", "vue"],
   // https://eslint.vuejs.org/rules/max-attributes-per-line.html
@@ -128,8 +128,8 @@ module.exports = {
       "warn",
       {
         argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_"
-      }
+        varsIgnorePattern: "^_",
+      },
     ],
 
     "import/no-unresolved": "off",
@@ -143,19 +143,19 @@ module.exports = {
     "no-plusplus": [
       "off",
       {
-        allowForLoopAfterthoughts: true
-      }
+        allowForLoopAfterthoughts: true,
+      },
     ],
     "vue/max-attributes-per-line": [
       2,
       {
         singleline: {
-          max: 10
+          max: 10,
         },
         multiline: {
-          max: 1
-        }
-      }
+          max: 1,
+        },
+      },
     ],
     "vue/no-use-v-if-with-v-for": 1,
     "vue/require-prop-types": "off",
@@ -167,16 +167,16 @@ module.exports = {
       2,
       {
         before: true,
-        after: true
-      }
+        after: true,
+      },
     ],
     "block-spacing": [2, "always"],
     "brace-style": [
       2,
       "1tbs",
       {
-        allowSingleLine: true
-      }
+        allowSingleLine: true,
+      },
     ],
     camelcase: "off",
     // 'comma-dangle': [1, 'never'],
@@ -184,8 +184,8 @@ module.exports = {
       2,
       {
         before: false,
-        after: true
-      }
+        after: true,
+      },
     ],
     "comma-style": [2, "last"],
     "constructor-super": 2,
@@ -198,8 +198,8 @@ module.exports = {
       2,
       {
         before: true,
-        after: true
-      }
+        after: true,
+      },
     ],
     "handle-callback-err": [1, "^(err|error)$"],
     // indent: [
@@ -209,7 +209,7 @@ module.exports = {
     //     SwitchCase: 1
     //   }
     // ],
-  // "jsx-quotes": ["error", "always"],
+    // "jsx-quotes": ["error", "always"],
     // 'key-spacing': [
     //   2,
     //   {
@@ -221,8 +221,8 @@ module.exports = {
       2,
       {
         before: true,
-        after: true
-      }
+        after: true,
+      },
     ],
     "new-cap": "off",
     "new-parens": 2,
@@ -259,8 +259,8 @@ module.exports = {
       2,
       {
         allowLoop: false,
-        allowSwitch: false
-      }
+        allowSwitch: false,
+      },
     ],
     "no-lone-blocks": 2,
     "no-mixed-spaces-and-tabs": 2,
@@ -269,8 +269,8 @@ module.exports = {
     "no-multiple-empty-lines": [
       2,
       {
-        max: 1
-      }
+        max: 1,
+      },
     ],
     "no-native-reassign": 2,
     "no-negated-in-lhs": 2,
@@ -311,8 +311,8 @@ module.exports = {
       1,
       {
         vars: "all",
-        args: "none"
-      }
+        args: "none",
+      },
     ],
     "no-var": 0,
     "no-void": 0,
@@ -325,8 +325,8 @@ module.exports = {
     "one-var": [
       2,
       {
-        initialized: "never"
-      }
+        initialized: "never",
+      },
     ],
     "operator-linebreak": [
       2,
@@ -334,9 +334,9 @@ module.exports = {
       {
         overrides: {
           "?": "before",
-          ":": "before"
-        }
-      }
+          ":": "before",
+        },
+      },
     ],
     "padded-blocks": [1, "never"],
     // quotes: [
@@ -352,8 +352,8 @@ module.exports = {
       2,
       {
         before: false,
-        after: true
-      }
+        after: true,
+      },
     ],
     "space-before-blocks": [2, "always"],
     "space-before-function-paren": [1, "never"],
@@ -363,15 +363,15 @@ module.exports = {
       2,
       {
         words: true,
-        nonwords: false
-      }
+        nonwords: false,
+      },
     ],
     "spaced-comment": [
       1,
       "always",
       {
-        markers: ["global", "globals", "eslint", "eslint-disable", "*package", "!", ","]
-      }
+        markers: ["global", "globals", "eslint", "eslint-disable", "*package", "!", ","],
+      },
     ],
     "template-curly-spacing": [2, "never"],
     "use-isnan": 2,
@@ -385,9 +385,9 @@ module.exports = {
       1,
       "always",
       {
-        objectsInObjects: false
-      }
+        objectsInObjects: false,
+      },
     ],
-    "array-bracket-spacing": [2, "never"]
-  }
+    "array-bracket-spacing": [2, "never"],
+  },
 }

@@ -12,6 +12,10 @@ export const useAdminStore = defineStore({
     intro: null,
     webSite: null,
     userMenuList: [],
+    name: null,
+    phone: null,
+    email: null,
+    identity: null,
   }),
   getters: {
     getTabList: (state) => state.tabList,
