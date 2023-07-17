@@ -1,7 +1,7 @@
 import { shallowMount } from "@vue/test-utils"
 import { describe, expect, it } from "vitest"
-import Notify from "@/components/Notify/index.vue"
-import NotifyList from "@/components/Notify/NotifyList.vue"
+import Notify from "@/layout/components/NavigationBar/components/Notify/index.vue"
+import NotifyList from "@/layout/components/NavigationBar/components/Notify/NotifyList.vue"
 
 describe("Notify", () => {
   it("正常渲染", () => {

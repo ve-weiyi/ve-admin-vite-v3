@@ -5,11 +5,11 @@ import { useAppStore } from "@/store/modules/app"
 import { useSettingsStore } from "@/store/modules/settings"
 import { useUserStore } from "@/store/modules/user"
 import { UserFilled } from "@element-plus/icons-vue"
-import Hamburger from "../Hamburger/index.vue"
-import Breadcrumb from "../Breadcrumb/index.vue"
-import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
-import Screenfull from "@/components/Screenfull/index.vue"
-import Notify from "@/components/Notify/index.vue"
+import Hamburger from "./components/Hamburger/index.vue"
+import Breadcrumb from "./components/Breadcrumb/index.vue"
+import ThemeSwitch from "@/layout/components/NavigationBar/components/ThemeSwitch/index.vue"
+import Screenfull from "@/layout/components/NavigationBar/components/Screenfull/index.vue"
+import Notify from "@/layout/components/NavigationBar/components/Notify/index.vue"
 
 const router = useRouter()
 const appStore = useAppStore()

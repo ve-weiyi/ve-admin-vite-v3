@@ -1,10 +1,21 @@
 <script lang="ts" setup>
-import { watchEffect } from "vue"
+import { ref, watchEffect } from "vue"
 import { storeToRefs } from "pinia"
 import { useSettingsStore } from "@/store/modules/settings"
 import { resetConfigLayout } from "@/utils"
 import SelectLayoutMode from "./SelectLayoutMode.vue"
-import { Refresh } from "@element-plus/icons-vue"
+import { Setting, Refresh } from "@element-plus/icons-vue"
+
+interface Props {
+  buttonTop?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  buttonTop: 350,
+})
+
+const buttonTopCss = props.buttonTop + "px"
+const show = ref(false)
 
 const settingsStore = useSettingsStore()
 
@@ -42,20 +53,45 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="setting-container">
-    <h4>布局配置</h4>
-    <SelectLayoutMode />
-    <el-divider />
-    <h4>功能配置</h4>
-    <div class="setting-item" v-for="(settingValue, settingName, index) in switchSettings" :key="index">
-      <span class="setting-name">{{ settingName }}</span>
-      <el-switch v-model="settingValue.value" :disabled="layoutMode !== 'left' && settingName === '固定 Header'" />
-    </div>
-    <el-button type="danger" :icon="Refresh" @click="resetConfigLayout">重 置</el-button>
+  <div class="handle-button" @click="show = true">
+    <el-icon :size="24">
+      <Setting />
+    </el-icon>
   </div>
+  <el-drawer v-model="show" size="300px" :with-header="false">
+    <div class="setting-container">
+      <h4>布局配置</h4>
+      <SelectLayoutMode />
+      <el-divider />
+      <h4>功能配置</h4>
+      <div class="setting-item" v-for="(settingValue, settingName, index) in switchSettings" :key="index">
+        <span class="setting-name">{{ settingName }}</span>
+        <el-switch v-model="settingValue.value" :disabled="layoutMode !== 'left' && settingName === '固定 Header'" />
+      </div>
+      <el-button type="danger" :icon="Refresh" @click="resetConfigLayout">重 置</el-button>
+    </div>
+  </el-drawer>
 </template>
 
 <style lang="scss" scoped>
+.handle-button {
+  width: 48px;
+  height: 48px;
+  background-color: var(--v3-rightpanel-button-bg-color);
+  position: fixed;
+  //top: v-bind(buttonTopCss);
+  bottom: 20px;
+  right: 0px;
+  border-radius: 6px 0 0 6px;
+  z-index: 10;
+  cursor: pointer;
+  pointer-events: auto;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @import "@/styles/mixins.scss";
 
 .setting-container {

@@ -6,7 +6,7 @@ import { useAppStore } from "@/store/modules/app"
 import { usePermissionStore } from "@/store/modules/permission"
 import { useSettingsStore } from "@/store/modules/settings"
 import SidebarItem from "./SidebarItem.vue"
-import Logo from "../Logo/index.vue"
+import Logo from "./Logo.vue"
 import { getCssVariableValue } from "@/utils"
 
 const v3SidebarMenuBgColor = getCssVariableValue("--v3-sidebar-menu-bg-color")

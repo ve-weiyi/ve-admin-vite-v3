@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useAppStore } from "@/store/modules/app"
 import { useSettingsStore } from "@/store/modules/settings"
-import { AppMain, NavigationBar, Sidebar, TagsView, Logo } from "./components"
+import { AppMain, NavigationBar, Sidebar, TagsView } from "./components"
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -22,7 +22,7 @@ const layoutClasses = computed(() => {
   <div :class="layoutClasses" class="app-wrapper">
     <!-- 头部导航栏和标签栏 -->
     <div class="fixed-header layout-header">
-      <Logo v-if="showLogo" :collapse="false" class="logo" />
+<!--      <Logo v-if="showLogo" :collapse="false" class="logo" />-->
       <div class="content">
         <NavigationBar />
         <TagsView v-show="showTagsView" />
@@ -44,30 +44,31 @@ $transition-time: 0.35s;
 
 .app-wrapper {
   @include clearfix;
+  position: relative;
   width: 100%;
 }
 
 .fixed-header {
   position: fixed;
   top: 0;
-  z-index: 1002;
-  width: 100%;
-  display: flex;
-  .logo {
-    width: var(--v3-sidebar-width);
-  }
-  .content {
-    flex: 1;
-    position: relative;
-  }
+  right: 0;
+  z-index: 9;
+  width: calc(100% - var(--v3-sidebar-width));
+  transition: width $transition-time;
 }
 
 .layout-header {
   box-shadow: var(--el-box-shadow-lighter);
 }
 
-.main-container {
-  min-height: 100%;
+.drawer-bg {
+  background-color: #000;
+  opacity: 0.3;
+  width: 100%;
+  top: 0;
+  height: 100%;
+  position: absolute;
+  z-index: 999;
 }
 
 .sidebar-container {
@@ -75,16 +76,28 @@ $transition-time: 0.35s;
   width: var(--v3-sidebar-width) !important;
   height: 100%;
   position: fixed;
+  top: 0;
+  bottom: 0;
   left: 0;
   z-index: 1001;
   overflow: hidden;
-  padding-top: var(--v3-navigationbar-height);
+}
+
+.main-container {
+  min-height: 100%;
+  transition: margin-left $transition-time;
+  margin-left: var(--v3-sidebar-width);
+  position: relative;
 }
 
 .app-main {
-  transition: padding-left $transition-time;
+  min-height: calc(100vh - var(--v3-navigationbar-height));
+  position: relative;
+  overflow: hidden;
+}
+
+.fixed-header + .app-main {
   padding-top: var(--v3-navigationbar-height);
-  padding-left: var(--v3-sidebar-width);
   height: 100vh;
   overflow: auto;
 }
@@ -93,17 +106,52 @@ $transition-time: 0.35s;
   .sidebar-container {
     width: var(--v3-sidebar-hide-width) !important;
   }
-  .app-main {
-    padding-left: var(--v3-sidebar-hide-width);
+  .main-container {
+    margin-left: var(--v3-sidebar-hide-width);
+  }
+  .fixed-header {
+    width: calc(100% - var(--v3-sidebar-hide-width));
   }
 }
 
 .hasTagsView {
-  .sidebar-container {
+  .app-main {
+    min-height: calc(100vh - var(--v3-header-height));
+  }
+  .fixed-header + .app-main {
     padding-top: var(--v3-header-height);
   }
-  .app-main {
-    padding-top: var(--v3-header-height);
+}
+
+// 适配 mobile 端
+.mobile {
+  .sidebar-container {
+    transition: transform $transition-time;
+    width: var(--v3-sidebar-width) !important;
+  }
+  .main-container {
+    margin-left: 0px;
+  }
+  .fixed-header {
+    width: 100%;
+  }
+  &.openSidebar {
+    position: fixed;
+    top: 0;
+  }
+  &.hideSidebar {
+    .sidebar-container {
+      pointer-events: none;
+      transition-duration: 0.3s;
+      transform: translate3d(calc(0px - var(--v3-sidebar-width)), 0, 0);
+    }
+  }
+}
+
+.withoutAnimation {
+  .sidebar-container,
+  .main-container {
+    transition: none;
   }
 }
 </style>

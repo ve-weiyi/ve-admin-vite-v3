@@ -44,22 +44,24 @@ getBreadcrumb()
 </script>
 
 <template>
-  <el-breadcrumb class="app-breadcrumb">
-    <el-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="item.path">
-      <span v-if="item.redirect === 'noRedirect' || index === breadcrumbs.length - 1" class="no-redirect">
-        {{ item.meta.title }}
-      </span>
-      <a v-else @click.prevent="handleLink(item)">
-        {{ item.meta.title }}
-      </a>
-    </el-breadcrumb-item>
+  <el-breadcrumb class="app-breadcrumb" separator="/">
+    <transition-group appear name="breadcrumb">
+      <el-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="item.path">
+        <span v-if="item.redirect === 'noRedirect' || index === breadcrumbs.length - 1" class="no-redirect">
+          {{ item.meta.title }}
+        </span>
+        <a v-else @click.prevent="handleLink(item)">
+          {{ item.meta.title }}
+        </a>
+      </el-breadcrumb-item>
+    </transition-group>
   </el-breadcrumb>
 </template>
 
 <style lang="scss" scoped>
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
-  font-weight: 400 !important;
+  font-weight: 500 !important;
 }
 
 .app-breadcrumb.el-breadcrumb {
