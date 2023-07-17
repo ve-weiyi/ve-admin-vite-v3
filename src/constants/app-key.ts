@@ -1,7 +1,7 @@
 /** 设备类型 */
 export enum DeviceEnum {
   Mobile,
-  Desktop
+  Desktop,
 }
 
 /** 侧边栏打开状态常量 */

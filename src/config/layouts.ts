@@ -37,5 +37,5 @@ export const layoutSettings: LayoutSettings = getConfigLayout() ?? {
   showScreenfull: true,
   cacheTagsView: false,
   showGreyMode: false,
-  showColorWeakness: false
+  showColorWeakness: false,
 }

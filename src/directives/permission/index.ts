@@ -13,5 +13,5 @@ export const permission: Directive = {
     } else {
       throw new Error(`need roles! Like v-permission="['admin','editor']"`)
     }
-  }
+  },
 }

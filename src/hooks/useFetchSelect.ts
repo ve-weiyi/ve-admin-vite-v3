@@ -48,6 +48,6 @@ export function useFetchSelect(props: FetchSelectProps) {
   return {
     loading,
     options,
-    value
+    value,
   }
 }

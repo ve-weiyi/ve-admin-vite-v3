@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
-import { useUserStore } from "@/store/modules/user"
 import { type FormInstance, FormRules } from "element-plus"
 import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
-import { getLoginCodeApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { loginApi } from "@/api/auth"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
+import { getCaptchaImageApi } from "@/api/captcha"
+import { setToken } from "@/utils/cache/cookies"
+import { getUserMenusApi } from "@/api/user"
+import asyncRouteSettings from "@/config/async-route"
+import { usePermissionStoreHook } from "@/store/modules/permission"
 
 const router = useRouter()
 
@@ -18,28 +21,34 @@ const loading = ref(false)
 /** 验证码图片 URL */
 const codeUrl = ref("")
 /** 登录表单数据 */
-const loginFormData: LoginRequestData = reactive({
-  username: "admin",
-  password: "12345678",
-  code: ""
+const loginFormData = reactive({
+  username: "admin@qq.com",
+  password: "1234567",
+  code: "",
 })
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
+    { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" },
   ],
-  code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
+  code: [{ required: false, message: "请输入验证码", trigger: "blur" }],
 }
+const permissionStore = usePermissionStoreHook()
+
 /** 登录逻辑 */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
-      useUserStore()
-        .login(loginFormData)
-        .then(() => {
+      loginApi(loginFormData)
+        .then((res) => {
+          console.log("登录成功", res)
+          setToken(res.data.token)
+          getUserMenusApi().then((res) => {
+            permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
+          })
           router.push({ path: "/" })
         })
         .catch(() => {
@@ -60,8 +69,12 @@ const createCode = () => {
   loginFormData.code = ""
   // 获取验证码
   codeUrl.value = ""
-  getLoginCodeApi().then((res) => {
-    codeUrl.value = res.data
+  getCaptchaImageApi({
+    height: 40,
+    width: 100,
+    length: 6,
+  }).then((res) => {
+    codeUrl.value = res.data.encodeData
   })
 }
 
@@ -73,7 +86,7 @@ createCode()
   <div class="login-container">
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
-      <div class="title">
+      <div class="table-title">
         <img src="@/assets/layouts/logo-text-2.png" />
       </div>
       <div class="content">

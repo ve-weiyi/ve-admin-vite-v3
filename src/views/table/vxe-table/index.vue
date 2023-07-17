@@ -11,15 +11,15 @@ import {
   type VxeModalInstance,
   type VxeModalProps,
   type VxeFormInstance,
-  type VxeFormProps
+  type VxeFormProps,
 } from "vxe-table"
 
 defineOptions({
   // 命名当前组件
-  name: "VxeTable"
+  name: "VxeTable",
 })
 
-//#region vxe-grid
+// #region vxe-grid
 interface RowMeta {
   id: string
   username: string
@@ -37,7 +37,7 @@ const xGridOpt: VxeGridProps = reactive({
   autoResize: true,
   /** 分页配置项 */
   pagerConfig: {
-    align: "right"
+    align: "right",
   },
   /** 表单配置项 */
   formConfig: {
@@ -46,82 +46,82 @@ const xGridOpt: VxeGridProps = reactive({
         field: "username",
         itemRender: {
           name: "$input",
-          props: { placeholder: "用户名", clearable: true }
-        }
+          props: { placeholder: "用户名", clearable: true },
+        },
       },
       {
         field: "phone",
         itemRender: {
           name: "$input",
-          props: { placeholder: "手机号", clearable: true }
-        }
+          props: { placeholder: "手机号", clearable: true },
+        },
       },
       {
         itemRender: {
           name: "$buttons",
           children: [
             {
-              props: { type: "submit", content: "查询", status: "primary" }
+              props: { type: "submit", content: "查询", status: "primary" },
             },
             {
-              props: { type: "reset", content: "重置" }
-            }
-          ]
-        }
-      }
-    ]
+              props: { type: "reset", content: "重置" },
+            },
+          ],
+        },
+      },
+    ],
   },
   /** 工具栏配置 */
   toolbarConfig: {
     refresh: true,
     custom: true,
-    slots: { buttons: "toolbar-btns" }
+    slots: { buttons: "toolbar-btns" },
   },
   /** 自定义列配置项 */
   customConfig: {
     /** 是否允许列选中  */
-    checkMethod: ({ column }) => !["username"].includes(column.field)
+    checkMethod: ({ column }) => !["username"].includes(column.field),
   },
   /** 列配置 */
   columns: [
     {
       type: "checkbox",
-      width: "50px"
+      width: "50px",
     },
     {
       field: "username",
-      title: "用户名"
+      title: "用户名",
     },
     {
       field: "roles",
       title: "角色",
       /** 自定义列与 type: "html" 的列一起使用，会产生错误，所以采用 TSX 实现 */
-      slots: RoleColumnSolts
+      slots: RoleColumnSolts,
     },
     {
       field: "phone",
-      title: "手机号"
+      title: "手机号",
     },
     {
       field: "email",
-      title: "邮箱"
+      title: "邮箱",
     },
     {
       field: "status",
       title: "状态",
-      slots: StatusColumnSolts
+      slots: StatusColumnSolts,
     },
     {
       field: "createTime",
-      title: "创建时间"
+      title: "创建时间",
     },
     {
       title: "操作",
       width: "150px",
       fixed: "right",
       showOverflow: false,
-      slots: { default: "row-operate" }
-    }
+      slots: { default: "row-operate" },
+    },
   ],
   /** 数据代理配置项（基于 Promise API） */
   proxyConfig: {
@@ -132,7 +132,7 @@ const xGridOpt: VxeGridProps = reactive({
     /** 是否自动加载，默认为 true */
     // autoLoad: false,
     props: {
-      total: "total"
+      total: "total",
     },
     ajax: {
       query: ({ page, form }) => {
@@ -159,18 +159,18 @@ const xGridOpt: VxeGridProps = reactive({
             username: form.username || undefined,
             phone: form.phone || undefined,
             size: page.pageSize,
-            currentPage: page.currentPage
+            currentPage: page.currentPage,
           }
           /** 调用接口 */
           getTableDataApi(params).then(callback).catch(callback)
         })
-      }
-    }
-  }
+      },
+    },
+  },
 })
-//#endregion
+// #endregion
 
-//#region vxe-modal
+// #region vxe-modal
 const xModalDom = ref<VxeModalInstance>()
 const xModalOpt: VxeModalProps = reactive({
   title: "",
@@ -180,11 +180,11 @@ const xModalOpt: VxeModalProps = reactive({
   beforeHideMethod: () => {
     xFormDom.value?.clearValidate()
     return Promise.resolve()
-  }
+  },
 })
-//#endregion
+// #endregion
 
-//#region vxe-form
+// #region vxe-form
 const xFormDom = ref<VxeFormInstance>()
 const xFormOpt: VxeFormProps = reactive({
   span: 24,
@@ -195,19 +195,19 @@ const xFormOpt: VxeFormProps = reactive({
   /** 表单数据 */
   data: {
     username: "",
-    password: ""
+    password: "",
   },
   /** 项列表 */
   items: [
     {
       field: "username",
       title: "用户名",
-      itemRender: { name: "$input", props: { placeholder: "请输入" } }
+      itemRender: { name: "$input", props: { placeholder: "请输入" } },
     },
     {
       field: "password",
       title: "密码",
-      itemRender: { name: "$input", props: { placeholder: "请输入" } }
+      itemRender: { name: "$input", props: { placeholder: "请输入" } },
     },
     {
       align: "right",
@@ -217,11 +217,11 @@ const xFormOpt: VxeFormProps = reactive({
           { props: { content: "取消" }, events: { click: () => xModalDom.value?.close() } },
           {
             props: { type: "submit", content: "确定", status: "primary" },
-            events: { click: () => crudStore.onSubmitForm() }
-          }
-        ]
-      }
-    }
+            events: { click: () => crudStore.onSubmitForm() },
+          },
+        ],
+      },
+    },
   ],
   /** 校验规则 */
   rules: {
@@ -235,8 +235,8 @@ const xFormOpt: VxeFormProps = reactive({
             case !itemValue.trim():
               return new Error("空格无效")
           }
-        }
-      }
+        },
+      },
     ],
     password: [
       {
@@ -248,14 +248,14 @@ const xFormOpt: VxeFormProps = reactive({
             case !itemValue.trim():
               return new Error("空格无效")
           }
-        }
-      }
-    ]
-  }
+        },
+      },
+    ],
+  },
 })
-//#endregion
+// #endregion
 
-//#region 增删改查
+// #region 增删改查
 const crudStore = reactive({
   /** 表单类型，true 表示修改，false 表示新增 */
   isUpdate: true,
@@ -325,7 +325,7 @@ const crudStore = reactive({
       closeOnPressEscape: true,
       cancelButtonText: "取消",
       confirmButtonText: "确定",
-      dangerouslyUseHTMLString: true
+      dangerouslyUseHTMLString: true,
     }
     ElMessageBox.confirm(tip, "提示", config).then(() => {
       deleteTableDataApi(row.id).then(() => {
@@ -344,9 +344,9 @@ const crudStore = reactive({
     }
   },
   /** 更多自定义方法 */
-  moreFn: () => {}
+  moreFn: () => {},
 })
-//#endregion
+// #endregion
 </script>
 
 <template>

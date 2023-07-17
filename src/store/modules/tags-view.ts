@@ -17,7 +17,7 @@ export const useTagsViewStore = defineStore("tags-view", () => {
     setCachedViews(cachedViews.value)
   })
 
-  //#region add
+  // #region add
   const addVisitedView = (view: TagView) => {
     // 检查是否已经存在相同的 visitedView
     const index = visitedViews.value.findIndex((v) => v.path === view.path)
@@ -35,9 +35,9 @@ export const useTagsViewStore = defineStore("tags-view", () => {
     if (cachedViews.value.includes(view.name)) return
     if (view.meta?.keepAlive) cachedViews.value.push(view.name)
   }
-  //#endregion
+  // #endregion
 
-  //#region del
+  // #region del
   const delVisitedView = (view: TagView) => {
     const index = visitedViews.value.findIndex((v) => v.path === view.path)
     if (index !== -1) visitedViews.value.splice(index, 1)
@@ -48,9 +48,9 @@ export const useTagsViewStore = defineStore("tags-view", () => {
     const index = cachedViews.value.indexOf(view.name)
     if (index !== -1) cachedViews.value.splice(index, 1)
   }
-  //#endregion
+  // #endregion
 
-  //#region delOthers
+  // #region delOthers
   const delOthersVisitedViews = (view: TagView) => {
     visitedViews.value = visitedViews.value.filter((v) => {
       return v.meta?.affix || v.path === view.path
@@ -67,9 +67,9 @@ export const useTagsViewStore = defineStore("tags-view", () => {
       cachedViews.value = []
     }
   }
-  //#endregion
+  // #endregion
 
-  //#region delAll
+  // #region delAll
   const delAllVisitedViews = () => {
     // 保留固定的 tags
     visitedViews.value = visitedViews.value.filter((tag) => tag.meta?.affix)
@@ -78,7 +78,7 @@ export const useTagsViewStore = defineStore("tags-view", () => {
   const delAllCachedViews = () => {
     cachedViews.value = []
   }
-  //#endregion
+  // #endregion
 
   return {
     visitedViews,
@@ -90,6 +90,6 @@ export const useTagsViewStore = defineStore("tags-view", () => {
     delOthersVisitedViews,
     delOthersCachedViews,
     delAllVisitedViews,
-    delAllCachedViews
+    delAllCachedViews,
   }
 })

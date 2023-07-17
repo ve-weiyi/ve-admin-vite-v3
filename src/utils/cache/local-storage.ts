@@ -6,7 +6,7 @@ import { type ThemeName } from "@/hooks/useTheme"
 import { type TagView } from "@/store/modules/tags-view"
 import { type LayoutSettings } from "@/config/layouts"
 
-//#region 系统布局配置
+// #region 系统布局配置
 export const getConfigLayout = () => {
   const json = localStorage.getItem(CacheKey.CONFIG_LAYOUT)
   return json ? (JSON.parse(json) as LayoutSettings) : null
@@ -17,27 +17,27 @@ export const setConfigLayout = (settings: LayoutSettings) => {
 export const removeConfigLayout = () => {
   localStorage.removeItem(CacheKey.CONFIG_LAYOUT)
 }
-//#endregion
+// #endregion
 
-//#region 侧边栏状态
+// #region 侧边栏状态
 export const getSidebarStatus = () => {
   return localStorage.getItem(CacheKey.SIDEBAR_STATUS)
 }
 export const setSidebarStatus = (sidebarStatus: SidebarOpened | SidebarClosed) => {
   localStorage.setItem(CacheKey.SIDEBAR_STATUS, sidebarStatus)
 }
-//#endregion
+// #endregion
 
-//#region 正在应用的主题名称
+// #region 正在应用的主题名称
 export const getActiveThemeName = () => {
   return localStorage.getItem(CacheKey.ACTIVE_THEME_NAME) as ThemeName | null
 }
 export const setActiveThemeName = (themeName: ThemeName) => {
   localStorage.setItem(CacheKey.ACTIVE_THEME_NAME, themeName)
 }
-//#endregion
+// #endregion
 
-//#region 标签栏
+// #region 标签栏
 export const getVisitedViews = () => {
   const json = localStorage.getItem(CacheKey.VISITED_VIEWS)
   return JSON.parse(json ?? "[]") as TagView[]
@@ -57,4 +57,4 @@ export const getCachedViews = () => {
 export const setCachedViews = (views: string[]) => {
   localStorage.setItem(CacheKey.CACHED_VIEWS, JSON.stringify(views))
 }
-//#endregion
+// #endregion
