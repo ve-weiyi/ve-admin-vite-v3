@@ -16,7 +16,7 @@
           @click="updatePhotoDelete(null)"
           :disabled="selectionIds.length === 0"
           size="default"
-          icon="el-icon-deleteItem"
+          icon="deleteItem"
         >
           批量恢复
         </el-button>
@@ -25,7 +25,7 @@
           @click="batchDeletePhoto = true"
           :disabled="selectionIds.length === 0"
           size="default"
-          icon="el-icon-deleteItem"
+          icon="deleteItem"
         >
           批量删除
         </el-button>

@@ -5,7 +5,7 @@ export default {
   component: Layout,
   name: "system",
   redirect: "system/website",
-  meta: { title: "网站管理", elIcon: "tools" },
+  meta: { title: "网站管理", elIcon: "setting" },
   children: [
     {
       path: "website",

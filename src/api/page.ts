@@ -1,55 +1,62 @@
 import http from "@/utils/request"
 
+interface Page {
+    id: any
+    pageName: any
+    pageLabel: any
+    pageCover: any
+    createdAt: any
+    updatedAt: any
+}
+
 /** 增 */
-export function createPageApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/page/create",
+export function createPageApi(data?: object): Promise<IApiResponseData<Page>> {
+  return http.request<IApiResponseData<Page>>({
+    url: "/api/v1/page",
     method: "post",
     data,
   })
 }
 
 /** 改 */
-export function updatePageApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/page/update",
+export function updatePageApi(data?: object): Promise<IApiResponseData<Page>> {
+  return http.request<IApiResponseData<Page>>({
+    url: "/api/v1/page",
     method: "put",
     data,
   })
 }
 
-/** 删 删除单个*/
-export function deletePageApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/page/delete",
+/** 删 */
+export function deletePageApi(id: number): Promise<IApiResponseData<Page>> {
+  return http.request<IApiResponseData<Page>>({
+    url: `/api/v1/page/${id}`,
     method: "delete",
-    data,
+  })
+}
+
+/** 查 */
+export function findPageApi(id: number): Promise<IApiResponseData<Page>> {
+  return http.request<IApiResponseData<Page>>({
+    url: `/api/v1/page/${id}`,
+    method: "get",
   })
 }
 
 /** 删除 批量操作 */
-export function deleteByIdsPageApi(ids: number[]): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/page/deleteByIds",
+export function deletePageByIdsApi(ids: number[]): Promise<IApiResponseData<Page>> {
+  return http.request<IApiResponseData<Page>>({
+    url: "/api/v1/page/batch_delete",
     method: "delete",
     data: ids,
   })
 }
 
-/** 查 */
-export function findPageApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/page/find",
-    method: "post",
-    data: data,
-  })
-}
-
-/** 查 列表*/
-export function findPageListApi(page?: Page): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
+/** 查询 分页列表 */
+export function findPageListApi(page?: Page): Promise<IApiResponseData<PageResult<Page>>> {
+  return http.request<IApiResponseData<PageResult<Page>>>({
     url: "/api/v1/page/list",
-    method: "get",
+    method: "post",
     data: page,
   })
 }

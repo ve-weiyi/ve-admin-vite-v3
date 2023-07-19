@@ -5,7 +5,7 @@ export default {
   component: Layout,
   name: "talk",
   redirect: "talk/publish",
-  meta: { title: "说说管理", elIcon: "comment" },
+  meta: { title: "说说管理", elIcon: "ChatDotSquare" },
   children: [
     {
       path: "publish",

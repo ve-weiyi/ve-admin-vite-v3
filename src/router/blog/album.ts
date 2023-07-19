@@ -1,20 +1,20 @@
 import Layout from "@/layout/index.vue"
 
 export default {
-  path: "/",
+  path: "/albums",
   component: Layout,
   name: "album-management",
-  redirect: "/albums",
+  redirect: "/album/albums",
   meta: { title: "相册管理", elIcon: "picture" },
   children: [
     {
-      path: "albums",
+      path: "list",
       component: () => import("@/views/blog/album/Album.vue"),
       name: "Albums",
       meta: { title: "相册列表", noCache: true },
     },
     {
-      path: "albums/:id",
+      path: ":id",
       component: () => import("@/views/blog/album/Photo.vue"),
       name: "Photo",
       meta: { title: "照片管理", hidden: true, noCache: true },

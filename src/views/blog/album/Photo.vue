@@ -15,7 +15,7 @@
             <span v-if="albumInfo.albumDesc" class="album-desc">
               {{ albumInfo.albumDesc }}
             </span>
-            <el-button icon="el-icon-picture" type="primary" size="small" @click="uploadPhoto = true">
+            <el-button icon="picture" type="primary" size="small" @click="uploadPhoto = true">
               上传照片
             </el-button>
           </div>
@@ -33,7 +33,7 @@
             @click="movePhoto = true"
             :disabled="selectionIds.length === 0"
             size="small"
-            icon="el-icon-deleteItem"
+            icon="deleteItem"
           >
             移动到
           </el-button>
@@ -42,7 +42,7 @@
             @click="batchDeletePhoto = true"
             :disabled="selectionIds.length === 0"
             size="small"
-            icon="el-icon-deleteItem"
+            icon="deleteItem"
           >
             批量删除
           </el-button>
@@ -195,10 +195,10 @@
             </div>
           </el-radio-group>
         </el-form>
-        <div slot="footer">
+        <template #footer>
           <el-button @click="movePhoto = false">取 消</el-button>
           <el-button :disabled="albumId === null" type="primary" @click="updatePhotoAlbum"> 确 定</el-button>
-        </div>
+        </template>
       </el-dialog>
     </el-card>
   </div>

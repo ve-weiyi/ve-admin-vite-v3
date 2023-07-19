@@ -5,7 +5,7 @@ export default {
   component: Layout,
   name: "user",
   redirect: "/user/list",
-  meta: { title: "用户管理", alwaysShow: true, elIcon: "user-filled" },
+  meta: { title: "用户管理", alwaysShow: true, elIcon: "user" },
   children: [
     {
       path: "list",

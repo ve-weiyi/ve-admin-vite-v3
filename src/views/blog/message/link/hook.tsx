@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { createLinkApi, deleteByIdsLinkApi, deleteLinkApi, findLinkListApi, updateLinkApi } from "@/api/link"
+import { createFriendLinkApi, deleteFriendLinkByIdsApi, deleteFriendLinkApi, findFriendLinkListApi, updateFriendLinkApi } from "@/api/friend_link"
 
 interface Pagination {
   total?: number
@@ -112,7 +112,7 @@ export function useTableHook() {
     applySearch()
 
     loading.value = true
-    findLinkListApi({
+    findFriendLinkListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
@@ -141,7 +141,7 @@ export function useTableHook() {
 
   function onCreate(row) {
     console.log("onCreate", row)
-    createLinkApi(row).then((res) => {
+    createFriendLinkApi(row).then((res) => {
       ElMessage.success("创建成功")
       addOrEditVisibility.value = false
       onSearchList()
@@ -150,7 +150,7 @@ export function useTableHook() {
 
   function onUpdate(row) {
     console.log("onUpdate", row)
-    updateLinkApi(row).then((res) => {
+    updateFriendLinkApi(row).then((res) => {
       ElMessage.success("更新成功")
       addOrEditVisibility.value = false
       onSearchList()
@@ -159,7 +159,7 @@ export function useTableHook() {
 
   function onDelete(row) {
     console.log("onDelete", row)
-    deleteLinkApi(row).then((res) => {
+    deleteFriendLinkApi(row).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
       onSearchList()
@@ -168,7 +168,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteByIdsLinkApi(ids).then((res) => {
+    deleteFriendLinkByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()

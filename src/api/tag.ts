@@ -1,53 +1,58 @@
 import http from "@/utils/request"
 
+interface Tag {
+    id: any
+    tagName: any
+    createdAt: any
+    updatedAt: any
+}
+
 /** 增 */
-export function createTagApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/tag/create",
+export function createTagApi(data?: object): Promise<IApiResponseData<Tag>> {
+  return http.request<IApiResponseData<Tag>>({
+    url: "/api/v1/tag",
     method: "post",
     data,
   })
 }
 
 /** 改 */
-export function updateTagApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/tag/update",
+export function updateTagApi(data?: object): Promise<IApiResponseData<Tag>> {
+  return http.request<IApiResponseData<Tag>>({
+    url: "/api/v1/tag",
     method: "put",
     data,
   })
 }
 
-/** 删 删除单个*/
-export function deleteTagApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/tag/delete",
+/** 删 */
+export function deleteTagApi(id: number): Promise<IApiResponseData<Tag>> {
+  return http.request<IApiResponseData<Tag>>({
+    url: `/api/v1/tag/${id}`,
     method: "delete",
-    data,
+  })
+}
+
+/** 查 */
+export function findTagApi(id: number): Promise<IApiResponseData<Tag>> {
+  return http.request<IApiResponseData<Tag>>({
+    url: `/api/v1/tag/${id}`,
+    method: "get",
   })
 }
 
 /** 删除 批量操作 */
-export function deleteByIdsTagApi(ids: number[]): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/tag/deleteByIds",
+export function deleteTagByIdsApi(ids: number[]): Promise<IApiResponseData<Tag>> {
+  return http.request<IApiResponseData<Tag>>({
+    url: "/api/v1/tag/batch_delete",
     method: "delete",
     data: ids,
   })
 }
 
-/** 查 */
-export function findTagApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/tag/find",
-    method: "post",
-    data: data,
-  })
-}
-
-/** 查 列表*/
-export function findTagListApi(page?: Page): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
+/** 查询 分页列表 */
+export function findTagListApi(page?: Page): Promise<IApiResponseData<PageResult<Tag>>> {
+  return http.request<IApiResponseData<PageResult<Tag>>>({
     url: "/api/v1/tag/list",
     method: "post",
     data: page,

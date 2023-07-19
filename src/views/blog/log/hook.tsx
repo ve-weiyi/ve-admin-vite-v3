@@ -2,12 +2,12 @@ import { onMounted, reactive, ref } from "vue"
 import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
 import { defaultPaginationData, Pagination, Order, Condition, FormField, RenderType } from "@/utils/render"
 import {
-  createOperationApi,
-  deleteByIdsOperationApi,
-  deleteOperationApi,
-  findOperationListApi,
-  updateOperationApi,
-} from "@/api/operation"
+  createOperationLogApi,
+  deleteOperationLogByIdsApi,
+  deleteOperationLogApi,
+  findOperationLogListApi,
+  updateOperationLogApi,
+} from "@/api/operation_log"
 import { Timer } from "@element-plus/icons-vue"
 
 const align = "center"
@@ -127,14 +127,14 @@ function getColumnFields(): Column[] {
       key: "ipAddress",
       title: "登录ip",
       dataKey: "ipAddress",
-      width: 120,
+      width: 140,
       align: align,
     },
     {
       key: "ipSource",
       title: "登录地址",
       dataKey: "ipSource",
-      width: 150,
+      width: 0,
       align: align,
     },
     {
@@ -284,10 +284,11 @@ export function useTableHook() {
   }
 
   function onSearchList() {
+    console.log("onSearchList")
     applySearch()
 
     loading.value = true
-    findOperationListApi({
+    findOperationLogListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       orders: orders,
@@ -316,7 +317,7 @@ export function useTableHook() {
 
   function onCreate(row) {
     console.log("onCreate", row)
-    createOperationApi(row).then((res) => {
+    createOperationLogApi(row).then((res) => {
       ElMessage.success("创建成功")
       addOrEditVisibility.value = false
       onSearchList()
@@ -325,7 +326,7 @@ export function useTableHook() {
 
   function onUpdate(row) {
     console.log("onUpdate", row)
-    updateOperationApi(row).then((res) => {
+    updateOperationLogApi(row).then((res) => {
       ElMessage.success("更新成功")
       addOrEditVisibility.value = false
       onSearchList()
@@ -334,7 +335,7 @@ export function useTableHook() {
 
   function onDelete(row) {
     console.log("onDelete", row)
-    deleteOperationApi(row).then((res) => {
+    deleteOperationLogApi(row).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
       onSearchList()
@@ -343,7 +344,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteByIdsOperationApi(ids).then((res) => {
+    deleteOperationLogByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()
@@ -425,6 +426,13 @@ export function useTableHook() {
     resetForm(row)
   }
 
+  const refreshTable = () => {
+    console.log("refreshTable")
+    // 修改宽度
+    // columnFields.value.forEach((item) => {})
+    tableRef.value?.doLayout()
+  }
+
   onMounted(() => {
     onSearchList()
   })
@@ -455,6 +463,7 @@ export function useTableHook() {
     handleCurrentChange,
     handleSelectionChange,
     handleSortChange,
+    refreshTable,
     columnFields,
     searchFields,
     formFields,

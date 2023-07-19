@@ -1,56 +1,66 @@
 import http from "@/utils/request"
 
-/** 增 */
-export function createRoleApi(data: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/role/create",
-    method: "post",
-    data,
-  })
+interface Role {
+    id: any
+    rolePid: any
+    roleDomain: any
+    roleName: any
+    roleComment: any
+    isDisable: any
+    isDefault: any
+    createdAt: any
+    updatedAt: any
 }
 
-/** 删 删除单个*/
-export function deleteRoleApi(data: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/role/delete",
-    method: "delete",
+/** 增 */
+export function createRoleApi(data?: object): Promise<IApiResponseData<Role>> {
+  return http.request<IApiResponseData<Role>>({
+    url: "/api/v1/role",
+    method: "post",
     data,
   })
 }
 
 /** 改 */
-export function updateRoleApi(data: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/role/update",
+export function updateRoleApi(data?: object): Promise<IApiResponseData<Role>> {
+  return http.request<IApiResponseData<Role>>({
+    url: "/api/v1/role",
     method: "put",
     data,
   })
 }
 
-/** 查 查询单个*/
-export function getRoleApi(data: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/role/find",
+/** 删 */
+export function deleteRoleApi(id: number): Promise<IApiResponseData<Role>> {
+  return http.request<IApiResponseData<Role>>({
+    url: `/api/v1/role/${id}`,
+    method: "delete",
+  })
+}
+
+/** 查 */
+export function findRoleApi(id: number): Promise<IApiResponseData<Role>> {
+  return http.request<IApiResponseData<Role>>({
+    url: `/api/v1/role/${id}`,
     method: "get",
-    data,
   })
 }
 
 /** 删除 批量操作 */
-export function deleteByIdsRoleApi(ids: number[]): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/role/deleteByIds",
+export function deleteRoleByIdsApi(ids: number[]): Promise<IApiResponseData<Role>> {
+  return http.request<IApiResponseData<Role>>({
+    url: "/api/v1/role/batch_delete",
     method: "delete",
     data: ids,
   })
 }
 
-/** 查 列表*/
-export function getRoleListApi(page: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
+/** 查询 分页列表 */
+export function findRoleListApi(page?: Page): Promise<IApiResponseData<PageResult<Role>>> {
+  return http.request<IApiResponseData<PageResult<Role>>>({
     url: "/api/v1/role/list",
     method: "post",
-    params: page,
+    data: page,
   })
 }
 

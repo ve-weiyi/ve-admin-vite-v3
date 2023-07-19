@@ -23,7 +23,7 @@ type ECharts = echarts.ECharts
 
 const props = defineProps({
   data: {
-    type: Array,
+    type: Object,
   },
   className: {
     type: String,
@@ -105,7 +105,7 @@ option.value = {
       geoIndex: 0,
       data: [{ name: "广西", value: 1 }],
       emphasis: {
-        //高亮状态下的多边形和标签样式
+        // 高亮状态下的多边形和标签样式
         // 控制地图滑过后的颜色
         label: {
           color: "red",

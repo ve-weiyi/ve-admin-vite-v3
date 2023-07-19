@@ -120,7 +120,7 @@
           </el-form-item>
           <el-form-item label="文章类型">
             <el-select v-model="article.type" placeholder="请选择类型">
-              <el-option v-for="item in typeList" :key="item.type" :label="item.label" :value="item.value" />
+              <el-option v-for="item in typeList" :key="item.type" :label="item.label" :value="item.type" />
             </el-select>
           </el-form-item>
           <!-- 文章类型 -->
@@ -170,9 +170,12 @@
 import { ref, onBeforeUnmount } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import imageConversion from "image-conversion"
-import axios from "axios"
 import { MdEditor, MdPreview, MdCatalog } from "md-editor-v3"
 import "md-editor-v3/lib/style.css"
+import { findCategoryListApi } from "@/api/category"
+import { findTagListApi } from "@/api/tag"
+import { createArticleApi, findArticleApi } from "@/api/article"
+import { uploadFileApi } from "@/api/file"
 
 const route = useRoute()
 const router = useRouter()
@@ -200,27 +203,27 @@ const tagList = ref([])
 const typeList = ref([
   {
     type: 1,
-    desc: "原创",
+    label: "原创",
   },
   {
     type: 2,
-    desc: "转载",
+    label: "转载",
   },
   {
     type: 3,
-    desc: "翻译",
+    label: "翻译",
   },
 ])
 
 function listCategories() {
-  axios.get("/api/admin/categories/search").then(({ data }) => {
-    categoryList.value = data.data
+  findCategoryListApi({}).then((res) => {
+    categoryList.value = res.data.list
   })
 }
 
 function listTags() {
-  axios.get("/api/admin/tags/search").then(({ data }) => {
-    tagList.value = data.data
+  findTagListApi({}).then((res) => {
+    tagList.value = res.data.list
   })
 }
 
@@ -254,17 +257,14 @@ function beforeUpload(file) {
 }
 
 function uploadImg(pos, file) {
-  const formData = new FormData()
   if (file.size / 1024 < 200) {
-    formData.append("file", file)
-    axios.post("/api/admin/articles/images", formData).then(({ data }) => {
-      mdRef.value.$img2Url(pos, data.data)
+    uploadFileApi("article", file).then((res) => {
+      mdRef.value.$img2Url(pos, res.data.fileUrl)
     })
   } else {
     imageConversion.compressAccurately(file, 200).then((res) => {
-      formData.append("file", new window.File([res], file.name, { type: file.type }))
-      axios.post("/api/admin/articles/images", formData).then(({ data }) => {
-        mdRef.value.$img2Url(pos, data.data)
+      uploadFileApi("article", file).then((res) => {
+        mdRef.value.$img2Url(pos, res.data.fileUrl)
       })
     })
   }
@@ -280,8 +280,8 @@ function saveArticleDraft() {
     return
   }
   article.value.status = 3
-  axios.post("/api/admin/articles", article.value).then(({ data }) => {
-    if (data.flag) {
+  createArticleApi(article.value).then((res) => {
+    if (res.data.code == 200) {
       if (article.value.id === null) {
         // store.commit("removeTab", "发布文章")
       } else {
@@ -319,21 +319,22 @@ function saveOrUpdateArticle() {
     alert("文章封面不能为空")
     return
   }
-  axios.post("/api/admin/articles", article.value).then(({ data }) => {
-    if (data.flag) {
+  createArticleApi(article.value).then((res) => {
+    if (res.data.code === 200) {
       if (article.value.id === null) {
-        // $store.commit("removeTab", "发布文章")
+        // store.commit("removeTab", "发布文章")
       } else {
-        // $store.commit("removeTab", "修改文章")
+        // store.commit("removeTab", "修改文章")
       }
       sessionStorage.removeItem("article")
       router.push({ path: "/article-list" })
-      alert(data.message)
+      alert("发布文章成功")
     } else {
-      alert(data.message)
+      alert("发布文章失败")
     }
     addOrEdit.value = false
   })
+
   autoSave.value = false
 }
 
@@ -344,8 +345,8 @@ function autoSaveArticle() {
     article.value.articleContent.trim() !== "" &&
     article.value.id !== null
   ) {
-    axios.post("/api/admin/articles", article.value).then(({ data }) => {
-      if (data.flag) {
+    createArticleApi(article.value).then((res) => {
+      if (res.data.code === 200) {
         alert("自动保存成功")
       } else {
         alert("自动保存失败")
@@ -358,8 +359,16 @@ function autoSaveArticle() {
 }
 
 function searchCategories(keywords, cb) {
-  axios.get("/api/admin/categories/search", { params: { keywords } }).then(({ data }) => {
-    cb(data.data)
+  findCategoryListApi({
+    conditions: [
+      {
+        field: "category_name",
+        value: keywords,
+        rule: "like",
+      },
+    ],
+  }).then((res) => {
+    cb(res.data.list)
   })
 }
 
@@ -383,8 +392,16 @@ function removeCategory() {
 }
 
 function searchTags(keywords, cb) {
-  axios.get("/api/admin/tags/search", { params: { keywords } }).then(({ data }) => {
-    cb(data.data)
+  findTagListApi({
+    conditions: [
+      {
+        field: "tag_name",
+        value: keywords,
+        rule: "like",
+      },
+    ],
+  }).then((res) => {
+    cb(res.data.list)
   })
 }
 
@@ -419,11 +436,16 @@ onBeforeUnmount(() => {
   autoSaveArticle()
 })
 
-const articleId = route.path.split("/")[2]
-if (articleId) {
-  axios.get(`/api/admin/articles/${articleId}`).then(({ data }) => {
-    article.value = data.data
+const getArticle = (articleId: number) => {
+  findArticleApi({ id: articleId }).then((res) => {
+    article.value = res.data.data
   })
+}
+
+const articleId = route.params.articleId ? parseInt(route.params.articleId as string) : 0  // 获取路由参数
+
+if (articleId) {
+  getArticle(Number(articleId))
 } else {
   const articleData = sessionStorage.getItem("article")
   if (articleData) {

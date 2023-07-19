@@ -1,54 +1,63 @@
 import http from "@/utils/request"
 
+interface PhotoAlbum {
+    id: any
+    albumName: any
+    albumDesc: any
+    albumCover: any
+    isDelete: any
+    status: any
+    createdAt: any
+    updatedAt: any
+}
+
 /** 增 */
-export function createPhotoAlbumApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/create",
+export function createPhotoAlbumApi(data?: object): Promise<IApiResponseData<PhotoAlbum>> {
+  return http.request<IApiResponseData<PhotoAlbum>>({
+    url: "/api/v1/photo_album",
     method: "post",
     data,
   })
 }
 
 /** 改 */
-export function updatePhotoAlbumApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/update",
+export function updatePhotoAlbumApi(data?: object): Promise<IApiResponseData<PhotoAlbum>> {
+  return http.request<IApiResponseData<PhotoAlbum>>({
+    url: "/api/v1/photo_album",
     method: "put",
     data,
   })
 }
 
-/** 删 删除单个*/
-export function deletePhotoAlbumApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/delete",
+/** 删 */
+export function deletePhotoAlbumApi(id: number): Promise<IApiResponseData<PhotoAlbum>> {
+  return http.request<IApiResponseData<PhotoAlbum>>({
+    url: `/api/v1/photo_album/${id}`,
     method: "delete",
-    data,
+  })
+}
+
+/** 查 */
+export function findPhotoAlbumApi(id: number): Promise<IApiResponseData<PhotoAlbum>> {
+  return http.request<IApiResponseData<PhotoAlbum>>({
+    url: `/api/v1/photo_album/${id}`,
+    method: "get",
   })
 }
 
 /** 删除 批量操作 */
-export function deleteByIdsPhotoAlbumApi(ids: number[]): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/deleteByIds",
+export function deletePhotoAlbumByIdsApi(ids: number[]): Promise<IApiResponseData<PhotoAlbum>> {
+  return http.request<IApiResponseData<PhotoAlbum>>({
+    url: "/api/v1/photo_album/batch_delete",
     method: "delete",
     data: ids,
   })
 }
 
-/** 查 */
-export function findPhotoAlbumApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/find",
-    method: "post",
-    data: data,
-  })
-}
-
-/** 查 列表*/
-export function findPhotoAlbumListApi(page?: Page): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/photoAlbum/list",
+/** 查询 分页列表 */
+export function findPhotoAlbumListApi(page?: Page): Promise<IApiResponseData<PageResult<PhotoAlbum>>> {
+  return http.request<IApiResponseData<PageResult<PhotoAlbum>>>({
+    url: "/api/v1/photo_album/list",
     method: "post",
     data: page,
   })

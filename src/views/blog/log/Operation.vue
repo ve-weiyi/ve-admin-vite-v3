@@ -31,6 +31,14 @@
         </div>
         <!-- 表格操作 -->
         <div class="operation-container">
+          <div style="margin-left: auto; margin-right: 0.5rem">
+            <el-tooltip content="下载">
+              <el-button type="primary" icon="Download" circle />
+            </el-tooltip>
+            <el-tooltip content="刷新表格">
+              <el-button type="primary" icon="RefreshRight" circle @click="refreshTable" />
+            </el-tooltip>
+          </div>
           <el-button
             type="danger"
             size="default"
@@ -44,12 +52,12 @@
       </div>
       <!-- 表格展示 -->
       <el-table
+        border
         ref="tableRef"
         :data="tableData"
-        border
+        :loading="loading"
         @selection-change="handleSelectionChange"
         @sort-change="handleSortChange"
-        :loading="loading"
       >
         <el-table-column
           v-for="item of columnFields"
@@ -168,6 +176,7 @@ const {
   handleCurrentChange,
   handleSelectionChange,
   handleSortChange,
+  refreshTable,
   columnFields,
   searchFields,
   formFields,

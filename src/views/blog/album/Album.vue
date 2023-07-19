@@ -4,7 +4,7 @@
       <!-- 标题 -->
       <div class="table-title">{{ $route.meta.title }}</div>
       <div class="operation-container">
-        <el-button type="primary" size="default" icon="el-icon-plus" @click="onSave(null)"> 新建相册 </el-button>
+        <el-button type="primary" size="default" icon="plus" @click="onSave(null)"> 新建相册 </el-button>
         <div style="margin-left: auto">
           <el-button
             type="text"
@@ -17,7 +17,7 @@
           </el-button>
           <el-input
             v-model="keywords"
-            prefix-icon="el-icon-search"
+            prefix-icon="search"
             size="default"
             placeholder="请输入相册名"
             style="width: 200px"
@@ -26,7 +26,7 @@
           <el-button
             type="primary"
             size="default"
-            icon="el-icon-search"
+            icon="search"
             style="margin-left: 1rem"
             @click="onSearchList"
           >
@@ -43,12 +43,12 @@
             <!-- 相册操作 -->
             <div class="album-operation">
               <el-dropdown @command="handleCommand">
-                <i class="el-icon-more" style="color: #fff" />
-                <el-dropdown-menu slot="dropdown">
+                <i class="more" style="color: #fff" />
+                <el-dropdown-menu v-slot="dropdown">
                   <el-dropdown-item :command="'update' + JSON.stringify(item)">
                     <i class="el-icon-edit" />编辑
                   </el-dropdown-item>
-                  <el-dropdown-item :command="'delete' + item.id"> <i class="el-icon-delete" />删除 </el-dropdown-item>
+                  <el-dropdown-item :command="'delete' + item.id"> <i class="delete" />删除 </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>

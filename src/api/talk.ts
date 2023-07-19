@@ -1,53 +1,62 @@
 import http from "@/utils/request"
 
+interface Talk {
+    id: any
+    userId: any
+    content: any
+    images: any
+    isTop: any
+    status: any
+    createdAt: any
+    updatedAt: any
+}
+
 /** 增 */
-export function createTalkApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/talk/create",
+export function createTalkApi(data?: object): Promise<IApiResponseData<Talk>> {
+  return http.request<IApiResponseData<Talk>>({
+    url: "/api/v1/talk",
     method: "post",
     data,
   })
 }
 
 /** 改 */
-export function updateTalkApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/talk/update",
+export function updateTalkApi(data?: object): Promise<IApiResponseData<Talk>> {
+  return http.request<IApiResponseData<Talk>>({
+    url: "/api/v1/talk",
     method: "put",
     data,
   })
 }
 
-/** 删 删除单个*/
-export function deleteTalkApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/talk/delete",
+/** 删 */
+export function deleteTalkApi(id: number): Promise<IApiResponseData<Talk>> {
+  return http.request<IApiResponseData<Talk>>({
+    url: `/api/v1/talk/${id}`,
     method: "delete",
-    data,
   })
 }
 
 /** 查 */
-export function findTalkApi(data?: object): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/talk/find",
-    method: "post",
-    data: data,
+export function findTalkApi(id: number): Promise<IApiResponseData<Talk>> {
+  return http.request<IApiResponseData<Talk>>({
+    url: `/api/v1/talk/${id}`,
+    method: "get",
   })
 }
 
 /** 删除 批量操作 */
-export function deleteByIdsTalkApi(ids: number[]): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: "/api/v1/talk/deleteByIds",
+export function deleteTalkByIdsApi(ids: number[]): Promise<IApiResponseData<Talk>> {
+  return http.request<IApiResponseData<Talk>>({
+    url: "/api/v1/talk/batch_delete",
     method: "delete",
     data: ids,
   })
 }
 
-/** 查 列表*/
-export function findTalkListApi(page?: Page): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
+/** 查询 分页列表 */
+export function findTalkListApi(page?: Page): Promise<IApiResponseData<PageResult<Talk>>> {
+  return http.request<IApiResponseData<PageResult<Talk>>>({
     url: "/api/v1/talk/list",
     method: "post",
     data: page,

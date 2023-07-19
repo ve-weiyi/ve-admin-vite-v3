@@ -17,14 +17,18 @@
           <el-avatar class="user-avatar" :src="item.avatar" :size="36" />
           <div class="user-detail-wrapper">
             <div class="user-nickname">
-              <div>{{ item.nickname }}</div>
+              <div>{{ item.nickname || "与梦" }}</div>
               <!-- 操作 -->
               <el-dropdown trigger="click" @command="handleCommand">
                 <el-icon style="color: #333; cursor: pointer"><MoreFilled /></el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :command="'1,' + item.id"> <i class="el-icon-edit" />编辑 </el-dropdown-item>
-                    <el-dropdown-item :command="'2,' + item.id"> <i class="el-icon-delete" />删除 </el-dropdown-item>
+                    <el-dropdown-item :command="'1,' + item.id">
+                      <el-icon><Edit /></el-icon>编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'2,' + item.id">
+                      <el-icon><Delete /></el-icon>删除
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -32,8 +36,8 @@
             <!-- 发表时间 -->
             <div class="time">
               {{ item.createdAt }}
-              <span class="top" v-if="item.isTop === 1"> <i class="iconfont el-icon-myzhiding" /> 置顶 </span>
-              <span class="secret" v-if="item.status === 2"> <i class="iconfont el-icon-mymima" /> 私密 </span>
+              <span class="top" v-if="item.isTop === 1"> <i class="iconfont icon-upload-fill" /> 置顶 </span>
+              <span class="secret" v-if="item.status === 2"> <i class="iconfont icon-password-fill" /> 私密 </span>
             </div>
             <!-- 说说信息 -->
             <div class="talk-content" v-html="item.content" />

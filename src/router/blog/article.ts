@@ -1,32 +1,32 @@
 import Layout from "@/layout/index.vue"
 
 export default {
-  path: "/",
+  path: "/article",
   component: Layout,
   name: "article",
   redirect: "article/publish",
-  meta: { title: "文章管理", elIcon: "list" },
+  meta: { title: "文章管理", elIcon: "document" },
   children: [
     {
-      path: "article/publish",
+      path: "publish",
       component: () => import("@/views/blog/article/Article.vue"),
       name: "article/publish",
       meta: { title: "发布文章", noCache: true },
     },
     {
-      path: "article/list",
+      path: "list",
       component: () => import("@/views/blog/article/ArticleList.vue"),
       name: "article/list",
       meta: { title: "文章列表", noCache: true },
     },
     {
-      path: "article/category",
+      path: "category",
       component: () => import("@/views/blog/article/Category.vue"),
       name: "article/category",
       meta: { title: "标签管理", noCache: true },
     },
     {
-      path: "article/tag",
+      path: "tag",
       component: () => import("@/views/blog/article/Tag.vue"),
       name: "article/tag",
       meta: { title: "分类管理", noCache: true },
