@@ -21,7 +21,7 @@ import { EChartsOption } from "echarts"
 type ECharts = echarts.ECharts
 
 const props = defineProps({
-  values: {
+  data: {
     type: Array as () => { day: string; count: number }[],
     default: () => [
       { day: "2022-01-18", count: 100 },
@@ -65,7 +65,7 @@ const initChart = () => {
   chart.value = echarts.init(container.value as HTMLElement)
 }
 
-const resetOption = () => {
+const updateCharts = () => {
   if (!chart.value) {
     return
   }
@@ -81,7 +81,7 @@ const resetOption = () => {
   const dayTime = 3600 * 24 * 1000
   for (let time = date; time < end; time += dayTime) {
     const key = echarts.time.format(time, "{yyyy}-{MM}-{dd}", false)
-    const count = props.values.find((item) => item.day === key)?.count || 0
+    const count = props.data.find((item) => item.day === key)?.count || 0
     // Math.floor(Math.random() * rangeMax)]
     if (count > rangeMax) {
       rangeMax = count
@@ -164,7 +164,7 @@ watchEffect(() => {
   if (!chart.value) {
     return
   }
-  resetOption()
+  updateCharts()
 })
 
 onMounted(() => {

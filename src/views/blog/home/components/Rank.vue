@@ -51,7 +51,6 @@ const initChart = () => {
 }
 
 const updateCharts = () => {
-
   option.value = {
     tooltip: {
       trigger: "axis",
@@ -59,10 +58,7 @@ const updateCharts = () => {
         type: "cross",
       },
     },
-    color: ["#3888fa"],
-    legend: {
-      data: ["访问量"],
-    },
+    color: ["#58AFFF"],
     grid: {
       left: "0%",
       right: "0%",
@@ -72,25 +68,13 @@ const updateCharts = () => {
     },
     xAxis: {
       data: props.data.xAxis,
-      axisLine: {
-        lineStyle: {
-          color: "#666",
-        },
-      },
     },
-    yAxis: {
-      axisLine: {
-        lineStyle: {
-          color: "#048CCE",
-        },
-      },
-    },
+    yAxis: {},
     series: [
       {
-        name: "访问量",
-        type: "line",
+        name: "浏览量",
+        type: "bar",
         data: props.data.values,
-        smooth: true,
       },
     ],
   }

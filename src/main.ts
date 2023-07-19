@@ -23,7 +23,6 @@ import "@/assets/iconfont/iconfont.css"
 
 const app = createApp(App)
 
-// app.component("v-chart", ECharts) // 注册 ECharts 组件
 /** 加载插件 */
 loadPlugins(app)
 /** 加载全局 SVG */

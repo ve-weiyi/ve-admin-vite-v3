@@ -72,7 +72,8 @@ const resolvePath = (routePath: string) => {
     </template>
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
+        <i v-if="props.item.meta?.icon" :class="props.item.meta.icon" class="iconfont el-icon" />
+        <SvgIcon v-else-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
         <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
         <span v-if="props.item.meta?.title">{{ props.item.meta.title }}</span>
       </template>

@@ -22,11 +22,11 @@ type ECharts = echarts.ECharts
 
 const props = defineProps({
   data: {
-    type: Object as () => { xAxis: string[]; values: number[] },
-    default: () => ({
-      xAxis: ["2022-01-18", "2022-01-19"],
-      values: [100, 100],
-    }),
+    type: Object as () => {
+      legendData: string[]
+      seriesData: number[]
+    },
+    default: () => ({}),
   },
   className: {
     type: String,
@@ -51,46 +51,21 @@ const initChart = () => {
 }
 
 const updateCharts = () => {
-
   option.value = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-      },
-    },
-    color: ["#3888fa"],
+    color: ["#7EC0EE", "#FF9F7F", "#FFD700", "#C9C9C9", "#E066FF", "#C0FF3E"],
     legend: {
-      data: ["访问量"],
+      data: props.data.legendData,
+      bottom: "bottom",
     },
-    grid: {
-      left: "0%",
-      right: "0%",
-      bottom: "0%",
-      top: "10%",
-      containLabel: true,
-    },
-    xAxis: {
-      data: props.data.xAxis,
-      axisLine: {
-        lineStyle: {
-          color: "#666",
-        },
-      },
-    },
-    yAxis: {
-      axisLine: {
-        lineStyle: {
-          color: "#048CCE",
-        },
-      },
+    tooltip: {
+      trigger: "item",
     },
     series: [
       {
-        name: "访问量",
-        type: "line",
-        data: props.data.values,
-        smooth: true,
+        name: "文章分类",
+        type: "pie",
+        roseType: "radius",
+        data: props.data.seriesData,
       },
     ],
   }
