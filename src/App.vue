@@ -9,7 +9,6 @@ import { useAdminStore } from "@/store/modules/admin"
 import { getUserInfoApi, getUserMenusApi } from "@/api/user"
 import { usePermissionStoreHook } from "@/store/modules/permission"
 import asyncRouteSettings from "@/config/async-route"
-import { getToken } from "@/utils/cache/cookies"
 import { useRouter } from "vue-router"
 
 const { initTheme } = useTheme()
@@ -20,14 +19,14 @@ initTheme()
 // 获取路由参数
 const router = useRouter()
 const permissionStore = usePermissionStoreHook()
-const store = useAdminStore()
+const userStore = useAdminStore()
 // 生命周期钩子
 onMounted(() => {
   console.log("mounted")
   // mounted钩子代码
-  if (getToken()) {
+  if (userStore.getToken()) {
     getUserInfoApi().then((res) => {
-      store.setUserInfo(res.data)
+      userStore.setLoginUser(res.data)
     })
     getUserMenusApi().then((res) => {
       permissionStore.setRoutes(asyncRouteSettings.defaultRoles)

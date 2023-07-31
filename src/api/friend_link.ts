@@ -1,63 +1,63 @@
 import http from "@/utils/request"
 
 interface FriendLink {
-    id: any
-    linkName: any
-    linkAvatar: any
-    linkAddress: any
-    linkIntro: any
-    createdAt: any
-    updatedAt: any
+    id: number
+    link_name: string // 链接名
+    link_avatar: string // 链接头像
+    link_address: string // 链接地址
+    link_intro: string // 链接介绍
+    created_at: string // 创建时间
+    updated_at: string // 更新时间
 }
 
-/** 增 */
-export function createFriendLinkApi(data?: object): Promise<IApiResponseData<FriendLink>> {
-  return http.request<IApiResponseData<FriendLink>>({
-    url: "/api/v1/friend_link",
-    method: "post",
-    data,
-  })
+/** 创建友链 */
+export function createFriendLinkApi(data: FriendLink): Promise<IApiResponseData<FriendLink>> {
+	return http.request<IApiResponseData<FriendLink>>({
+		url: `/api/v1//friend_link`,
+		method: "post",
+		data: data,
+	})
 }
 
-/** 改 */
-export function updateFriendLinkApi(data?: object): Promise<IApiResponseData<FriendLink>> {
-  return http.request<IApiResponseData<FriendLink>>({
-    url: "/api/v1/friend_link",
-    method: "put",
-    data,
-  })
+/** 更新友链 */
+export function updateFriendLinkApi(data: FriendLink): Promise<IApiResponseData<FriendLink>> {
+	return http.request<IApiResponseData<FriendLink>>({
+		url: `/api/v1//friend_link`,
+		method: "put",
+		data: data,
+	})
 }
 
-/** 删 */
-export function deleteFriendLinkApi(id: number): Promise<IApiResponseData<FriendLink>> {
-  return http.request<IApiResponseData<FriendLink>>({
-    url: `/api/v1/friend_link/${id}`,
-    method: "delete",
-  })
+/** 删除友链 */
+export function deleteFriendLinkApi(id: string): Promise<IApiResponseData<any>> {
+	return http.request<IApiResponseData<any>>({
+		url: `/api/v1//friend_link/${id}`,
+		method: "delete",
+	})
 }
 
-/** 查 */
-export function findFriendLinkApi(id: number): Promise<IApiResponseData<FriendLink>> {
-  return http.request<IApiResponseData<FriendLink>>({
-    url: `/api/v1/friend_link/${id}`,
-    method: "get",
-  })
+/** 查询友链 */
+export function findFriendLinkApi(id: string): Promise<IApiResponseData<FriendLink>> {
+	return http.request<IApiResponseData<FriendLink>>({
+		url: `/api/v1//friend_link/${id}`,
+		method: "get",
+	})
 }
 
-/** 删除 批量操作 */
-export function deleteFriendLinkByIdsApi(ids: number[]): Promise<IApiResponseData<FriendLink>> {
-  return http.request<IApiResponseData<FriendLink>>({
-    url: "/api/v1/friend_link/batch_delete",
-    method: "delete",
-    data: ids,
-  })
+/** 批量删除友链 */
+export function deleteFriendLinkByIdsApi(data: number[]): Promise<IApiResponseData<any>> {
+	return http.request<IApiResponseData<any>>({
+		url: `/api/v1//friend_link/batch_delete`,
+		method: "delete",
+		data: data,
+	})
 }
 
-/** 查询 分页列表 */
-export function findFriendLinkListApi(page?: Page): Promise<IApiResponseData<PageResult<FriendLink>>> {
-  return http.request<IApiResponseData<PageResult<FriendLink>>>({
-    url: "/api/v1/friend_link/list",
-    method: "post",
-    data: page,
-  })
+/** 分页获取友链列表 */
+export function findFriendLinkListApi(page: PageQuery): Promise<IApiResponseData<PageResult<PageResult<FriendLink>>>> {
+	return http.request<IApiResponseData<PageResult<PageResult<FriendLink>>>>({
+		url: `/api/v1//friend_link/list`,
+		method: "post",
+		data: page,
+	})
 }

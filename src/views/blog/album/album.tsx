@@ -54,7 +54,7 @@ export function useTableHook() {
   // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
   // eslint-disable-next-line no-undef
-  const orders = reactive<Order[]>([])
+  const orders = reactive<Sort[]>([])
 
   const resetForm = (row) => {
     if (row != null) {
@@ -100,7 +100,7 @@ export function useTableHook() {
     findPhotoAlbumListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: orders,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list

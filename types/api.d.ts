@@ -19,15 +19,15 @@ interface PageResult<T> {
   total: number
 }
 
-interface Page {
+interface PageQuery {
   page?: number
   page_size?: number
-  orders?: Order[]
+  sorts?: Sort[]
   conditions?: Condition[]
 }
 
 
-interface Order {
+interface Sort {
   field: string
   rule: string
 }

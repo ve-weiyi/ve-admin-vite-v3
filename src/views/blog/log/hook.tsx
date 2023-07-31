@@ -291,7 +291,7 @@ export function useTableHook() {
     findOperationLogListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: orders,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list

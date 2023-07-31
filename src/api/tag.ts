@@ -1,60 +1,60 @@
 import http from "@/utils/request"
 
 interface Tag {
-    id: any
-    tagName: any
-    createdAt: any
-    updatedAt: any
+    id: number
+    tag_name: string // 标签名
+    created_at: string // 创建时间
+    updated_at: string // 更新时间
 }
 
-/** 增 */
-export function createTagApi(data?: object): Promise<IApiResponseData<Tag>> {
-  return http.request<IApiResponseData<Tag>>({
-    url: "/api/v1/tag",
-    method: "post",
-    data,
-  })
+/** 创建文章标签 */
+export function createTagApi(data: Tag): Promise<IApiResponseData<Tag>> {
+	return http.request<IApiResponseData<Tag>>({
+		url: `/api/v1//tag`,
+		method: "post",
+		data: data,
+	})
 }
 
-/** 改 */
-export function updateTagApi(data?: object): Promise<IApiResponseData<Tag>> {
-  return http.request<IApiResponseData<Tag>>({
-    url: "/api/v1/tag",
-    method: "put",
-    data,
-  })
+/** 更新文章标签 */
+export function updateTagApi(data: Tag): Promise<IApiResponseData<Tag>> {
+	return http.request<IApiResponseData<Tag>>({
+		url: `/api/v1//tag`,
+		method: "put",
+		data: data,
+	})
 }
 
-/** 删 */
-export function deleteTagApi(id: number): Promise<IApiResponseData<Tag>> {
-  return http.request<IApiResponseData<Tag>>({
-    url: `/api/v1/tag/${id}`,
-    method: "delete",
-  })
+/** 删除文章标签 */
+export function deleteTagApi(id: string): Promise<IApiResponseData<any>> {
+	return http.request<IApiResponseData<any>>({
+		url: `/api/v1//tag/${id}`,
+		method: "delete",
+	})
 }
 
-/** 查 */
-export function findTagApi(id: number): Promise<IApiResponseData<Tag>> {
-  return http.request<IApiResponseData<Tag>>({
-    url: `/api/v1/tag/${id}`,
-    method: "get",
-  })
+/** 查询文章标签 */
+export function findTagApi(id: string): Promise<IApiResponseData<Tag>> {
+	return http.request<IApiResponseData<Tag>>({
+		url: `/api/v1//tag/${id}`,
+		method: "get",
+	})
 }
 
-/** 删除 批量操作 */
-export function deleteTagByIdsApi(ids: number[]): Promise<IApiResponseData<Tag>> {
-  return http.request<IApiResponseData<Tag>>({
-    url: "/api/v1/tag/batch_delete",
-    method: "delete",
-    data: ids,
-  })
+/** 批量删除文章标签 */
+export function deleteTagByIdsApi(data: number[]): Promise<IApiResponseData<any>> {
+	return http.request<IApiResponseData<any>>({
+		url: `/api/v1//tag/batch_delete`,
+		method: "delete",
+		data: data,
+	})
 }
 
-/** 查询 分页列表 */
-export function findTagListApi(page?: Page): Promise<IApiResponseData<PageResult<Tag>>> {
-  return http.request<IApiResponseData<PageResult<Tag>>>({
-    url: "/api/v1/tag/list",
-    method: "post",
-    data: page,
-  })
+/** 分页获取文章标签列表 */
+export function findTagListApi(page: PageQuery): Promise<IApiResponseData<PageResult<PageResult<Tag>>>> {
+	return http.request<IApiResponseData<PageResult<PageResult<Tag>>>>({
+		url: `/api/v1//tag/list`,
+		method: "post",
+		data: page,
+	})
 }
