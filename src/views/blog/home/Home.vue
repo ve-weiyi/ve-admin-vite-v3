@@ -115,7 +115,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue"
-import { adminHomeInfoApi, adminUserAreasApi } from "@/api/admin"
+import { getHomeInfoApi } from "@/api/admin"
+import { getUserAreasApi } from "@/api/user"
 import Calender from "@/views/blog/home/components/Calender.vue"
 import LineChart from "@/views/blog/home/components/LineChart.vue"
 import ChinaMap from "@/views/blog/home/components/ChinaMap.vue"
@@ -165,7 +166,7 @@ const areaData = ref<{
 // 获取数据
 const getData = () => {
   // 发送请求获取数据
-  adminHomeInfoApi().then((res) => {
+  getHomeInfoApi().then((res) => {
     viewsCount.value = res.data.viewsCount
     messageCount.value = res.data.messageCount
     userCount.value = res.data.userCount
@@ -235,7 +236,7 @@ const getData = () => {
 const type = ref(1)
 const listUserArea = () => {
   // 发送请求获取用户地域分布数据
-  adminUserAreasApi({}).then((res) => {
+  getUserAreasApi({}).then((res) => {
     // userAreaMap.series[0].data = res.data
     areaData.value = res.data.list
   })

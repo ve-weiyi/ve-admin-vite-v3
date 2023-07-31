@@ -2,16 +2,17 @@
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { type FormInstance, FormRules } from "element-plus"
-import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
+import { Key, Loading, Lock, Picture, User } from "@element-plus/icons-vue"
 import { loginApi } from "@/api/auth"
 import ThemeSwitch from "@/layout/components/NavigationBar/components/ThemeSwitch/index.vue"
 import { getCaptchaImageApi } from "@/api/captcha"
-import { setToken } from "@/utils/cache/cookies"
 import { getUserMenusApi } from "@/api/user"
 import asyncRouteSettings from "@/config/async-route"
 import { usePermissionStoreHook } from "@/store/modules/permission"
+import { useAdminStore } from "@/store/modules/admin"
 
 const router = useRouter()
+const userStore = useAdminStore()
 
 /** 登录表单元素的引用 */
 const loginFormRef = ref<FormInstance | null>(null)
@@ -45,7 +46,8 @@ const handleLogin = () => {
       loginApi(loginFormData)
         .then((res) => {
           console.log("登录成功", res)
-          setToken(res.data.token)
+          userStore.setLoginUser(res.data.userInfo)
+          userStore.setToken(res.data.token)
           getUserMenusApi().then((res) => {
             permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
           })
@@ -70,6 +72,7 @@ const createCode = () => {
   // 获取验证码
   codeUrl.value = ""
   getCaptchaImageApi({
+    captcha_type: "digit",
     height: 40,
     width: 100,
     length: 6,
@@ -86,7 +89,7 @@ createCode()
   <div class="login-container">
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
-      <div class="table-title">
+      <div class="title">
         <img src="@/assets/layouts/logo-text-2.png" />
       </div>
       <div class="content">
@@ -152,32 +155,39 @@ createCode()
   align-items: center;
   width: 100%;
   min-height: 100%;
+
   .theme-switch {
     position: fixed;
     top: 5%;
     right: 5%;
     cursor: pointer;
   }
+
   .login-card {
     width: 480px;
     border-radius: 20px;
     box-shadow: 0 0 10px #dcdfe6;
     background-color: #fff;
     overflow: hidden;
+
     .title {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 150px;
+
       img {
         height: 100%;
       }
     }
+
     .content {
       padding: 20px 50px 50px 50px;
+
       :deep(.el-input-group__append) {
         padding: 0;
         overflow: hidden;
+
         .el-image {
           width: 100px;
           height: 40px;
@@ -187,6 +197,7 @@ createCode()
           text-align: center;
         }
       }
+
       .el-button {
         width: 100%;
         margin-top: 10px;

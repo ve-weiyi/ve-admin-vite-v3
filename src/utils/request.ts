@@ -9,7 +9,7 @@
 "use strict"
 import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios"
 import { ElMessage } from "element-plus"
-import { getToken, removeToken } from "@/utils/cache/cookies"
+import cookies from "@/utils/cookies"
 
 class HttpRequest {
   private baseUrl: string
@@ -111,9 +111,11 @@ class HttpRequest {
   }
 
   private setHeader(config: AxiosRequestConfig) {
-    const token = getToken()
+    const token = cookies.get("token")
+    const uid = cookies.get("uid")
     if (token) {
       config.headers!.Authorization = token
+      config.headers!.uid = uid
     }
   }
 
@@ -140,7 +142,7 @@ class HttpRequest {
       },
       (error) => {
         return Promise.reject(new Error(error))
-      }
+      },
     )
 
     // 响应拦截
@@ -160,7 +162,7 @@ class HttpRequest {
           // token 错误
           case 403:
             console.log("403")
-            removeToken()
+            cookies.clearAll()
             return Promise.reject(new Error(message || "Error"))
           default:
             ElMessage({
@@ -182,7 +184,7 @@ class HttpRequest {
           duration: 2 * 1000,
         })
         return Promise.reject(new Error(error.message))
-      }
+      },
     )
     return instance
   }

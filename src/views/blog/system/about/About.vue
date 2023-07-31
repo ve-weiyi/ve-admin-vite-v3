@@ -30,7 +30,7 @@ import { MdEditor, MdPreview, MdCatalog } from "md-editor-v3"
 import "md-editor-v3/lib/style.css"
 import { uploadFileApi } from "@/api/file"
 import { updateAboutApi } from "@/api/admin"
-import { getAboutApi } from "@/api/website"
+import { getAboutApi } from "@/api/blog"
 
 const mdRef = ref(null)
 const aboutContent = ref("")

@@ -125,8 +125,8 @@ export const asyncRoutes: RouteRecordRaw[] = [
 const router = createRouter({
   history:
     import.meta.env.VITE_ROUTER_HISTORY === "hash"
-      ? createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH)
-      : createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
+      ? createWebHashHistory(import.meta.env.BASE_URL)
+      : createWebHistory(import.meta.env.BASE_URL),
   routes: constantRoutes,
 })
 

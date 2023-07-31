@@ -3,18 +3,18 @@ import { useRouter } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useAppStore } from "@/store/modules/app"
 import { useSettingsStore } from "@/store/modules/settings"
-import { useUserStore } from "@/store/modules/user"
 import { UserFilled } from "@element-plus/icons-vue"
 import Hamburger from "./components/Hamburger/index.vue"
 import Breadcrumb from "./components/Breadcrumb/index.vue"
 import ThemeSwitch from "@/layout/components/NavigationBar/components/ThemeSwitch/index.vue"
 import Screenfull from "@/layout/components/NavigationBar/components/Screenfull/index.vue"
 import Notify from "@/layout/components/NavigationBar/components/Notify/index.vue"
+import { useAdminStore } from "@/store/modules/admin"
 
 const router = useRouter()
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
-const userStore = useUserStore()
+const userStore = useAdminStore()
 
 const { sidebar } = storeToRefs(appStore)
 const { showNotify, showThemeSwitch, showScreenfull } = storeToRefs(settingsStore)
@@ -41,7 +41,7 @@ const logout = () => {
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
           <el-avatar :icon="UserFilled" :size="30" />
-          <span>{{ userStore.username }}</span>
+          <span>{{ userStore.nickname }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>

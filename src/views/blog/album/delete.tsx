@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { createPhotoApi, deleteByIdsPhotoApi, deletePhotoApi, findPhotoListApi, updatePhotoApi } from "@/api/photo"
+import { createPhotoApi, deletePhotoByIdsApi, deletePhotoApi, findPhotoListApi, updatePhotoApi } from "@/api/photo"
 
 interface Pagination {
   total?: number
@@ -48,7 +48,7 @@ export function useTableHook() {
   // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
   // eslint-disable-next-line no-undef
-  const orders = reactive<Order[]>([])
+  const sorts = reactive<Sort[]>([])
 
   const resetForm = (row) => {
     if (row != null) {
@@ -67,7 +67,7 @@ export function useTableHook() {
 
   const applySearch = () => {
     conditions.length = 0
-    orders.length = 0
+    sorts.length = 0
     if (searchData.linkName != "") {
       conditions.push({
         flag: "AND",
@@ -94,7 +94,7 @@ export function useTableHook() {
     findPhotoListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: sorts,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list
@@ -147,7 +147,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteByIdsPhotoApi(ids).then((res) => {
+    deletePhotoByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()

@@ -2,7 +2,7 @@ import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
 import { defaultPaginationData, Pagination, Order, Condition, FormField, RenderType } from "@/utils/render"
-import { adminCommentsApi } from "@/api/admin"
+import { findCommentBackListApi } from "@/api/comment"
 
 const align = "center"
 
@@ -34,7 +34,7 @@ export function useTableHook() {
   const pagination = reactive<Pagination>({ ...defaultPaginationData })
 
   const conditions = reactive<Condition[]>([])
-  const orders = reactive<Order[]>([])
+  const sorts = reactive<Order[]>([])
 
   const resetForm = (formEl) => {
     if (!formEl) return
@@ -51,7 +51,7 @@ export function useTableHook() {
 
   const applySearch = () => {
     conditions.length = 0
-    orders.length = 0
+    sorts.length = 0
     if (searchData.username != "") {
       conditions.push({
         flag: "AND",
@@ -82,10 +82,10 @@ export function useTableHook() {
     applySearch()
 
     loading.value = true
-    adminCommentsApi({
+    findCommentBackListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: sorts,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list

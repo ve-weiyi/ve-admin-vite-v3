@@ -241,7 +241,7 @@ export function useTableHook() {
 
   // 条件查询
   const conditions = reactive<Condition[]>([])
-  const orders = reactive<Order[]>(defaultOrder)
+  const sorts = reactive<Order[]>(defaultOrder)
 
   const resetForm = (row) => {
     if (row != null) {
@@ -262,7 +262,7 @@ export function useTableHook() {
 
   const applySearch = () => {
     conditions.length = 0
-    orders.length = 0
+    sorts.length = 0
 
     // 搜索条件
     searchFields.value.forEach((item) => {
@@ -279,7 +279,7 @@ export function useTableHook() {
 
     // 排序条件
     for (const item of orderData.value) {
-      orders.push(item)
+      sorts.push(item)
     }
   }
 
@@ -291,7 +291,7 @@ export function useTableHook() {
     findOperationLogListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: sorts,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list

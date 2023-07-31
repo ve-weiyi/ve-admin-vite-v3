@@ -4,7 +4,7 @@ import { VNode, Ref, toRef } from "vue"
 interface Page {
   page?: number
   page_size?: number
-  orders?: Order[]
+  sorts?: Order[]
   conditions?: Condition[]
 }
 

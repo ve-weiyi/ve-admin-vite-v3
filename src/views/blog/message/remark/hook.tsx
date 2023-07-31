@@ -51,7 +51,7 @@ export function useTableHook() {
   // eslint-disable-next-line no-undef
   const conditions = reactive<Condition[]>([])
   // eslint-disable-next-line no-undef
-  const orders = reactive<Order[]>([])
+  const sorts = reactive<Sort[]>([])
 
   const resetForm = (formEl) => {
     if (!formEl) return
@@ -68,7 +68,7 @@ export function useTableHook() {
 
   const applySearch = () => {
     conditions.length = 0
-    orders.length = 0
+    sorts.length = 0
     if (searchData.username != "") {
       conditions.push({
         flag: "AND",
@@ -102,7 +102,7 @@ export function useTableHook() {
     findRemarkListApi({
       page: pagination.currentPage,
       page_size: pagination.pageSize,
-      orders: orders,
+      sorts: sorts,
       conditions: conditions,
     }).then((res) => {
       tableData.value = res.data.list
