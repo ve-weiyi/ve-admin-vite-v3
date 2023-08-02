@@ -42,7 +42,7 @@ export function useTableHook() {
     linkAvatar: "",
     linkAddress: "",
     linkIntro: "",
-    createdAt: null,
+    created_at: null,
   })
   const formRules: FormRules = reactive({
     linkName: [{ required: true, trigger: "blur", message: "请输入友链名称" }],
@@ -74,14 +74,14 @@ export function useTableHook() {
       formData.linkAvatar = row.linkAvatar
       formData.linkAddress = row.linkAddress
       formData.linkIntro = row.linkIntro
-      formData.createdAt = row.createdAt
+      formData.created_at = row.created_at
     } else {
       formData.id = 0
       formData.linkName = ""
       formData.linkAvatar = ""
       formData.linkAddress = ""
       formData.linkIntro = ""
-      formData.createdAt = null
+      formData.created_at = null
     }
     formRef.value?.resetFields()
   }

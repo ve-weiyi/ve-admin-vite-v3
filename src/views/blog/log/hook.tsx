@@ -8,6 +8,7 @@ import {
   findOperationLogListApi,
   updateOperationLogApi,
 } from "@/api/operation_log"
+import { OperationLog } from "@/api/types"
 import { Timer } from "@element-plus/icons-vue"
 
 const align = "center"
@@ -86,34 +87,34 @@ function getColumnFields(): Column[] {
       sortable: true,
     },
     {
-      key: "optModule",
+      key: "opt_module",
       title: "系统模块",
-      dataKey: "optModule",
+      dataKey: "opt_module",
       width: 100,
       align: align,
     },
     {
-      key: "optType",
+      key: "opt_type",
       title: "操作类型",
-      dataKey: "optType",
+      dataKey: "opt_type",
       width: 100,
       align: align,
     },
     {
-      key: "optDesc",
+      key: "opt_desc",
       title: "操作描述",
-      dataKey: "optDesc",
+      dataKey: "opt_desc",
       width: 100,
       align: align,
     },
     {
-      key: "requestMethod",
+      key: "request_method",
       title: "请求方式",
-      dataKey: "requestMethod",
+      dataKey: "request_method",
       width: 100,
       align: align,
       cellRenderer: (row: any) => {
-        return <el-tag type={tagType(row.requestMethod)}>{row.requestMethod}</el-tag>
+        return <el-tag type={tagType(row.request_method)}>{row.request_method}</el-tag>
       },
     },
     {
@@ -124,23 +125,23 @@ function getColumnFields(): Column[] {
       align: align,
     },
     {
-      key: "ipAddress",
+      key: "ip_address",
       title: "登录ip",
-      dataKey: "ipAddress",
+      dataKey: "ip_address",
       width: 140,
       align: align,
     },
     {
-      key: "ipSource",
+      key: "ip_source",
       title: "登录地址",
-      dataKey: "ipSource",
+      dataKey: "ip_source",
       width: 0,
       align: align,
     },
     {
-      key: "createdAt",
+      key: "created_at",
       title: "操作日期",
-      dataKey: "createdAt",
+      dataKey: "created_at",
       width: 150,
       align: align,
       sortable: true,
@@ -150,7 +151,7 @@ function getColumnFields(): Column[] {
             <el-icon style="margin-right: 5px">
               <Timer />
             </el-icon>
-            <span>{row.createdAt.substring(0, 10)}</span>
+            <span>{row.created_at.substring(0, 10)}</span>
           </div>
         )
       },
@@ -161,34 +162,34 @@ function getColumnFields(): Column[] {
 function getFormFields(): FormField[] {
   return [
     {
-      field: "optModule",
+      field: "opt_module",
       label: "操作模块",
     },
     {
-      field: "optUrl",
+      field: "opt_url",
       label: "请求地址",
     },
     {
-      field: "optDesc",
+      field: "opt_desc",
       label: "操作描述",
     },
     {
-      field: "requestMethod",
+      field: "request_method",
       label: "请求方式",
       render: (field, model) => {
-        return <el-tag type={tagType(model.requestMethod)}>{model.requestMethod}</el-tag>
+        return <el-tag type={tagType(model.request_method)}>{model.request_method}</el-tag>
       },
     },
     {
-      field: "optMethod",
+      field: "opt_method",
       label: "操作方法",
     },
     {
-      field: "requestParam",
+      field: "request_param",
       label: "请求参数",
     },
     {
-      field: "responseData",
+      field: "response_data",
       label: "返回数据",
     },
     {
@@ -196,12 +197,12 @@ function getFormFields(): FormField[] {
       label: "操作人员",
     },
     {
-      field: "createdAt",
+      field: "created_at",
       label: "操作日期",
       render: (field, model) => {
         return (
           <div>
-            <span>{model.createdAt.substring(0, 10)}</span>
+            <span>{model.created_at.substring(0, 10)}</span>
           </div>
         )
       },
@@ -234,9 +235,9 @@ export function useTableHook() {
 
   // 表格数据定义
   const tableRef = ref<TableInstance | null>(null)
-  const tableData = ref([])
+  const tableData = ref<OperationLog[]>([])
   const orderData = ref<Order[]>(defaultOrder)
-  const selectionIds = reactive([])
+  const selectionIds = reactive<number[]>([])
   const pagination = reactive<Pagination>({ ...defaultPaginationData })
 
   // 条件查询
@@ -335,7 +336,7 @@ export function useTableHook() {
 
   function onDelete(row) {
     console.log("onDelete", row)
-    deleteOperationLogApi(row).then((res) => {
+    deleteOperationLogApi(row.id).then((res) => {
       ElMessage.success("删除成功")
       removeVisibility.value = false
       onSearchList()

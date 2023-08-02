@@ -1,22 +1,10 @@
 import http from "@/utils/request"
-
-interface Remark {
-  id: number // 主键id
-  nickname: string // 昵称
-  avatar: string // 头像
-  message_content: string // 留言内容
-  ip_address: string // 用户ip
-  ip_source: string // 用户地址
-  time: number // 弹幕速度
-  is_review: boolean // 是否审核
-  created_at: string // 发布时间
-  updated_at: string // 修改时间
-}
+import { Remark } from './types'
 
 /** 创建留言 */
 export function createRemarkApi(data: Remark): Promise<IApiResponseData<Remark>> {
   return http.request<IApiResponseData<Remark>>({
-    url: `/api/v1//remark`,
+    url: `/api/v1/remark`,
     method: "post",
     data: data,
   })
@@ -25,7 +13,7 @@ export function createRemarkApi(data: Remark): Promise<IApiResponseData<Remark>>
 /** 更新留言 */
 export function updateRemarkApi(data: Remark): Promise<IApiResponseData<Remark>> {
   return http.request<IApiResponseData<Remark>>({
-    url: `/api/v1//remark`,
+    url: `/api/v1/remark`,
     method: "put",
     data: data,
   })
@@ -34,7 +22,7 @@ export function updateRemarkApi(data: Remark): Promise<IApiResponseData<Remark>>
 /** 删除留言 */
 export function deleteRemarkApi(id: number): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: `/api/v1//remark/${id}`,
+    url: `/api/v1/remark/${id}`,
     method: "delete",
   })
 }
@@ -42,7 +30,7 @@ export function deleteRemarkApi(id: number): Promise<IApiResponseData<any>> {
 /** 查询留言 */
 export function findRemarkApi(id: number): Promise<IApiResponseData<Remark>> {
   return http.request<IApiResponseData<Remark>>({
-    url: `/api/v1//remark/${id}`,
+    url: `/api/v1/remark/${id}`,
     method: "get",
   })
 }
@@ -50,16 +38,16 @@ export function findRemarkApi(id: number): Promise<IApiResponseData<Remark>> {
 /** 批量删除留言 */
 export function deleteRemarkByIdsApi(data: number[]): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
-    url: `/api/v1//remark/batch_delete`,
+    url: `/api/v1/remark/batch_delete`,
     method: "delete",
     data: data,
   })
 }
 
 /** 分页获取留言列表 */
-export function findRemarkListApi(page: PageQuery): Promise<IApiResponseData<PageResult<PageResult<Remark>>>> {
-  return http.request<IApiResponseData<PageResult<PageResult<Remark>>>>({
-    url: `/api/v1//remark/list`,
+export function findRemarkListApi(page: PageQuery): Promise<IApiResponseData<PageResult<Remark>>> {
+  return http.request<IApiResponseData<PageResult<Remark>>>({
+    url: `/api/v1/remark/list`,
     method: "post",
     data: page,
   })

@@ -51,7 +51,7 @@ const formRef = ref<FormInstance | null>(null)
 const formData = ref({
   id: "",
   uuid: "",
-  createdAt: "",
+  created_at: "",
   roles: [
     {
       id: 0,
@@ -90,7 +90,7 @@ const resetForm = () => {
   formData.value = {
     id: "",
     uuid: "",
-    createdAt: "",
+    created_at: "",
     roles: [],
   }
 }
@@ -244,12 +244,12 @@ defineOptions({
               />
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="创建时间" width="auto" :align="alignType">
+          <el-table-column prop="created_at" label="创建时间" width="auto" :align="alignType">
             <template #default="scope">
               <el-icon>
                 <Timer />
               </el-icon>
-              {{ scope.row.createdAt }}
+              {{ scope.row.created_at }}
             </template>
           </el-table-column>
           <el-table-column prop="lastLoginTime" label="上次登录时间" width="auto" :align="alignType">

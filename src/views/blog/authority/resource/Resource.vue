@@ -42,7 +42,7 @@ const formData = ref({
   id: "",
   roleName: "",
   roleComment: "",
-  createdAt: "",
+  created_at: "",
 })
 const formRules: FormRules = reactive({
   username: [{ required: false, trigger: "blur", message: "请输入用户名" }],
@@ -70,7 +70,7 @@ const resetForm = () => {
     id: "",
     roleName: "",
     roleComment: "",
-    createdAt: "",
+    created_at: "",
   }
 }
 // 提交
@@ -212,12 +212,12 @@ defineOptions({
               />
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="创建时间" width="auto" :align="alignType">
+          <el-table-column prop="created_at" label="创建时间" width="auto" :align="alignType">
             <template #default="scope">
               <el-icon>
                 <Timer />
               </el-icon>
-              {{ scope.row.createdAt }}
+              {{ scope.row.created_at }}
             </template>
           </el-table-column>
 

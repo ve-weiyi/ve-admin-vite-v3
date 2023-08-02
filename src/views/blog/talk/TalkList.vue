@@ -35,7 +35,7 @@
             </div>
             <!-- 发表时间 -->
             <div class="time">
-              {{ item.createdAt }}
+              {{ item.created_at }}
               <span class="top" v-if="item.isTop === 1"> <i class="iconfont icon-upload-fill" /> 置顶 </span>
               <span class="secret" v-if="item.status === 2"> <i class="iconfont icon-password-fill" /> 私密 </span>
             </div>

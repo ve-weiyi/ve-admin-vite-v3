@@ -220,12 +220,12 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
               />
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="创建时间" width="130" :align="alignType">
+          <el-table-column prop="created_at" label="创建时间" width="130" :align="alignType">
             <template #default="scope">
               <el-icon>
                 <Timer />
               </el-icon>
-              {{ scope.row.createdAt }}
+              {{ scope.row.created_at }}
             </template>
           </el-table-column>
 

@@ -112,10 +112,10 @@
           </template>
         </el-table-column>
         <!-- 评论时间 -->
-        <el-table-column prop="createdAt" label="评论时间" width="150" align="center">
+        <el-table-column prop="created_at" label="评论时间" width="150" align="center">
           <template #default="{ row }">
             <i class="el-icon-time" style="margin-right: 5px"></i>
-            {{ formatDateTime(row.createdAt) }}
+            {{ formatDateTime(row.created_at) }}
           </template>
         </el-table-column>
         <!-- 列操作 -->

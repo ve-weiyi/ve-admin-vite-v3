@@ -5,7 +5,7 @@
       <el-col :span="6">
         <el-card>
           <div class="card-icon-container">
-            <i class="iconfont icon-a-groupgroup-fill" style="color: #40c9c6" />
+            <i class="iconfont icon-user-fill" style="color: #40c9c6" />
           </div>
           <div class="card-desc">
             <div class="card-title">访问量</div>
@@ -115,7 +115,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue"
-import { getHomeInfoApi } from "@/api/admin"
+import { getHomeInfoApi } from "@/api/blog"
 import { getUserAreasApi } from "@/api/user"
 import Calender from "@/views/blog/home/components/Calender.vue"
 import LineChart from "@/views/blog/home/components/LineChart.vue"
@@ -167,16 +167,17 @@ const areaData = ref<{
 const getData = () => {
   // 发送请求获取数据
   getHomeInfoApi().then((res) => {
-    viewsCount.value = res.data.viewsCount
-    messageCount.value = res.data.messageCount
-    userCount.value = res.data.userCount
-    articleCount.value = res.data.articleCount
-    articleStatisticsList.value = res.data.articleStatisticsList
+    console.log("res", res)
+    viewsCount.value = res.data.views_count
+    messageCount.value = res.data.message_count
+    userCount.value = res.data.user_count
+    articleCount.value = res.data.article_count
+    articleStatisticsList.value = res.data.article_statistics_list
 
-    if (res.data.uniqueViewDTOList != null) {
+    if (res.data.unique_view_dto_list != null) {
       const x = []
       const y = []
-      res.data.uniqueViewDTOList.forEach((item) => {
+      res.data.unique_view_dto_list.forEach((item) => {
         x.push(item.day)
         y.push(item.count)
       })
@@ -187,16 +188,16 @@ const getData = () => {
       }
     }
 
-    if (res.data.categoryDTOList != null) {
+    if (res.data.category_dto_list != null) {
       const series = []
       const legend = []
 
-      res.data.categoryDTOList.forEach((item) => {
+      res.data.category_dto_list.forEach((item) => {
         series.push({
-          value: item.articleCount,
-          name: item.categoryName,
+          value: item.article_count,
+          name: item.category_name,
         })
-        legend.push(item.categoryName)
+        legend.push(item.category_name)
       })
 
       categoryData.value = {
@@ -205,11 +206,11 @@ const getData = () => {
       }
     }
 
-    if (res.data.articleRankDTOList != null) {
+    if (res.data.article_rank_dto_list != null) {
       const x = []
       const y = []
-      res.data.articleRankDTOList.forEach((item) => {
-        x.push(item.articleTitle)
+      res.data.article_rank_dto_list.forEach((item) => {
+        x.push(item.article_title)
         y.push(item.count)
       })
 
@@ -219,11 +220,11 @@ const getData = () => {
       }
     }
 
-    if (res.data.tagDTOList != null) {
-      res.data.tagDTOList.forEach((item) => {
+    if (res.data.tag_dto_list != null) {
+      res.data.tag_dto_list.forEach((item) => {
         tagDTOList.value.push({
           id: item.id,
-          name: item.tagName,
+          name: item.tag_name,
         })
       })
     }

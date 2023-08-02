@@ -114,7 +114,7 @@ class HttpRequest {
     const token = cookies.get("token")
     const uid = cookies.get("uid")
     if (token) {
-      config.headers!.Authorization = token
+      config.headers!.token = token
       config.headers!.uid = uid
     }
   }

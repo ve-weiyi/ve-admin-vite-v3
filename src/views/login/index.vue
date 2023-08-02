@@ -46,14 +46,15 @@ const handleLogin = () => {
       loginApi(loginFormData)
         .then((res) => {
           console.log("登录成功", res)
-          userStore.setLoginUser(res.data.userInfo)
+          userStore.setLoginUser(res.data.userinfo)
           userStore.setToken(res.data.token)
           getUserMenusApi().then((res) => {
             permissionStore.setRoutes(asyncRouteSettings.defaultRoles)
+            router.push({ path: "/" })
           })
-          router.push({ path: "/" })
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("登录失败", err)
           createCode()
           loginFormData.password = ""
         })
@@ -77,7 +78,7 @@ const createCode = () => {
     width: 100,
     length: 6,
   }).then((res) => {
-    codeUrl.value = res.data.encodeData
+    codeUrl.value = res.data.encode_data
   })
 }
 

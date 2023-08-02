@@ -48,6 +48,9 @@
           >
             批量删除
           </el-button>
+          <bar>
+<!--            <template v-slot:title> 这是自定义的标题 </template>-->
+          </bar>
         </div>
       </div>
       <!-- 表格展示 -->
@@ -151,7 +154,7 @@
 import { ref, reactive, computed } from "vue"
 import { useTableHook } from "./hook"
 import { builderRender } from "@/utils/render"
-
+import Bar from "./Bar.vue"
 const {
   loading,
   removeVisibility,

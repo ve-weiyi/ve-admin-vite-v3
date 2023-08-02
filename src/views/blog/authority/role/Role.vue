@@ -60,12 +60,12 @@
               />
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="创建时间" width="200" align="center">
+          <el-table-column prop="created_at" label="创建时间" width="200" align="center">
             <template #default="scope">
               <el-icon>
                 <Timer />
               </el-icon>
-              {{ scope.row.createdAt }}
+              {{ scope.row.created_at }}
             </template>
           </el-table-column>
 
@@ -260,7 +260,7 @@ const formData = ref({
   roleName: "",
   roleDomain: "",
   roleComment: "",
-  // createdAt: '',
+  // created_at: '',
   resourceIdList: [],
   menuIdList: [],
 })
@@ -305,7 +305,7 @@ const resetForm = () => {
     roleName: "",
     roleDomain: "",
     roleComment: "",
-    // createdAt: '',
+    // created_at: '',
     resourceIdList: [],
     menuIdList: [],
   }
