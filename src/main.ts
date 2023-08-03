@@ -17,6 +17,8 @@ import "vxe-table/lib/style.css"
 import "vxe-table-plugin-element/dist/style.css"
 import "@/styles/index.scss"
 import "@/styles/admin.scss"
+// 一定要在main.ts中导入tailwind.css，防止vite每次hmr都会请求src/style/index.scss整体css文件导致热更新慢的问题
+import "@/styles/tailwind.css"
 
 // 字体图标
 import "@/assets/iconfont/iconfont.css"

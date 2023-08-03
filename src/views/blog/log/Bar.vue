@@ -93,7 +93,12 @@ import RefreshIcon from "./svg/refresh.svg?component"
 import SettingIcon from "./svg/settings.svg?component"
 import CollapseIcon from "./svg/collapse.svg?component"
 
-const props = defineProps({})
+const props = defineProps({
+  title: {
+    type: String,
+    default: "",
+  },
+})
 const emit = defineEmits({})
 const slots = defineSlots()
 
@@ -150,6 +155,7 @@ function handleCheckColumnListChange(val: boolean, label: string) {
 const isFixedColumn = (label: string) => {
   return dynamicColumns.value.filter((item) => item.label === label)[0].fixed ? true : false
 }
+
 const rowDrop = (event) => {
   event.preventDefault()
   // 处理拖拽逻辑

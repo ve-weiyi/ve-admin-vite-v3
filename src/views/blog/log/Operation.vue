@@ -31,14 +31,6 @@
         </div>
         <!-- 表格操作 -->
         <div class="operation-container">
-          <div style="margin-left: auto; margin-right: 0.5rem">
-            <el-tooltip content="下载">
-              <el-button type="primary" icon="Download" circle />
-            </el-tooltip>
-            <el-tooltip content="刷新表格">
-              <el-button type="primary" icon="RefreshRight" circle @click="refreshTable" />
-            </el-tooltip>
-          </div>
           <el-button
             type="danger"
             size="default"
@@ -48,11 +40,71 @@
           >
             批量删除
           </el-button>
-          <bar>
-<!--            <template v-slot:title> 这是自定义的标题 </template>-->
-          </bar>
+          <div style="margin-left: 0.5rem; margin-right: 0.5rem">
+            <el-tooltip content="刷新表格" placement="top">
+              <el-button type="primary" icon="RefreshRight" circle @click="refreshTable" />
+            </el-tooltip>
+
+            <el-tooltip content="下载表格" placement="top">
+              <el-dropdown trigger="click">
+                <el-button style="margin-inline: 0.5rem" type="primary" icon="Download" circle />
+                <template #dropdown>
+                  <el-dropdown-menu class="translation">
+                    <el-dropdown-item :style="getDropdownItemStyle('large')" @click="size = 'large'">
+                      宽松
+                    </el-dropdown-item>
+                    <el-dropdown-item :style="getDropdownItemStyle('default')" @click="size = 'default'">
+                      默认
+                    </el-dropdown-item>
+                    <el-dropdown-item :style="getDropdownItemStyle('small')" @click="size = 'small'">
+                      紧凑
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-tooltip>
+
+            <!--            <el-tooltip placement="top" virtual-ref="buttonRef" virtual-triggering trigger="hover" content="列设置" />-->
+            <el-tooltip content="表格设置" placement="top">
+              <el-button ref="buttonRef" type="primary" icon="setting" circle @click="refreshTable" />
+            </el-tooltip>
+
+            <!-- 其他部分保持不变 -->
+            <el-popover
+              ref="popoverRef"
+              :virtual-ref="buttonRef"
+              trigger="click"
+              placement="bottom-start"
+              virtual-triggering
+            >
+              <div class="toolbar-wrapper">
+                <el-checkbox label="列展示" v-model="checkAll" @change="handleCheckAllChange" />
+                <el-button type="primary" link @click="onReset"> 重置</el-button>
+              </div>
+
+              <el-divider direction="horizontal" style="margin-top: 0px; margin-bottom: 5px" />
+
+              <div class="pt-[6px] pl-[11px]">
+                <el-checkbox-group v-model="checkedColumns" @change="handleCheckedColumnsChange">
+                  <el-space direction="vertical" alignment="flex-start" size="0">
+                    <template v-for="item in checkColumnList" :key="item">
+                      <i class="iconfont icon-picture" />
+                      <div class="flex items-center">
+                        <el-checkbox v-if="item" :label="item" @change="handleCheckColumnListChange">
+                          <span :title="item" class="inline-block w-[120px] truncate hover:text-text_color_primary">
+                            {{ item }}
+                          </span>
+                        </el-checkbox>
+                      </div>
+                    </template>
+                  </el-space>
+                </el-checkbox-group>
+              </div>
+            </el-popover>
+          </div>
         </div>
       </div>
+
       <!-- 表格展示 -->
       <el-table
         border
@@ -91,7 +143,7 @@
             </el-button>
             <el-popconfirm title="确定删除吗？" style="margin-left: 10px" @confirm="onDelete(scope.row)">
               <template #reference>
-                <el-button text type="primary" size="small" class="operation-button" icon="delete"> 删除 </el-button>
+                <el-button text type="primary" size="small" class="operation-button" icon="delete"> 删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -151,10 +203,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue"
+import { ref, reactive, computed, nextTick } from "vue"
 import { useTableHook } from "./hook"
 import { builderRender } from "@/utils/render"
 import Bar from "./Bar.vue"
+import PureTableBar from "@/views/blog/log/bar"
+import Sortable from "sortablejs"
+
 const {
   loading,
   removeVisibility,
@@ -223,6 +278,94 @@ const checkTabType = (count: number) => {
 const isActive = (status) => {
   return status === type.value ? "active-status" : "status"
 }
+
+const cloneDeep = (arr: any[]) => {
+  return JSON.parse(JSON.stringify(arr))
+}
+
+const getKeyList = (arr: any[], key: string) => {
+  return arr.map((item) => item[key])
+}
+
+const buttonRef = ref()
+const size = ref("default")
+const isExpandAll = ref(true)
+const checkAll = ref(true)
+const isIndeterminate = ref(false)
+let checkColumnList = []
+const checkedColumns = ref([])
+const dynamicColumns = ref([])
+
+const getDropdownItemStyle = computed(() => {
+  return (s) => {
+    return {
+      background: s === size.value ? "#409eff" : "",
+      color: s === size.value ? "#fff" : "var(--el-text-color-primary)",
+    }
+  }
+})
+
+const onReset = () => {
+  checkAll.value = true
+  isIndeterminate.value = false
+  dynamicColumns.value = cloneDeep(columnFields.value)
+  checkColumnList = getKeyList(cloneDeep(columnFields.value), "title")
+  checkedColumns.value = getKeyList(cloneDeep(columnFields.value), "title")
+
+  console.log("dynamicColumns", dynamicColumns.value)
+  console.log("checkedColumns", checkedColumns.value)
+  console.log("checkColumnList", checkColumnList)
+}
+
+function handleCheckAllChange(val: boolean) {
+  checkedColumns.value = val ? checkColumnList : []
+  isIndeterminate.value = false
+  dynamicColumns.value.map((column) => (val ? (column.hide = false) : (column.hide = true)))
+}
+
+function handleCheckedColumnsChange(value: string[]) {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === checkColumnList.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < checkColumnList.length
+}
+
+function handleCheckColumnListChange(val: boolean, label: string) {
+  dynamicColumns.value.filter((item) => item.label === label)[0].hide = !val
+}
+
+const isFixedColumn = (label: string) => {
+  return dynamicColumns.value.filter((item) => item.label === label)[0].fixed ? true : false
+}
+
+/** 列展示拖拽排序 */
+const rowDrop = (event: { preventDefault: () => void }) => {
+  event.preventDefault()
+  nextTick(() => {
+    const wrapper: HTMLElement = document.querySelector(".el-checkbox-group>div")
+    Sortable.create(wrapper, {
+      animation: 300,
+      handle: ".drag-btn",
+      onEnd: ({ newIndex, oldIndex, item }) => {
+        const targetThElem = item
+        const wrapperElem = targetThElem.parentNode as HTMLElement
+        const oldColumn = dynamicColumns.value[oldIndex]
+        const newColumn = dynamicColumns.value[newIndex]
+        if (oldColumn?.fixed || newColumn?.fixed) {
+          // 当前列存在fixed属性 则不可拖拽
+          const oldThElem = wrapperElem.children[oldIndex] as HTMLElement
+          if (newIndex > oldIndex) {
+            wrapperElem.insertBefore(targetThElem, oldThElem)
+          } else {
+            wrapperElem.insertBefore(targetThElem, oldThElem ? oldThElem.nextElementSibling : oldThElem)
+          }
+          return
+        }
+        const currentRow = dynamicColumns.value.splice(oldIndex, 1)[0]
+        dynamicColumns.value.splice(newIndex, 0, currentRow)
+      },
+    })
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -233,6 +376,7 @@ const isActive = (status) => {
     padding-bottom: 2px;
   }
 }
+
 .comment-content {
   display: inline-block;
 }
