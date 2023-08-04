@@ -74,6 +74,19 @@ export const constantRoutes: RouteRecordRaw[] = [
   talk,
   log,
   mine,
+  {
+    path: "/test",
+    component: Layout,
+    redirect: "/test",
+    children: [
+      {
+        path: "/test",
+        component: () => import("@/views/blog/test/test.vue"),
+        name: "test",
+        meta: { title: "测试", keepAlive: true },
+      },
+    ],
+  },
   // {
   //   path: "/table",
   //   component: Layout,

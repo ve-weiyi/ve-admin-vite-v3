@@ -75,6 +75,7 @@ function getColumnFields(): Column[] {
   return [
     {
       type: "selection",
+      title: "多选",
       width: 60,
       align: align,
     },

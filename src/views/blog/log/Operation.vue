@@ -64,7 +64,6 @@
               </el-dropdown>
             </el-tooltip>
 
-            <!--            <el-tooltip placement="top" virtual-ref="buttonRef" virtual-triggering trigger="hover" content="列设置" />-->
             <el-tooltip content="表格设置" placement="top">
               <el-button ref="buttonRef" type="primary" icon="setting" circle @click="refreshTable" />
             </el-tooltip>
@@ -78,28 +77,44 @@
               virtual-triggering
             >
               <div class="toolbar-wrapper">
-                <el-checkbox label="列展示" v-model="checkAll" @change="handleCheckAllChange" />
+                <el-checkbox
+                  label="列展示"
+                  v-model="checkAll"
+                  :indeterminate="isIndeterminate"
+                  @change="handleCheckAllChange"
+                />
                 <el-button type="primary" link @click="onReset"> 重置</el-button>
               </div>
 
-              <el-divider direction="horizontal" style="margin-top: 0px; margin-bottom: 5px" />
-
-              <div class="pt-[6px] pl-[11px]">
-                <el-checkbox-group v-model="checkedColumns" @change="handleCheckedColumnsChange">
-                  <el-space direction="vertical" alignment="flex-start" size="0">
-                    <template v-for="item in checkColumnList" :key="item">
-                      <i class="iconfont icon-picture" />
-                      <div class="flex items-center">
-                        <el-checkbox v-if="item" :label="item" @change="handleCheckColumnListChange">
-                          <span :title="item" class="inline-block w-[120px] truncate hover:text-text_color_primary">
-                            {{ item }}
+              <el-divider direction="horizontal" style="margin-top: 0; margin-bottom: 5px" />
+              <el-checkbox-group v-model="checkedColumns" @change="handleCheckedColumnsChange">
+                <el-space direction="vertical" alignment="stretch">
+                  <!-- 单列拖拽 -->
+                  <draggable
+                    v-model="columnFields"
+                    item-key="key"
+                    @change="change"
+                    force-fallback="true"
+                    animation="300"
+                    draggable=".item-single"
+                  >
+                    <template #item="{ element, index }">
+                      <div class="flex item-single" style="display: flex; align-items: center">
+                        <el-icon style="margin-right: 5px; font-size: 16px"><Operation /></el-icon>
+                        <el-checkbox
+                          v-if="element"
+                          :label="element"
+                          @change="(value) => handleCheckColumnListChange(value, element)"
+                        >
+                          <span :title="element" class="inline-block w-[120px] truncate hover:text-text_color_primary">
+                            {{ element.title }}
                           </span>
                         </el-checkbox>
                       </div>
                     </template>
-                  </el-space>
-                </el-checkbox-group>
-              </div>
+                  </draggable>
+                </el-space>
+              </el-checkbox-group>
             </el-popover>
           </div>
         </div>
@@ -115,11 +130,11 @@
         @sort-change="handleSortChange"
       >
         <el-table-column
-          v-for="item of columnFields"
+          v-for="item of columnFields.filter((item) => item.hidden !== true)"
           :type="item.type"
           :key="item.key"
           :prop="item.dataKey"
-          :label="item.title"
+          :label="item.hidden ? 'hidden' : item.title"
           :align="item.align"
           :width="item.width"
           :sortable="item.sortable"
@@ -203,13 +218,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, nextTick } from "vue"
+import { ref, reactive, computed, nextTick, onMounted } from "vue"
 import { useTableHook } from "./hook"
 import { builderRender } from "@/utils/render"
 import Bar from "./Bar.vue"
-import PureTableBar from "@/views/blog/log/bar"
 import Sortable from "sortablejs"
+import draggable from "vuedraggable/src/vuedraggable"
 
+const change = (evt): void => {
+  console.log("evt: ", evt)
+  console.log("evt from: ", columnFields)
+}
 const {
   loading,
   removeVisibility,
@@ -289,12 +308,11 @@ const getKeyList = (arr: any[], key: string) => {
 
 const buttonRef = ref()
 const size = ref("default")
-const isExpandAll = ref(true)
 const checkAll = ref(true)
 const isIndeterminate = ref(false)
-let checkColumnList = []
+
+// 已选列表
 const checkedColumns = ref([])
-const dynamicColumns = ref([])
 
 const getDropdownItemStyle = computed(() => {
   return (s) => {
@@ -305,66 +323,41 @@ const getDropdownItemStyle = computed(() => {
   }
 })
 
+// 可选列表
+let initColumnFields = []
+onMounted(() => {
+  initColumnFields = columnFields.value.map((item) => item)
+  onReset()
+})
+
 const onReset = () => {
   checkAll.value = true
   isIndeterminate.value = false
-  dynamicColumns.value = cloneDeep(columnFields.value)
-  checkColumnList = getKeyList(cloneDeep(columnFields.value), "title")
-  checkedColumns.value = getKeyList(cloneDeep(columnFields.value), "title")
-
-  console.log("dynamicColumns", dynamicColumns.value)
+  checkedColumns.value = initColumnFields
+  columnFields.value = initColumnFields
+  columnFields.value.map((column) => (column.hidden = false))
+  console.log("columnFields", initColumnFields)
   console.log("checkedColumns", checkedColumns.value)
-  console.log("checkColumnList", checkColumnList)
 }
 
 function handleCheckAllChange(val: boolean) {
-  checkedColumns.value = val ? checkColumnList : []
+  checkedColumns.value = val ? columnFields.value : []
   isIndeterminate.value = false
-  dynamicColumns.value.map((column) => (val ? (column.hide = false) : (column.hide = true)))
+  columnFields.value.map((column) => (val ? (column.hidden = false) : (column.hidden = true)))
+  console.log("handleCheckAllChange val", val, columnFields.value)
 }
 
+// 已选列表发送变化
 function handleCheckedColumnsChange(value: string[]) {
+  console.log("handleCheckedColumnsChange value", value)
   const checkedCount = value.length
-  checkAll.value = checkedCount === checkColumnList.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < checkColumnList.length
+  checkAll.value = checkedCount === columnFields.value.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < columnFields.value.length
 }
 
-function handleCheckColumnListChange(val: boolean, label: string) {
-  dynamicColumns.value.filter((item) => item.label === label)[0].hide = !val
-}
-
-const isFixedColumn = (label: string) => {
-  return dynamicColumns.value.filter((item) => item.label === label)[0].fixed ? true : false
-}
-
-/** 列展示拖拽排序 */
-const rowDrop = (event: { preventDefault: () => void }) => {
-  event.preventDefault()
-  nextTick(() => {
-    const wrapper: HTMLElement = document.querySelector(".el-checkbox-group>div")
-    Sortable.create(wrapper, {
-      animation: 300,
-      handle: ".drag-btn",
-      onEnd: ({ newIndex, oldIndex, item }) => {
-        const targetThElem = item
-        const wrapperElem = targetThElem.parentNode as HTMLElement
-        const oldColumn = dynamicColumns.value[oldIndex]
-        const newColumn = dynamicColumns.value[newIndex]
-        if (oldColumn?.fixed || newColumn?.fixed) {
-          // 当前列存在fixed属性 则不可拖拽
-          const oldThElem = wrapperElem.children[oldIndex] as HTMLElement
-          if (newIndex > oldIndex) {
-            wrapperElem.insertBefore(targetThElem, oldThElem)
-          } else {
-            wrapperElem.insertBefore(targetThElem, oldThElem ? oldThElem.nextElementSibling : oldThElem)
-          }
-          return
-        }
-        const currentRow = dynamicColumns.value.splice(oldIndex, 1)[0]
-        dynamicColumns.value.splice(newIndex, 0, currentRow)
-      },
-    })
-  })
+function handleCheckColumnListChange(val: boolean, element: any) {
+  columnFields.value.filter((item) => item.title === element.title)[0].hidden = !val
+  console.log("handleCheckColumnListChange val", val, element)
 }
 </script>
 
@@ -399,5 +392,14 @@ const rowDrop = (event: { preventDefault: () => void }) => {
   cursor: pointer;
   color: #333;
   font-weight: bold;
+}
+
+.dropdown-item-active {
+  background: #409eff;
+  color: #fff;
+}
+
+.dropdown-item-normal {
+  color: var(--el-text-color-primary);
 }
 </style>

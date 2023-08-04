@@ -116,3 +116,9 @@
 .reset-margin [class*='el-icon'] + span {
   margin-left: 2px !important;
 }
+
+.flex-center {
+  display: flex;
+  justify-content: center; /* 可选，根据需要调整对齐方式 */
+  align-items: center; /* 可选，根据需要调整对齐方式 */
+}
