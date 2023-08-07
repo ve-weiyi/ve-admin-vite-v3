@@ -64,7 +64,7 @@ interface Option {
   label: string
 }
 
-export function builderRender(field: FormField, model: any): VNode {
+export function builderFormRender(field: FormField, model: any): VNode {
   if (field.render) {
     return field.render(field, model)
   }

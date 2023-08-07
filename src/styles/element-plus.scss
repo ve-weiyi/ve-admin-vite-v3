@@ -67,8 +67,9 @@
 .operation-container {
   display: flex;
   align-items: center;
-  margin-bottom: 1.00rem;
-  margin-top: 1.00rem;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 .operation-button {
   font-size: 12px;
@@ -76,6 +77,7 @@
   margin-left: 0px;
   padding: 2px;
 }
+
 .pagination-container {
   float: right;
   margin-top: 1.25rem;
@@ -104,10 +106,15 @@
   font-weight: bold;
 }
 
-//.el-button--small{
-//  margin-left: 0px;
-//  padding: 3px;
-//}
+/* 重置 el-button 中 icon 的 margin */
+.el-button [class*="el-icon"] + span {
+  margin-left: 2px !important;
+}
+
+.el-button--small{
+  margin-left: 0px;
+  padding: 3px;
+}
 
 .el-button + .el-button {
   margin-left: 4px;

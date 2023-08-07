@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <!-- 表格搜索条件 -->
-    <el-card v-loading="loading" shadow="never" class="search-wrapper">
+    <el-card v-loading="loading" shadow="never" class="search-container">
       <el-form ref="searchFormRef" :inline="true" :model="searchFields">
         <el-form-item v-for="item of searchFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
           <template v-if="item.field">
             <component
               style="display: flex; justify-content: center; align-items: center"
-              :is="builderRender(item, searchData)"
+              :is="builderFormRender(item, searchData)"
             />
           </template>
         </el-form-item>
@@ -21,7 +21,8 @@
     <!-- 表格 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
       <div class="table-title">{{ $route.meta.title }}</div>
-      <div class="toolbar-wrapper">
+      <div class="operation-container">
+        <!-- 表格菜单 -->
         <div class="status-menu" v-if="tabList.length !== 0">
           <template v-for="item of tabList" :key="item.count">
             <span @click="checkTabType(item.count)" :class="isActive(item.count)">
@@ -30,7 +31,7 @@
           </template>
         </div>
         <!-- 表格操作 -->
-        <div class="operation-container">
+        <div class="flex-between">
           <el-button
             type="danger"
             size="default"
@@ -42,10 +43,10 @@
           </el-button>
           <div style="margin-left: 0.5rem; margin-right: 0.5rem">
             <el-tooltip content="刷新表格" placement="top">
-              <el-button type="primary" icon="RefreshRight" circle @click="refreshTable" />
+              <el-button type="primary" icon="RefreshRight" circle @click="onSearchList" />
             </el-tooltip>
 
-            <el-tooltip content="下载表格" placement="top">
+            <el-tooltip content="表格密度" placement="top">
               <el-dropdown trigger="click">
                 <el-button style="margin-inline: 0.5rem" type="primary" icon="Download" circle />
                 <template #dropdown>
@@ -65,7 +66,7 @@
             </el-tooltip>
 
             <el-tooltip content="表格设置" placement="top">
-              <el-button ref="buttonRef" type="primary" icon="setting" circle @click="refreshTable" />
+              <el-button ref="buttonRef" type="primary" icon="setting" circle />
             </el-tooltip>
 
             <!-- 其他部分保持不变 -->
@@ -76,24 +77,24 @@
               placement="bottom-start"
               virtual-triggering
             >
-              <div class="toolbar-wrapper">
+              <div class="flex-between">
                 <el-checkbox
                   label="列展示"
-                  v-model="checkAll"
+                  v-model="checkAllColumns"
                   :indeterminate="isIndeterminate"
                   @change="handleCheckAllChange"
                 />
-                <el-button type="primary" link @click="onReset"> 重置</el-button>
+                <el-button type="primary" link @click="resetTable"> 重置</el-button>
               </div>
 
               <el-divider direction="horizontal" style="margin-top: 0; margin-bottom: 5px" />
-              <el-checkbox-group v-model="checkedColumns" @change="handleCheckedColumnsChange">
+              <el-checkbox-group v-model="checkedColumnFields" @change="handleCheckedColumnFieldsChange">
                 <el-space direction="vertical" alignment="stretch">
                   <!-- 单列拖拽 -->
                   <draggable
                     v-model="columnFields"
                     item-key="key"
-                    @change="change"
+                    @change="handleDragChange"
                     force-fallback="true"
                     animation="300"
                     draggable=".item-single"
@@ -104,7 +105,7 @@
                         <el-checkbox
                           v-if="element"
                           :label="element"
-                          @change="(value) => handleCheckColumnListChange(value, element)"
+                          @change="(value) => handleCheckedColumnChange(value, element)"
                         >
                           <span :title="element" class="inline-block w-[120px] truncate hover:text-text_color_primary">
                             {{ element.title }}
@@ -124,8 +125,9 @@
       <el-table
         border
         ref="tableRef"
-        :data="tableData"
         :loading="loading"
+        :data="tableData"
+        :size="size"
         @selection-change="handleSelectionChange"
         @sort-change="handleSortChange"
       >
@@ -134,7 +136,7 @@
           :type="item.type"
           :key="item.key"
           :prop="item.dataKey"
-          :label="item.hidden ? 'hidden' : item.title"
+          :label="item.title"
           :align="item.align"
           :width="item.width"
           :sortable="item.sortable"
@@ -153,12 +155,12 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="handleAddOrEdit(scope.row)" icon="view">
-              <i class="el-icon-view" /> 查看
+            <el-button text type="primary" size="small" icon="view" @click="handleFormVisibility(scope.row)">
+              查看
             </el-button>
             <el-popconfirm title="确定删除吗？" style="margin-left: 10px" @confirm="onDelete(scope.row)">
               <template #reference>
-                <el-button text type="primary" size="small" class="operation-button" icon="delete"> 删除</el-button>
+                <el-button text type="primary" size="small" icon="delete"> 删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -196,20 +198,20 @@
     </el-dialog>
 
     <!-- 查看模态框 -->
-    <el-dialog v-model="addOrEditVisibility" class="dialog-container">
+    <el-dialog v-model="formVisibility" class="dialog-container">
       <template #header>
         <div class="dialog-title-container">
           <el-icon>
             <MoreFilled />
           </el-icon>
-          详细信息
+          {{ formTitle }}
         </div>
       </template>
 
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" size="default">
         <el-form-item v-for="item of formFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
           <template v-if="item.field">
-            <component :is="builderRender(item, formData)" />
+            <component :is="builderFormRender(item, formData)" />
           </template>
         </el-form-item>
       </el-form>
@@ -220,50 +222,53 @@
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted } from "vue"
 import { useTableHook } from "./hook"
-import { builderRender } from "@/utils/render"
-import Bar from "./Bar.vue"
-import Sortable from "sortablejs"
+import { builderFormRender } from "@/utils/render"
 import draggable from "vuedraggable/src/vuedraggable"
 
-const change = (evt): void => {
-  console.log("evt: ", evt)
-  console.log("evt from: ", columnFields)
-}
 const {
-  loading,
   removeVisibility,
-  addOrEditVisibility,
+  formFields,
+  formVisibility,
   formRef,
   formData,
   formRules,
+  searchFields,
   searchFormRef,
   searchData,
+  loading,
+  columnFields,
+  checkedColumnFields,
+  checkAllColumns,
+  isIndeterminate,
   tableRef,
   tableData,
-  selectionIds,
   pagination,
-  resetForm,
-  resetSearch,
+  selectionIds,
   onSearchList,
-  onSave,
+  onSaveForm,
+  onCreate,
+  onUpdate,
   onDelete,
   onDeleteByIds,
-  handleAddOrEdit,
+  handleFormVisibility,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
   handleSortChange,
-  refreshTable,
-  columnFields,
-  searchFields,
-  formFields,
+  handleDragChange,
+  handleCheckAllChange,
+  handleCheckedColumnFieldsChange,
+  handleCheckedColumnChange,
+  resetForm,
+  resetSearch,
+  resetTable,
 } = useTableHook()
 
-const linkTitle = computed(() => {
+const formTitle = computed(() => {
   if (formData.value.id == 0) {
-    return "添加友链"
+    return "详细信息"
   } else {
-    return "编辑友链"
+    return "详细信息"
   }
 })
 
@@ -295,24 +300,12 @@ const checkTabType = (count: number) => {
 }
 
 const isActive = (status) => {
-  return status === type.value ? "active-status" : "status"
-}
-
-const cloneDeep = (arr: any[]) => {
-  return JSON.parse(JSON.stringify(arr))
-}
-
-const getKeyList = (arr: any[], key: string) => {
-  return arr.map((item) => item[key])
+  return status === type.value ? "active-status" : "normal-status"
 }
 
 const buttonRef = ref()
-const size = ref("default")
-const checkAll = ref(true)
-const isIndeterminate = ref(false)
 
-// 已选列表
-const checkedColumns = ref([])
+const size = ref("default")
 
 const getDropdownItemStyle = computed(() => {
   return (s) => {
@@ -323,46 +316,11 @@ const getDropdownItemStyle = computed(() => {
   }
 })
 
-// 可选列表
-let initColumnFields = []
-onMounted(() => {
-  initColumnFields = columnFields.value.map((item) => item)
-  onReset()
-})
-
-const onReset = () => {
-  checkAll.value = true
-  isIndeterminate.value = false
-  checkedColumns.value = initColumnFields
-  columnFields.value = initColumnFields
-  columnFields.value.map((column) => (column.hidden = false))
-  console.log("columnFields", initColumnFields)
-  console.log("checkedColumns", checkedColumns.value)
-}
-
-function handleCheckAllChange(val: boolean) {
-  checkedColumns.value = val ? columnFields.value : []
-  isIndeterminate.value = false
-  columnFields.value.map((column) => (val ? (column.hidden = false) : (column.hidden = true)))
-  console.log("handleCheckAllChange val", val, columnFields.value)
-}
-
-// 已选列表发送变化
-function handleCheckedColumnsChange(value: string[]) {
-  console.log("handleCheckedColumnsChange value", value)
-  const checkedCount = value.length
-  checkAll.value = checkedCount === columnFields.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < columnFields.value.length
-}
-
-function handleCheckColumnListChange(val: boolean, element: any) {
-  columnFields.value.filter((item) => item.title === element.title)[0].hidden = !val
-  console.log("handleCheckColumnListChange val", val, element)
-}
+onMounted(() => {})
 </script>
 
 <style lang="scss" scoped>
-.search-wrapper {
+.search-container {
   margin-bottom: 10px;
 
   :deep(.el-card__body) {
@@ -370,8 +328,9 @@ function handleCheckColumnListChange(val: boolean, element: any) {
   }
 }
 
-.comment-content {
-  display: inline-block;
+.flex-between {
+  display: flex;
+  justify-content: space-between;
 }
 
 .status-menu {
@@ -380,18 +339,16 @@ function handleCheckColumnListChange(val: boolean, element: any) {
   color: #999;
 }
 
-.status-menu span {
-  margin-right: 24px;
-}
-
-.status {
+.normal-status {
   cursor: pointer;
+  margin-right: 24px;
 }
 
 .active-status {
   cursor: pointer;
   color: #333;
   font-weight: bold;
+  margin-right: 24px;
 }
 
 .dropdown-item-active {

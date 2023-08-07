@@ -105,7 +105,7 @@
           </template>
         </el-table-column>
         <!-- 状态 -->
-        <el-table-column prop="isReview" label="状态" width="80" align="center">
+        <el-table-column prop="isReview" label="状态" width="100" align="center">
           <template #default="{ row }">
             <el-tag v-if="!row.isReview" type="warning">审核中</el-tag>
             <el-tag v-if="row.isReview" type="success">正常</el-tag>
