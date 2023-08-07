@@ -40,15 +40,15 @@
           <!-- 表格列 -->
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="id" label="id" align="center" sortable />
-          <el-table-column prop="roleName" label="角色名" align="center" />
-          <el-table-column prop="roleDomain" label="权限范围" align="center">
+          <el-table-column prop="role_name" label="角色名" align="center" />
+          <el-table-column prop="role_domain" label="权限范围" align="center">
             <template #default="scope">
               <el-tag v-if="scope.row.roleDomain === 'blog'" effect="plain">{{ scope.row.roleDomain }}</el-tag>
               <el-tag v-else type="warning" effect="plain">{{ scope.row.roleDomain }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="roleComment" label="权限标签" align="center" />
-          <el-table-column prop="isDisable" label="禁用" align="center" width="100">
+          <el-table-column prop="role_comment" label="权限标签" align="center" />
+          <el-table-column prop="is_disable" label="禁用" align="center" width="100">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.isDisable"
@@ -189,9 +189,9 @@ import {
 import { usePagination } from "@/hooks/usePagination"
 import {
   createRoleApi,
-  deleteByIdsRoleApi,
+  deleteRoleByIdsApi,
   updateRoleApi,
-  getRoleTreeApi,
+  findRoleListDetailsApi,
   updateRoleMenusApi,
   updateRoleResourcesApi,
 } from "@/api/role"
@@ -229,11 +229,11 @@ const tableData = ref<any[]>([])
 // 查询列表
 const getTableData = () => {
   loading.value = true
-  getRoleTreeApi()
+  findRoleListDetailsApi({})
     .then((res) => {
       paginationData.total = res.data.total
       // 会引起页面刷新
-      // paginationData.pageSize = res.values.pageSize
+      paginationData.pageSize = res.data.page_size
       tableData.value = res.data.list
     })
     .catch(() => {
@@ -350,7 +350,7 @@ function selectionChange(dataList) {
 }
 
 const doDeleteByIds = (ids) => {
-  deleteByIdsRoleApi(ids).then(() => {
+  deleteRoleByIdsApi(ids).then(() => {
     ElMessage.success("批量删除成功")
     getTableData()
     isDelete.value = false
@@ -358,7 +358,7 @@ const doDeleteByIds = (ids) => {
 }
 
 const doDelete = (row) => {
-  deleteByIdsRoleApi([row.id]).then(() => {
+  deleteRoleByIdsApi([row.id]).then(() => {
     ElMessage.success("删除成功")
     getTableData()
   })

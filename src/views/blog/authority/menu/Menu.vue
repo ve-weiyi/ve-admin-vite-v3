@@ -3,7 +3,7 @@ import { reactive, ref, watch } from "vue"
 import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from "element-plus"
 import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from "@element-plus/icons-vue"
 import { usePagination } from "@/hooks/usePagination"
-import { createMenuApi, deleteByIdsMenuApi, updateMenuApi, getMenuTreeApi } from "@/api/menu"
+import { createMenuApi, deleteMenuByIdsApi, updateMenuApi, findMenuListDetailsApi } from "@/api/menu"
 import options from "./icon"
 
 const loading = ref<boolean>(false)
@@ -14,10 +14,10 @@ const tableData = ref<any[]>([])
 // 查询列表
 const getTableData = () => {
   loading.value = true
-  getMenuTreeApi()
+  findMenuListDetailsApi({})
     .then((res) => {
       paginationData.total = res.data.total
-      // paginationData.pageSize = res.values.pageSize
+      paginationData.pageSize = res.data.page_size
       tableData.value = res.data.list
     })
     .catch(() => {
@@ -135,7 +135,7 @@ function selectionChange(dataList) {
 }
 
 const doDeleteByIds = (ids) => {
-  deleteByIdsMenuApi(ids).then(() => {
+  deleteMenuByIdsApi(ids).then(() => {
     ElMessage.success("批量删除成功")
     getTableData()
     isDelete.value = false
@@ -143,7 +143,7 @@ const doDeleteByIds = (ids) => {
 }
 
 const doDelete = (row) => {
-  deleteByIdsMenuApi([row.id]).then(() => {
+  deleteMenuByIdsApi([row.id]).then(() => {
     ElMessage.success("删除成功")
     getTableData()
   })
@@ -162,7 +162,6 @@ const onDelete = (row) => {
 
 /** 监听分页参数的变化 */
 watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
-
 </script>
 
 <template>

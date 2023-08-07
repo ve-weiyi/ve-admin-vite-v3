@@ -79,7 +79,7 @@ export function getArticleArchivesApi(page: PageQuery): Promise<IApiResponseData
 }
 
 /** 分页获取文章列表 */
-export function getArticleListByConditionApi(page: PageQuery): Promise<IApiResponseData<PageResult<Article>>> {
+export function findArticleListByConditionApi(page: PageQuery): Promise<IApiResponseData<PageResult<Article>>> {
   return http.request<IApiResponseData<PageResult<Article>>>({
     url: `/api/v1/article/list/condition`,
     method: "post",

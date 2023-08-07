@@ -54,9 +54,9 @@ export function findRoleListApi(page: PageQuery): Promise<IApiResponseData<PageR
 }
 
 /** 获取角色列表 */
-export function getRolesApi(page: PageQuery): Promise<IApiResponseData<Role>> {
-  return http.request<IApiResponseData<Role>>({
-    url: `/api/v1/roles`,
+export function findRoleListDetailsApi(page: PageQuery): Promise<IApiResponseData<PageResult<Role>>> {
+  return http.request<IApiResponseData<PageResult<Role>>>({
+    url: `/api/v1/role/list/details`,
     method: "post",
     data: page,
   })

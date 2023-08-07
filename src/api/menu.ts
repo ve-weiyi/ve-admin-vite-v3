@@ -54,9 +54,9 @@ export function findMenuListApi(page: PageQuery): Promise<IApiResponseData<PageR
 }
 
 /** 获取菜单列表 */
-export function getMenusApi(page: PageQuery): Promise<IApiResponseData<Menu>> {
-  return http.request<IApiResponseData<Menu>>({
-    url: `/api/v1/menus`,
+export function findMenuListDetailsApi(page: PageQuery): Promise<IApiResponseData<PageResult<MenuDetails>>> {
+  return http.request<IApiResponseData<PageResult<MenuDetails>>>({
+    url: `/api/v1/menu/list/details`,
     method: "post",
     data: page,
   })

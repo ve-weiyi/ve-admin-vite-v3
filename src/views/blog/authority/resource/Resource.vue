@@ -1,311 +1,311 @@
-<script lang="ts" setup>
-import { reactive, ref, watch } from "vue"
-import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from "element-plus"
-import { CirclePlus, Delete, Download, RefreshRight, EditPen, Timer, Plus } from "@element-plus/icons-vue"
-import { usePagination } from "@/hooks/usePagination"
-import { createResourceApi, deleteByIdsResourceApi, updateResourceApi, getResourceTreeApi } from "@/api/api"
-
-const loading = ref<boolean>(false)
-const alignType = ref<string>("left")
-const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
-
-const tableData = ref<any[]>([])
-// 查询列表
-const getTableData = () => {
-  loading.value = true
-  getResourceTreeApi()
-    .then((res) => {
-      paginationData.total = res.data.total
-      paginationData.pageSize = res.data.pageSize
-      tableData.value = res.data.list
-    })
-    .catch(() => {
-      tableData.value = []
-    })
-    .finally(() => {
-      loading.value = false
-    })
-}
-
-// 刷新
-const handleRefresh = () => {
-  getTableData()
-}
-// #endregion
-
-// #region 增,改
-// 表单提交
-// ref 当值发生变化时，Vue 会自动更新相关的视图 values.value++. 用来做表单参数验证
-// reactive 当对象的属性发生变化时，Vue 会自动更新相关的视图 values++. 用来做数据传输
-const formRef = ref<FormInstance | null>(null)
-const formData = ref({
-  id: "",
-  roleName: "",
-  roleComment: "",
-  created_at: "",
-})
-const formRules: FormRules = reactive({
-  username: [{ required: false, trigger: "blur", message: "请输入用户名" }],
-  password: [{ required: false, trigger: "blur", message: "请输入密码" }],
-})
-const menuList = reactive([{ id: 1 }, { id: 2 }, { id: 3 }])
-
-const dialogFormVisible = ref<boolean>(false)
-const isAdd = ref(false)
-
-const addResource = (row) => {
-  resetForm()
-  isAdd.value = true
-  dialogFormVisible.value = true
-}
-// 修改菜单方法
-const editResource = (row) => {
-  formData.value = row
-  isAdd.value = false
-  dialogFormVisible.value = true
-}
-
-const resetForm = () => {
-  formData.value = {
-    id: "",
-    roleName: "",
-    roleComment: "",
-    created_at: "",
-  }
-}
-// 提交
-const submitForm = () => {
-  if (isAdd.value) {
-    doCreate(formData.value)
-  } else {
-    doUpdate(formData.value)
-  }
-  dialogFormVisible.value = false
-}
-
-const doCreate = (row) => {
-  createResourceApi(row).then(() => {
-    ElMessage.success("添加成功")
-    getTableData()
-  })
-}
-
-const doUpdate = (row) => {
-  updateResourceApi(row).then(() => {
-    ElMessage.success("修改成功")
-    getTableData()
-  })
-}
-// #endregion
-
-// #region 删
-// 多选删除，表格列改变
-const isDelete = ref<boolean>(false)
-const selectionIds = ref<undefined | number[]>([])
-
-function selectionChange(dataList) {
-  selectionIds.value = []
-  dataList.forEach((item) => {
-    selectionIds.value.push(item.id)
-  })
-
-  console.log("selectionIds", selectionIds.value)
-}
-
-const doDeleteByIds = (ids) => {
-  deleteByIdsResourceApi(ids).then(() => {
-    ElMessage.success("批量删除成功")
-    getTableData()
-    isDelete.value = false
-  })
-}
-
-const doDelete = (row) => {
-  deleteByIdsResourceApi([row.id]).then(() => {
-    ElMessage.success("删除成功")
-    getTableData()
-  })
-}
-const onDelete = (row) => {
-  ElMessageBox.confirm(`正在删除用户：${row.roleName}，确认删除？`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
-    console.log("row", row.id)
-    doDelete({ id: row.id })
-  })
-}
-// #endregion
-
-function tagType(method) {
-  switch (method) {
-    case "GET":
-      return ""
-    case "POST":
-      return "success"
-    case "PUT":
-      return "warning"
-    case "DELETE":
-      return "danger"
-    default:
-      return ""
-  }
-}
-
-/** 监听分页参数的变化 */
-watch([() => paginationData.currentPage, () => paginationData.pageSize], getTableData, { immediate: true })
-
-defineOptions({
-  name: "Resource",
-})
-</script>
-
 <template>
   <div class="app-container">
-    <!-- 表格内容 -->
+    <!-- 表格搜索条件 -->
+    <el-card v-loading="loading" shadow="never" class="search-container">
+      <el-form ref="searchFormRef" :inline="true" :model="searchFields">
+        <el-form-item v-for="item of searchFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
+          <template v-if="item.field">
+            <component
+              style="display: flex; justify-content: center; align-items: center"
+              :is="builderFormRender(item, searchData)"
+            />
+          </template>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="Search" @click="onSearchList">搜索</el-button>
+          <el-button icon="Refresh" @click="resetSearch">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
+    <!-- 表格 -->
     <el-card v-loading="loading" shadow="never" class="main-card">
       <div class="table-title">{{ $route.meta.title }}</div>
       <div class="operation-container">
-        <div>
-          <el-button type="primary" :icon="CirclePlus" @click="addResource">新增菜单</el-button>
+        <div class="flex-between">
+          <el-button type="primary" size="default" icon="plus" @click="formVisibility = true"> 新增模块 </el-button>
+          <el-button
+            type="danger"
+            size="default"
+            icon="Delete"
+            v-if="checkedColumnFields.filter((item) => item.type === 'selection').length > 0"
+            :disabled="selectionIds.length === 0"
+            @click="removeVisibility = true"
+          >
+            批量删除
+          </el-button>
         </div>
-        <div style="margin-left: auto">
-          <el-tooltip content="下载">
-            <el-button type="primary" :icon="Download" circle />
-          </el-tooltip>
-          <el-tooltip content="刷新表格">
-            <el-button type="primary" :icon="RefreshRight" circle @click="handleRefresh" />
-          </el-tooltip>
+        <!-- 表格操作 -->
+        <div class="flex-between">
+          <div style="margin-left: 0.5rem; margin-right: 0.5rem">
+            <el-tooltip content="刷新表格" placement="top">
+              <el-button type="primary" icon="RefreshRight" circle @click="onSearchList" />
+            </el-tooltip>
+
+            <el-tooltip content="表格密度" placement="top">
+              <el-dropdown trigger="click">
+                <el-button style="margin-inline: 0.5rem" type="primary" icon="Download" circle />
+                <template #dropdown>
+                  <el-dropdown-menu class="translation">
+                    <el-dropdown-item :style="getDropdownItemStyle('large')" @click="size = 'large'">
+                      宽松
+                    </el-dropdown-item>
+                    <el-dropdown-item :style="getDropdownItemStyle('default')" @click="size = 'default'">
+                      默认
+                    </el-dropdown-item>
+                    <el-dropdown-item :style="getDropdownItemStyle('small')" @click="size = 'small'">
+                      紧凑
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-tooltip>
+
+            <el-tooltip content="表格设置" placement="top">
+              <el-button ref="buttonRef" type="primary" icon="setting" circle />
+            </el-tooltip>
+
+            <!-- 其他部分保持不变 -->
+            <el-popover
+              ref="popoverRef"
+              :virtual-ref="buttonRef"
+              trigger="click"
+              placement="bottom-start"
+              virtual-triggering
+            >
+              <div class="flex-between">
+                <el-checkbox
+                  label="列展示"
+                  v-model="checkAllColumns"
+                  :indeterminate="isIndeterminate"
+                  @change="handleCheckAllChange"
+                />
+                <el-button type="primary" link @click="resetTable"> 重置</el-button>
+              </div>
+
+              <el-divider direction="horizontal" style="margin-top: 0; margin-bottom: 5px" />
+              <el-checkbox-group v-model="checkedColumnFields" @change="handleCheckedColumnFieldsChange">
+                <el-space direction="vertical" alignment="stretch">
+                  <!-- 单列拖拽 -->
+                  <draggable
+                    v-model="columnFields"
+                    item-key="key"
+                    @change="handleDragChange"
+                    force-fallback="true"
+                    animation="300"
+                    draggable=".item-single"
+                  >
+                    <template #item="{ element, index }">
+                      <div class="flex item-single" style="display: flex; align-items: center">
+                        <el-icon style="margin-right: 5px; font-size: 16px"><Operation /></el-icon>
+                        <el-checkbox
+                          v-if="element"
+                          :label="element"
+                          @change="(value) => handleCheckedColumnChange(value, element)"
+                        >
+                          <span :title="element" class="inline-block w-[120px] truncate hover:text-text_color_primary">
+                            {{ element.title }}
+                          </span>
+                        </el-checkbox>
+                      </div>
+                    </template>
+                  </draggable>
+                </el-space>
+              </el-checkbox-group>
+            </el-popover>
+          </div>
         </div>
       </div>
 
       <!-- 表格展示 -->
-      <div class="table-wrapper">
-        <el-table
-          border
-          :data="tableData"
-          v-loading="loading"
-          row-key="id"
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      <el-table
+        border
+        ref="tableRef"
+        :loading="loading"
+        :data="tableData"
+        :size="size"
+        row-key="id"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
+        <el-table-column
+          v-for="item of columnFields.filter((item) => item.hidden !== true)"
+          :type="item.type"
+          :key="item.key"
+          :prop="item.dataKey"
+          :label="item.title"
+          :align="item.align"
+          :width="item.width"
+          :sortable="item.sortable"
         >
-          <!-- 表格列 -->
-          <el-table-column prop="id" label="id" :align="alignType" width="100px" />
-          <el-table-column prop="name" label="接口名称" :align="alignType" width="auto" />
-          <el-table-column prop="path" label="接口路径" :align="alignType" width="auto" />
-          <el-table-column prop="method" label="请求方式" :align="alignType" width="auto">
-            <template #default="scope">
-              <el-tag v-if="scope.row.method" :type="tagType(scope.row.method)">
-                {{ scope.row.method }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="accessType" label="匿名访问" align="center" width="100">
-            <template #default="scope">
-              <el-switch
-                v-model="scope.row.accessType"
-                active-color="#13ce66"
-                inactive-color="#F4F4F5"
-                :active-value="1"
-                :inactive-value="0"
-                @click="doUpdate(scope.row)"
+          <template #default="{ row }">
+            <template v-if="item.cellRenderer">
+              <component
+                style="display: flex; justify-content: center; align-items: center"
+                :is="item.cellRenderer(row)"
               />
             </template>
-          </el-table-column>
-          <el-table-column prop="created_at" label="创建时间" width="auto" :align="alignType">
-            <template #default="scope">
-              <el-icon>
-                <Timer />
-              </el-icon>
-              {{ scope.row.created_at }}
+            <template v-else-if="item.type !== 'selection'">
+              {{ row[item.dataKey] }}
             </template>
-          </el-table-column>
-
-          <!-- 列操作 -->
-          <el-table-column fixed="right" label="操作" :align="alignType" width="180">
-            <template #default="scope">
-              <el-button
-                class="operation-button"
-                text
-                type="primary"
-                size="small"
-                :icon="Plus"
-                @click="editResource(scope.row)"
-              >
-                新增
-              </el-button>
-              <el-button
-                class="operation-button"
-                text
-                type="primary"
-                size="small"
-                :icon="EditPen"
-                @click="editResource(scope.row)"
-              >
-                修改
-              </el-button>
-              <el-popconfirm title="确定删除吗？" @confirm="doDelete(scope.row)">
-                <template #reference>
-                  <el-button text type="danger" size="small" class="operation-button" icon="delete"> 删除 </el-button>
-                </template>
-              </el-popconfirm>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+          </template>
+        </el-table-column>
+      </el-table>
       <!-- 分页 -->
-      <div class="pager-wrapper">
-        <el-pagination
-          background
-          :layout="paginationData.layout"
-          :page-sizes="paginationData.pageSizes"
-          :total="paginationData.total"
-          :page-size="paginationData.pageSize"
-          :currentPage="paginationData.currentPage"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+      <el-pagination
+        class="pagination-container"
+        background
+        :current-page="pagination.currentPage"
+        :page-size="pagination.pageSize"
+        :total="pagination.total"
+        :page-sizes="pagination.pageSizes"
+        :layout="pagination.layout"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      ></el-pagination>
     </el-card>
 
-    <!-- 批量删除对话框 -->
-    <el-dialog class="dialog-title-container" v-model="isDelete" title="提示" width="30%">
-      <div class="dialog-title-container"><i class="el-icon-warning" style="color: #ff9900" />是否删除选中项？</div>
+    <!-- 批量彻底删除对话框 -->
+    <el-dialog v-model="removeVisibility" width="30%">
+      <template #header>
+        <div class="dialog-title-container">
+          <el-icon style="color: #ff9900">
+            <WarningFilled />
+          </el-icon>
+          删除提示
+        </div>
+      </template>
+      <div style="font-size: 1rem">是否彻底删除选中项？</div>
       <template #footer>
-        <el-button @click="isDelete = false">取 消</el-button>
-        <el-button type="primary" @click="doDeleteByIds(selectionIds)"> 确 定</el-button>
+        <el-button @click="removeVisibility = false">取 消</el-button>
+        <el-button type="primary" @click="onDeleteByIds(selectionIds)">确 定</el-button>
       </template>
     </el-dialog>
 
     <!-- 角色-菜单对话框 -->
-    <el-dialog
-      v-model="dialogFormVisible"
-      :title="isAdd === true ? '新增角色' : '修改角色'"
-      @close="resetForm"
-      width="30%"
-    >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="left">
-        <el-form-item label="角色名">
-          <el-input v-model="formData.roleName" style="width: 250px" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="权限标签">
-          <el-input v-model="formData.roleComment" style="width: 250px" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="菜单权限">
-          <el-tree
-            :data="menuList"
-            :default-checked-keys="menuList"
-            check-strictly
-            show-checkbox
-            node-key="id"
-            ref="menuTreeRef"
-          />
+    <el-dialog v-model="formVisibility" :title="formTitle" @close="resetForm" width="35%">
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" size="default">
+        <el-form-item v-for="item of formFields" :key="item.field" :prop="item.field" :label="item.label + '：'">
+          <template v-if="item.field">
+            <component :is="builderFormRender(item, formData)" />
+          </template>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="formVisibility = false">取消</el-button>
+        <el-button type="primary" @click="onSaveForm(formData)">确定</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, nextTick, onMounted } from "vue"
+import { useTableHook } from "./hook"
+import { builderFormRender } from "@/utils/render"
+import draggable from "vuedraggable/src/vuedraggable"
+
+const {
+  removeVisibility,
+  formFields,
+  formVisibility,
+  formRef,
+  formData,
+  formRules,
+  searchFields,
+  searchFormRef,
+  searchData,
+  loading,
+  columnFields,
+  checkedColumnFields,
+  checkAllColumns,
+  isIndeterminate,
+  tableRef,
+  tableData,
+  pagination,
+  selectionIds,
+  onSearchList,
+  onSaveForm,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onDeleteByIds,
+  handleFormVisibility,
+  handleSizeChange,
+  handleCurrentChange,
+  handleSelectionChange,
+  handleSortChange,
+  handleDragChange,
+  handleCheckAllChange,
+  handleCheckedColumnFieldsChange,
+  handleCheckedColumnChange,
+  resetForm,
+  resetSearch,
+  resetTable,
+} = useTableHook()
+
+const formTitle = computed(() => {
+  if (formData.value.id == 0) {
+    return "新增接口"
+  } else {
+    return "编辑接口"
+  }
+})
+
+const buttonRef = ref()
+const size = ref("default")
+
+const getDropdownItemStyle = computed(() => {
+  return (s) => {
+    return {
+      background: s === size.value ? "#409eff" : "",
+      color: s === size.value ? "#fff" : "var(--el-text-color-primary)",
+    }
+  }
+})
+
+onMounted(() => {})
+</script>
+
+<style lang="scss" scoped>
+.search-container {
+  margin-bottom: 10px;
+
+  :deep(.el-card__body) {
+    padding-bottom: 2px;
+  }
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.status-menu {
+  font-size: 14px;
+  margin-top: 20px;
+  color: #999;
+}
+
+.normal-status {
+  cursor: pointer;
+  margin-right: 24px;
+}
+
+.active-status {
+  cursor: pointer;
+  color: #333;
+  font-weight: bold;
+  margin-right: 24px;
+}
+
+.dropdown-item-active {
+  background: #409eff;
+  color: #fff;
+}
+
+.dropdown-item-normal {
+  color: var(--el-text-color-primary);
+}
+</style>

@@ -4,13 +4,13 @@ import { VNode, Ref, toRef } from "vue"
 interface Page {
   page?: number
   page_size?: number
-  sorts?: Order[]
+  sorts?: Sort[]
   conditions?: Condition[]
 }
 
-export interface Order {
+export interface Sort {
   field: string
-  rule: string
+  order: string
 }
 
 export interface Condition {
@@ -55,6 +55,7 @@ export enum RenderType {
   Input = "input",
   Select = "select",
   Tag = "tag",
+  Radio = "radio",
 }
 
 interface Option {
@@ -86,6 +87,14 @@ export function formRender(field: FormField, model: any): VNode {
       )
     case RenderType.Tag:
       return <el-tag type={model[field.field]}>{model[field.field]}</el-tag>
+    case RenderType.Radio:
+      return (
+        <el-radio-group v-model={model[field.field]} placeholder="请选择">
+          {field.options.map((item) => (
+            <el-radio key={item.value} label={item.value} >{item.label}</el-radio>
+          ))}
+        </el-radio-group>
+      )
     default:
       return <div style="width: 100%">{model[field.field]}</div>
   }

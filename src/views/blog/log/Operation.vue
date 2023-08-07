@@ -128,6 +128,8 @@
         :loading="loading"
         :data="tableData"
         :size="size"
+        row-key="id"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         @selection-change="handleSelectionChange"
         @sort-change="handleSortChange"
       >
@@ -149,7 +151,7 @@
               />
             </template>
             <template v-else-if="item.type !== 'selection'">
-              <div>{{ row[item.dataKey] }}</div>
+              {{ row[item.dataKey] }}
             </template>
           </template>
         </el-table-column>
@@ -295,7 +297,7 @@ const type = ref(null)
 
 const checkTabType = (count: number) => {
   type.value = count
-  searchData.value.type = count
+  // searchData.value.type = count
   onSearchList()
 }
 

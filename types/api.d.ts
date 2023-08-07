@@ -22,7 +22,7 @@ interface PageQuery {
 
 interface Sort {
   field: string
-  rule: string
+  order: string
 }
 
 interface Condition {

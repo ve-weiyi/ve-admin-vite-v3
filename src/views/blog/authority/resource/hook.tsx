@@ -1,18 +1,15 @@
-import { onMounted, reactive, ref } from "vue"
+import { onMounted, reactive, ref, VNode } from "vue"
 import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
 import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
-import {
-  createOperationLogApi,
-  deleteOperationLogByIdsApi,
-  deleteOperationLogApi,
-  findOperationLogListApi,
-  updateOperationLogApi,
-} from "@/api/operation_log"
-import { OperationLog } from "@/api/types"
+import { createApiApi, deleteApiByIdsApi, deleteApiApi, updateApiApi, findApiListDetailsApi } from "@/api/api"
+import { Api, ApiDetails } from "@/api/types"
 import { Timer } from "@element-plus/icons-vue"
 import { assign } from "xe-utils"
+import { an } from "vitest/dist/types-198fd1d9"
 
 const align = "center"
+
+type changeEvent = "traceable" | "add" | "delete" | "edit"
 
 const tagType = (type) => {
   switch (type) {
@@ -29,26 +26,26 @@ const tagType = (type) => {
   }
 }
 
-const options = [
+const methodOpt = [
   {
-    value: "新增",
-    label: "新增",
+    label: "GET",
+    value: "GET",
   },
   {
-    value: "修改",
-    label: "修改",
+    label: "POST",
+    value: "POST",
   },
   {
-    value: "删除",
-    label: "删除",
+    label: "PUT",
+    value: "PUT",
   },
   {
-    value: "查询",
-    label: "查询",
+    label: "DELETE",
+    value: "DELETE",
   },
   {
-    value: "新增或修改",
-    label: "新增或修改",
+    label: "NULL",
+    value: "",
   },
 ]
 
@@ -56,23 +53,23 @@ function getSearchFields(): FormField[] {
   return [
     {
       type: RenderType.Input,
-      label: "系统模块",
-      field: "opt_module",
+      label: "名称",
+      field: "name",
       flag: "and",
       rule: "like",
     },
     {
       type: RenderType.Select,
-      label: "操作类型",
-      field: "opt_type",
+      label: "请求方法",
+      field: "method",
       flag: "and",
       rule: "=",
-      options: options,
+      options: methodOpt,
     },
   ]
 }
 
-function getColumnFields(): Column[] {
+function getColumnFields(onChange: (row: any, event: changeEvent) => void): Column[] {
   return [
     {
       key: "selection",
@@ -80,66 +77,58 @@ function getColumnFields(): Column[] {
       title: "批量操作",
       width: 60,
       align: align,
+      hidden: true,
     },
     {
       key: "id",
       title: "id",
       dataKey: "id",
-      width: 70,
+      width: 100,
       align: align,
       sortable: true,
     },
     {
-      key: "opt_module",
-      title: "系统模块",
-      dataKey: "opt_module",
-      width: 100,
-      align: align,
-    },
-    {
-      key: "opt_type",
-      title: "操作类型",
-      dataKey: "opt_type",
-      width: 100,
-      align: align,
-    },
-    {
-      key: "opt_desc",
-      title: "操作描述",
-      dataKey: "opt_desc",
-      width: 140,
-      align: align,
-    },
-    {
-      key: "request_method",
-      title: "请求方式",
-      dataKey: "request_method",
-      width: 100,
-      align: align,
-      cellRenderer: (row: any) => {
-        return <el-tag type={tagType(row.request_method)}>{row.request_method}</el-tag>
-      },
-    },
-    {
-      key: "nickname",
-      title: "操作人员",
-      dataKey: "nickname",
-      width: 140,
-      align: align,
-    },
-    {
-      key: "ip_address",
-      title: "登录ip",
-      dataKey: "ip_address",
+      key: "name",
+      title: "名称",
+      dataKey: "name",
       width: 120,
       align: align,
     },
     {
-      key: "ip_source",
-      title: "登录地址",
-      dataKey: "ip_source",
+      key: "path",
+      title: "路径",
+      dataKey: "path",
       width: 0,
       align: align,
+    },
+    {
+      key: "method",
+      title: "方法",
+      dataKey: "method",
+      width: 120,
+      align: align,
+      cellRenderer: (row: any) => {
+        return <el-tag type={tagType(row.method)}>{row.method}</el-tag>
+      },
+    },
+    {
+      key: "traceable",
+      title: "是否追溯操作",
+      dataKey: "traceable",
+      width: 120,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <el-switch
+            v-model={row.traceable}
+            active-color="#13ce66"
+            inactive-color="#F4F4F5"
+            active-value={1}
+            inactive-value={0}
+            onClick={() => onChange(row, "traceable")}
+          />
+        )
+      },
     },
     {
       key: "created_at",
@@ -159,56 +148,68 @@ function getColumnFields(): Column[] {
         )
       },
     },
+    {
+      key: "operation",
+      title: "操作",
+      dataKey: "operation",
+      width: 150,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <el-button
+              class="operation-button"
+              text
+              type="primary"
+              size="small"
+              icon="Plus"
+              onClick={() => onChange(row, "add")}
+            >
+              新增
+            </el-button>
+            <el-button
+              class="operation-button"
+              text
+              type="primary"
+              size="small"
+              icon="editPen"
+              onClick={() => onChange(row, "edit")}
+            >
+              修改
+            </el-button>
+            <el-popconfirm title="确定删除吗？" onConfirm={() => onChange(row, "delete")}>
+              {{
+                reference: () => (
+                  <el-button text type="danger" size="small" class="operation-button" icon="delete">
+                    删除
+                  </el-button>
+                ),
+              }}
+            </el-popconfirm>
+          </div>
+        )
+      },
+    },
   ]
 }
 
 function getFormFields(): FormField[] {
   return [
     {
-      field: "opt_module",
-      label: "操作模块",
+      type: RenderType.Input,
+      field: "name",
+      label: "接口名称",
     },
     {
-      field: "opt_url",
-      label: "请求地址",
+      type: RenderType.Input,
+      field: "path",
+      label: "接口路径",
     },
     {
-      field: "opt_desc",
-      label: "操作描述",
-    },
-    {
-      field: "request_method",
+      type: RenderType.Radio,
+      field: "method",
       label: "请求方式",
-      render: (field, model) => {
-        return <el-tag type={tagType(model.request_method)}>{model.request_method}</el-tag>
-      },
-    },
-    {
-      field: "opt_method",
-      label: "操作方法",
-    },
-    {
-      field: "request_param",
-      label: "请求参数",
-    },
-    {
-      field: "response_data",
-      label: "返回数据",
-    },
-    {
-      field: "nickname",
-      label: "操作人员",
-    },
-    {
-      field: "created_at",
-      label: "操作日期",
-      render: (field, model) => {
-        return (
-          <div>
-            <span>{model.created_at.substring(0, 10)}</span>
-          </div>
-        )
-      },
+      options: methodOpt,
     },
   ]
 }
@@ -231,14 +232,14 @@ export function useTableHook() {
   const removeVisibility = ref(false)
 
   // 表格结构定义
-  const columnFields = ref<Column[]>(getColumnFields())
+  const columnFields = ref<Column[]>([])
   const checkedColumnFields = ref<Column[]>([])
   const checkAllColumns = ref(true)
   const isIndeterminate = ref(false)
 
   // 表格数据定义
   const tableRef = ref<TableInstance | null>(null)
-  const tableData = ref<OperationLog[]>([])
+  const tableData = ref<ApiDetails[]>([])
   const pagination = reactive<Pagination>({ ...defaultPaginationData })
   const selectionIds = reactive<number[]>([])
 
@@ -281,9 +282,9 @@ export function useTableHook() {
     }
 
     loading.value = true
-    findOperationLogListApi({
-      page: pagination.currentPage,
-      page_size: pagination.pageSize,
+    findApiListDetailsApi({
+      // page: pagination.currentPage,
+      // page_size: pagination.pageSize,
       sorts: sorts,
       conditions: conditions,
     }).then((res) => {
@@ -297,7 +298,7 @@ export function useTableHook() {
 
   function onCreate(row) {
     console.log("onCreate", row)
-    createOperationLogApi(row).then((res) => {
+    createApiApi(row).then((res) => {
       ElMessage.success("创建成功")
       formVisibility.value = false
       onSearchList()
@@ -306,7 +307,7 @@ export function useTableHook() {
 
   function onUpdate(row) {
     console.log("onUpdate", row)
-    updateOperationLogApi(row).then((res) => {
+    updateApiApi(row).then((res) => {
       ElMessage.success("更新成功")
       formVisibility.value = false
       onSearchList()
@@ -315,7 +316,7 @@ export function useTableHook() {
 
   function onDelete(row) {
     console.log("onDelete", row)
-    deleteOperationLogApi(row.id).then((res) => {
+    deleteApiApi(row.id).then((res) => {
       ElMessage.success("删除成功")
       onSearchList()
     })
@@ -323,7 +324,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteOperationLogByIdsApi(ids).then((res) => {
+    deleteApiByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()
@@ -350,29 +351,45 @@ export function useTableHook() {
   }
 
   // 行数据状态改变回调
-  function handleStatusChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style="color:var(--el-color-primary)">${
-        row.username
-      }</strong>用户吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true,
-      }
-    )
-      .then(() => {
-        ElMessage({
-          message: "已成功修改用户状态",
-          type: "success",
+  function handleStatusChange(row: any, event: changeEvent) {
+    console.log("handleStatusChange", row, event)
+    switch (event) {
+      case "delete":
+        onDelete(row)
+        break
+      case "add":
+        handleFormVisibility(null)
+        break
+      case "edit":
+        handleFormVisibility(row)
+        break
+      case "traceable":
+        updateApiApi(row).then((res) => {
+          ElMessage.success("更新状态成功")
         })
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0)
-      })
+    }
+    // ElMessageBox.confirm(
+    //   `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style="color:var(--el-color-primary)">${
+    //     row.username
+    //   }</strong>用户吗?`,
+    //   "系统提示",
+    //   {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //     dangerouslyUseHTMLString: true,
+    //     draggable: true,
+    //   }
+    // )
+    //   .then(() => {
+    //     ElMessage({
+    //       message: "已成功修改用户状态",
+    //       type: "success",
+    //     })
+    //   })
+    //   .catch(() => {
+    //     row.status === 0 ? (row.status = 1) : (row.status = 0)
+    //   })
   }
 
   // 分页大小改变回调
@@ -445,6 +462,7 @@ export function useTableHook() {
     } else {
       formData.value = {}
     }
+    console.log("resetForm", formData.value)
     formRef.value?.resetFields()
   }
 
@@ -459,7 +477,7 @@ export function useTableHook() {
   function resetTable() {
     checkAllColumns.value = true
     isIndeterminate.value = false
-    columnFields.value = getColumnFields()
+    columnFields.value = getColumnFields(handleStatusChange)
     checkedColumnFields.value = columnFields.value.filter((column) => (column.hidden != true))
     console.log("columnFields", columnFields.value)
     console.log("checkedColumnFields", checkedColumnFields.value)

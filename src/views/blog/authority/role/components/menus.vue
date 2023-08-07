@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { defineComponent, nextTick, ref, unref, watch } from "vue"
 import { type FormInstance, type FormRules, ElMessage, ElMessageBox, ElTree } from "element-plus"
-import { getMenuTreeApi } from "@/api/menu"
+import { findMenuListDetailsApi } from "@/api/menu"
 
 // 父组件向子组件传输的数据
 const props = defineProps({
@@ -58,7 +58,7 @@ const menuDefaultProps = ref({
 
 const getTableData = () => {
   defaultCheckIds.value = props.row
-  getMenuTreeApi().then((res) => {
+  findMenuListDetailsApi({}).then((res) => {
     menuTreeData.value = res.data.list
   })
 }

@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { defaultPaginationData, Pagination, Order, Condition, FormField, RenderType } from "@/utils/render"
+import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
 import { findCommentBackListApi } from "@/api/comment"
 
 const align = "center"
@@ -34,7 +34,7 @@ export function useTableHook() {
   const pagination = reactive<Pagination>({ ...defaultPaginationData })
 
   const conditions = reactive<Condition[]>([])
-  const sorts = reactive<Order[]>([])
+  const sorts = reactive<Sort[]>([])
 
   const resetForm = (formEl) => {
     if (!formEl) return

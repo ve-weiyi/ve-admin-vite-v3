@@ -21,7 +21,7 @@ const getTableData = () => {
   })
     .then((res) => {
       paginationData.total = res.data.total
-      paginationData.pageSize = res.data.pageSize
+      paginationData.pageSize = res.data.page_size
       tableData.value = res.data.list
     })
     .catch(() => {

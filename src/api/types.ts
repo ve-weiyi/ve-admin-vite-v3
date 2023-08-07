@@ -1,3 +1,4 @@
+
 export interface Api {
   id: number // 主键id
   name: string // api名称
@@ -426,9 +427,11 @@ export interface BlogHomeInfoDTO {
   page_list: PageVO[] // 页面列表
 }
 
-export interface WebsiteConfigVO {}
+export interface WebsiteConfigVO {
+}
 
-export interface PageVO {}
+export interface PageVO {
+}
 
 export interface BlogBackInfoDTO {
   views_count: number // 访问量
@@ -550,12 +553,12 @@ export interface UserMenu {
   children: UserMenu[]
 }
 
-export interface ApiTree extends Api {
-  children: ApiTree[]
+export interface ApiDetails extends Api {
+  children: ApiDetails[]
 }
 
-export interface MenuTree extends Menu {
-  children: MenuTree[]
+export interface MenuDetails extends Menu {
+  children: MenuDetails[]
 }
 
 export interface RoleInfo extends Role {

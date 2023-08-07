@@ -54,7 +54,7 @@ export function findCommentListApi(page: PageQuery): Promise<IApiResponseData<Pa
 }
 
 /** 分页获取评论列表 */
-export function findCommentDetailListApi(page: PageQuery): Promise<IApiResponseData<PageResult<Comment>>> {
+export function findCommentListDetailsApi(page: PageQuery): Promise<IApiResponseData<PageResult<Comment>>> {
   return http.request<IApiResponseData<PageResult<Comment>>>({
     url: `/api/v1/comment/list/details`,
     method: "post",
