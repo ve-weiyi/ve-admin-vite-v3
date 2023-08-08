@@ -98,6 +98,33 @@
   margin-right: 0.5rem;
 }
 
+.status-menu {
+  font-size: 14px;
+  margin-top: 20px;
+  color: #999;
+}
+
+.normal-status {
+  cursor: pointer;
+  margin-right: 24px;
+}
+
+.active-status {
+  cursor: pointer;
+  color: #333;
+  font-weight: bold;
+  margin-right: 24px;
+}
+
+.dropdown-item-active {
+  background: #409eff;
+  color: #fff;
+}
+
+.dropdown-item-normal {
+  color: var(--el-text-color-primary);
+}
+
 //表单字体加粗
 .el-form-item__label {
   font-weight: bold;
@@ -128,4 +155,9 @@
   display: flex;
   justify-content: center; /* 可选，根据需要调整对齐方式 */
   align-items: center; /* 可选，根据需要调整对齐方式 */
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
 }

@@ -330,35 +330,4 @@ onMounted(() => {})
   }
 }
 
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-}
-
-.status-menu {
-  font-size: 14px;
-  margin-top: 20px;
-  color: #999;
-}
-
-.normal-status {
-  cursor: pointer;
-  margin-right: 24px;
-}
-
-.active-status {
-  cursor: pointer;
-  color: #333;
-  font-weight: bold;
-  margin-right: 24px;
-}
-
-.dropdown-item-active {
-  background: #409eff;
-  color: #fff;
-}
-
-.dropdown-item-normal {
-  color: var(--el-text-color-primary);
-}
 </style>

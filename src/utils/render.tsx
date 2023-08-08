@@ -44,6 +44,7 @@ export interface FormField {
 
   label: string
   field: string
+  default?: any
   // value?: any
   placeholder?: string
   options?: Option[]
@@ -56,13 +57,14 @@ export enum RenderType {
   Select = "select",
   Tag = "tag",
   Radio = "radio",
+  Number = "number",
 }
 
 interface Option {
-  // 选择后的值，也做key使用
-  value: string | number
   // 展示的标签
   label: string
+  // 选择后的值，也做key使用
+  value: string | number
 }
 
 export function builderFormRender(field: FormField, model: any): VNode {
@@ -89,11 +91,22 @@ export function formRender(field: FormField, model: any): VNode {
       return <el-tag type={model[field.field]}>{model[field.field]}</el-tag>
     case RenderType.Radio:
       return (
-        <el-radio-group v-model={model[field.field]} placeholder="请选择">
+        <el-radio-group v-model={model[field.field]} >
           {field.options.map((item) => (
-            <el-radio key={item.value} label={item.value} >{item.label}</el-radio>
+            <el-radio key={item.value} label={item.value}>
+              {item.label}
+            </el-radio>
           ))}
         </el-radio-group>
+      )
+    case RenderType.Number:
+      return (
+        <el-input-number
+          v-model={model[field.field]}
+          model-value={field.default}
+          controls-position="right"
+          placeholder={`${field.label}`}
+        />
       )
     default:
       return <div style="width: 100%">{model[field.field]}</div>

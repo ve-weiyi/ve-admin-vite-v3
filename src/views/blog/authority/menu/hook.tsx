@@ -1,14 +1,14 @@
 import { onMounted, reactive, ref, VNode } from "vue"
 import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
 import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
-import { createApiApi, deleteApiByIdsApi, deleteApiApi, updateApiApi, findApiListDetailsApi } from "@/api/api"
-import { Api, ApiDetails } from "@/api/types"
+import { createMenuApi, deleteMenuByIdsApi, deleteMenuApi, updateMenuApi, findMenuListDetailsApi } from "@/api/menu"
+import { MenuDetails } from "@/api/types"
 import { Timer } from "@element-plus/icons-vue"
 import { assign } from "xe-utils"
 
 const align = "center"
 
-type changeEvent = "traceable" | "add" | "delete" | "edit"
+type changeEvent = "is_hidden" | "add" | "delete" | "edit"
 
 const tagType = (type) => {
   switch (type) {
@@ -94,6 +94,31 @@ function getColumnFields(onChange: (row: any, event: changeEvent) => void): Colu
       align: align,
     },
     {
+      key: "icon",
+      title: "图标",
+      dataKey: "icon",
+      width: 0,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <el-icon>
+              <component is={row.icon} />
+            </el-icon>
+            {row.icon}
+          </div>
+        )
+      },
+    },
+    {
+      key: "rank",
+      title: "排序",
+      dataKey: "rank",
+      width: 80,
+      align: align,
+      sortable: true,
+    },
+    {
       key: "path",
       title: "路径",
       dataKey: "path",
@@ -101,22 +126,9 @@ function getColumnFields(onChange: (row: any, event: changeEvent) => void): Colu
       align: align,
     },
     {
-      key: "method",
-      title: "方法",
-      dataKey: "method",
-      width: 100,
-      align: align,
-      cellRenderer: (row: any) => {
-        if (row.path === "") {
-          return <div></div>
-        }
-        return <el-tag type={tagType(row.method)}>{row.method}</el-tag>
-      },
-    },
-    {
-      key: "traceable",
-      title: "是否追溯操作",
-      dataKey: "traceable",
+      key: "is_hidden",
+      title: "隐藏",
+      dataKey: "is_hidden",
       width: 120,
       align: align,
       cellRenderer: (row: any) => {
@@ -125,19 +137,19 @@ function getColumnFields(onChange: (row: any, event: changeEvent) => void): Colu
         }
         return (
           <el-switch
-            v-model={row.traceable}
+            v-model={row.is_hidden}
             active-color="#13ce66"
             inactive-color="#F4F4F5"
-            active-value={1}
-            inactive-value={0}
-            onClick={() => onChange(row, "traceable")}
+            active-value={true}
+            inactive-value={false}
+            onClick={() => onChange(row, "is_hidden")}
           />
         )
       },
     },
     {
       key: "created_at",
-      title: "操作日期",
+      title: "创建时间",
       dataKey: "created_at",
       width: 0,
       align: align,
@@ -145,10 +157,10 @@ function getColumnFields(onChange: (row: any, event: changeEvent) => void): Colu
       cellRenderer: (row: any) => {
         return (
           <div>
-            <el-icon style="margin-right: 2px">
+            <el-icon style={"margin-right: 2px"}>
               <Timer />
             </el-icon>
-            <span>{new Date(row.created_at).toLocaleString()}</span>
+            <span>{new Date(row.created_at).toLocaleDateString()}</span>
           </div>
         )
       },
@@ -198,32 +210,69 @@ function getColumnFields(onChange: (row: any, event: changeEvent) => void): Colu
   ]
 }
 
-function getFormFields(): FormField[] {
+function getFormFields(row: any): FormField[] {
   return [
+    {
+      type: RenderType.Radio,
+      field: "name",
+      label: "菜单类型",
+      default: "目录",
+      options: [
+        {
+          label: "目录",
+          value: 1,
+        },
+        {
+          label: "一级菜单",
+          value: 0,
+        },
+      ],
+    },
     {
       type: RenderType.Input,
       field: "name",
-      label: "接口名称",
+      label: "菜单名称",
+    },
+    {
+      type: RenderType.Input,
+      field: "icon",
+      label: "菜单图标",
     },
     {
       type: RenderType.Input,
       field: "path",
-      label: "接口路径",
+      label: "菜单路径",
+    },
+    {
+      type: RenderType.Number,
+      field: "rank",
+      label: "显示排序",
+      default: 1,
     },
     {
       type: RenderType.Radio,
-      field: "method",
-      label: "请求方式",
-      options: methodOpt,
+      field: "is_hidden",
+      label: "显示状态",
+      default: "1",
+      options: [
+        {
+          label: "显示",
+          value: 1,
+        },
+        {
+          label: "隐藏",
+          value: 0,
+        },
+      ],
     },
   ]
 }
 
-const defaultOrder = { id: "desc" }
+const defaultOrder = { rank: "asc" }
 
 export function useTableHook() {
   // 表单数据定义
-  const formFields = ref<FormField[]>(getFormFields())
+  const formFields = ref<FormField[]>([])
   const formVisibility = ref(false)
 
   // 表单规则定义
@@ -244,7 +293,7 @@ export function useTableHook() {
 
   // 表格数据定义
   const tableRef = ref<TableInstance | null>(null)
-  const tableData = ref<ApiDetails[]>([])
+  const tableData = ref<MenuDetails[]>([])
   const pagination = reactive<Pagination>({ ...defaultPaginationData })
   const selectionIds = reactive<number[]>([])
 
@@ -287,7 +336,7 @@ export function useTableHook() {
     }
 
     loading.value = true
-    findApiListDetailsApi({
+    findMenuListDetailsApi({
       // page: pagination.currentPage,
       // page_size: pagination.pageSize,
       sorts: sorts,
@@ -303,7 +352,7 @@ export function useTableHook() {
 
   function onCreate(row) {
     console.log("onCreate", row)
-    createApiApi(row).then((res) => {
+    createMenuApi(row).then((res) => {
       ElMessage.success("创建成功")
       formVisibility.value = false
       onSearchList()
@@ -312,7 +361,7 @@ export function useTableHook() {
 
   function onUpdate(row) {
     console.log("onUpdate", row)
-    updateApiApi(row).then((res) => {
+    updateMenuApi(row).then((res) => {
       ElMessage.success("更新成功")
       formVisibility.value = false
       onSearchList()
@@ -321,7 +370,7 @@ export function useTableHook() {
 
   function onDelete(row) {
     console.log("onDelete", row)
-    deleteApiApi(row.id).then((res) => {
+    deleteMenuApi(row.id).then((res) => {
       ElMessage.success("删除成功")
       onSearchList()
     })
@@ -329,7 +378,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteApiByIdsApi(ids).then((res) => {
+    deleteMenuByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()
@@ -368,8 +417,8 @@ export function useTableHook() {
       case "edit":
         handleFormVisibility(row)
         break
-      case "traceable":
-        updateApiApi(row).then((res) => {
+      case "is_hidden":
+        updateMenuApi(row).then((res) => {
           ElMessage.success("更新状态成功")
         })
     }
@@ -467,6 +516,8 @@ export function useTableHook() {
     } else {
       formData.value = {}
     }
+
+    formFields.value = getFormFields(row)
     console.log("resetForm", formData.value)
     formRef.value?.resetFields()
   }
