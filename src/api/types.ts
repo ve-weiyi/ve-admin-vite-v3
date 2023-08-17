@@ -4,7 +4,6 @@ export interface Api {
   name: string // api名称
   path: string // api路径
   method: string // api请求方法
-  group: string // api分组
   parent_id: number // 分组id
   traceable: number // 是否追溯操作记录 0需要，1是
   status: number // 状态 1开，2关

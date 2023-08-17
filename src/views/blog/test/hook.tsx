@@ -1,15 +1,51 @@
 import { FormField, RenderType } from "@/utils/render"
 import { Column } from "element-plus"
 import { Timer } from "@element-plus/icons-vue"
-import {
-  createArticleApi,
-  deleteArticleApi,
-  findArticleListApi,
-  updateArticleApi,
-  findArticleListDetailsApi,
-} from "@/api/article"
 
 const align = "center"
+
+const methodOpt = [
+  {
+    label: "GET",
+    value: "GET",
+  },
+  {
+    label: "POST",
+    value: "POST",
+  },
+  {
+    label: "PUT",
+    value: "PUT",
+  },
+  {
+    label: "DELETE",
+    value: "DELETE",
+  },
+  {
+    label: "NULL",
+    value: "",
+  },
+]
+
+function getSearchFields(): FormField[] {
+  return [
+    {
+      type: RenderType.Input,
+      label: "名称",
+      field: "name",
+      flag: "and",
+      rule: "like",
+    },
+    {
+      type: RenderType.Select,
+      label: "请求方法",
+      field: "method",
+      flag: "and",
+      rule: "=",
+      options: methodOpt,
+    },
+  ]
+}
 
 function getColumnFields(onChange: (row: any, event: string) => void): Column[] {
   return [
@@ -19,6 +55,7 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
       title: "批量操作",
       width: 60,
       align: align,
+      hidden: true,
     },
     {
       key: "id",
@@ -29,75 +66,49 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
       sortable: true,
     },
     {
-      key: "article_cover",
-      title: "文章封面",
-      dataKey: "article_cover",
+      key: "name",
+      title: "名称",
+      dataKey: "name",
       width: 120,
+      align: align,
+    },
+    {
+      key: "icon",
+      title: "图标",
+      dataKey: "icon",
+      width: 0,
       align: align,
       cellRenderer: (row: any) => {
         return (
           <div>
-            <el-image class="article-cover" src={row.article_cover} />
+            <el-icon>
+              <component is={row.icon} />
+            </el-icon>
+            {row.icon}
           </div>
         )
       },
     },
     {
-      key: "article_title",
-      title: "标题",
-      dataKey: "article_title",
-      width: 0,
+      key: "rank",
+      title: "排序",
+      dataKey: "rank",
+      width: 80,
       align: align,
+      sortable: true,
     },
     {
-      key: "category_name",
-      title: "分类",
-      dataKey: "category_name",
-      width: 0,
-      align: align,
-    },
-    {
-      key: "article_tag_list",
-      title: "标签",
-      dataKey: "article_tag_list",
-      width: 180,
-      align: align,
-      cellRenderer: (row: any) => {
-        return (
-          <div style={"display: flex;flex-wrap: wrap;"}>
-            {row.article_tag_list.map((item: any) => {
-              return <el-tag style={"margin-right:0.2rem;margin-top:0.2rem"}>{item.tag_name}</el-tag>
-            })}
-          </div>
-        )
-      },
-    },
-    {
-      key: "views_count",
-      title: "浏览量",
-      dataKey: "views_count",
-      width: 0,
-      align: align,
-    },
-    {
-      key: "like_count",
-      title: "点赞量",
-      dataKey: "like_count",
-      width: 120,
-      align: align,
-    },
-    {
-      key: "type",
+      key: "path",
       title: "路径",
-      dataKey: "type",
+      dataKey: "path",
       width: 0,
       align: align,
     },
     {
-      key: "is_top",
-      title: "置顶",
-      dataKey: "is_top",
-      width: 0,
+      key: "is_hidden",
+      title: "隐藏",
+      dataKey: "is_hidden",
+      width: 120,
       align: align,
       cellRenderer: (row: any) => {
         if (row.path === "") {
@@ -105,12 +116,12 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
         }
         return (
           <el-switch
-            v-model={row.is_top}
+            v-model={row.is_hidden}
             active-color="#13ce66"
             inactive-color="#F4F4F5"
             active-value={true}
             inactive-value={false}
-            onClick={() => onChange(row, "is_top")}
+            onClick={() => onChange(row, "is_hidden")}
           />
         )
       },
@@ -178,32 +189,6 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
   ]
 }
 
-function getSearchFields(): FormField[] {
-  return [
-    {
-      type: RenderType.Input,
-      label: "文章标题",
-      field: "article_title",
-      flag: "and",
-      rule: "like",
-    },
-    {
-      type: RenderType.Input,
-      label: "文章分类",
-      field: "category_name",
-      flag: "and",
-      rule: "=",
-    },
-    {
-      type: RenderType.Input,
-      label: "文章标签",
-      field: "tag_name",
-      flag: "and",
-      rule: "=",
-    },
-  ]
-}
-
 function getFormFields(row: any): FormField[] {
   return [
     {
@@ -262,27 +247,4 @@ function getFormFields(row: any): FormField[] {
   ]
 }
 
-function handleApi(event: string, data: any) {
-  switch (event) {
-    case "add":
-      return createArticleApi(data)
-    case "edit":
-      return updateArticleApi(data)
-    case "delete":
-      return deleteArticleApi(data)
-    case "list":
-      console.log("list")
-      return findArticleListDetailsApi(data)
-    default:
-      return
-  }
-}
-
-export function useTableHook() {
-  return {
-    getColumnFields,
-    getSearchFields,
-    getFormFields,
-    handleApi,
-  }
-}
+export { getSearchFields, getColumnFields, getFormFields }

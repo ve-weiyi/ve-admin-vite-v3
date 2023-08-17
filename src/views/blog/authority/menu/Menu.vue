@@ -200,7 +200,7 @@
 
     <!-- 菜单-菜单对话框 -->
     <el-dialog
-      v-model="dialogFormVisible"
+      v-model="formVisibility"
       :title="isAdd === true ? '新增菜单' : '修改菜单'"
       @close="resetForm"
       width="30%"

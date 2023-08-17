@@ -70,15 +70,24 @@ export function likeArticleApi(id: number): Promise<IApiResponseData<Article>> {
 }
 
 /** 文章归档 */
-export function getArticleArchivesApi(page: PageQuery): Promise<IApiResponseData<Article>> {
-  return http.request<IApiResponseData<Article>>({
+export function findArticleArchivesApi(page: PageQuery): Promise<IApiResponseData<PageResult<Article>>> {
+  return http.request<IApiResponseData<PageResult<Article>>>({
     url: `/api/v1/article/archives`,
-    method: "get",
+    method: "post",
     data: page,
   })
 }
 
-/** 分页获取文章列表 */
+/** 分页获取文章详情列表 */
+export function findArticleListDetailsApi(page: PageQuery): Promise<IApiResponseData<PageResult<Article>>> {
+  return http.request<IApiResponseData<PageResult<Article>>>({
+    url: `/api/v1/article/list/details`,
+    method: "post",
+    data: page,
+  })
+}
+
+/** 通过标签或者id获取文章列表 */
 export function findArticleListByConditionApi(page: PageQuery): Promise<IApiResponseData<PageResult<Article>>> {
   return http.request<IApiResponseData<PageResult<Article>>>({
     url: `/api/v1/article/list/condition`,
