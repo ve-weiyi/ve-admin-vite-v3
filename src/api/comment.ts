@@ -63,7 +63,7 @@ export function findCommentListDetailsApi(page: PageQuery): Promise<IApiResponse
 }
 
 /** 获取用户评论列表 */
-export function findCommentBackListApi(page: PageQuery): Promise<IApiResponseData<any>> {
+export function findCommentListBackApi(page: PageQuery): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: `/api/v1/comment/list/back`,
     method: "post",

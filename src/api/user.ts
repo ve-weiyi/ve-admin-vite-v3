@@ -1,6 +1,33 @@
 import http from "@/utils/request"
 import { UserInformation, Upload, UserAccount, UpdateUserRoles, Role } from './types'
 
+/** 获取用户列表 */
+export function findUserListApi(page: PageQuery): Promise<IApiResponseData<any>> {
+  return http.request<IApiResponseData<any>>({
+    url: `/api/v1/user/list`,
+    method: "post",
+    data: page,
+  })
+}
+
+/** 获取用户地区 */
+export function findUserListAreasApi(page: PageQuery): Promise<IApiResponseData<any>> {
+  return http.request<IApiResponseData<any>>({
+    url: `/api/v1/user/list/areas`,
+    method: "post",
+    data: page,
+  })
+}
+
+/** 获取用户登录历史 */
+export function findUserLoginHistoryApi(page: PageQuery): Promise<IApiResponseData<any>> {
+  return http.request<IApiResponseData<any>>({
+    url: `/api/v1/user/login_history`,
+    method: "post",
+    data: page,
+  })
+}
+
 /** 获取用户菜单权限 */
 export function getUserMenusApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
@@ -14,15 +41,6 @@ export function getUserApisApi(): Promise<IApiResponseData<any>> {
   return http.request<IApiResponseData<any>>({
     url: `/api/v1/user/apis`,
     method: "get",
-  })
-}
-
-/** 获取用户登录历史 */
-export function getLoginHistoryApi(page: PageQuery): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: `/api/v1/user/login_history`,
-    method: "get",
-    data: page,
   })
 }
 
@@ -49,24 +67,6 @@ export function updateUserAvatarApi(data: Upload): Promise<IApiResponseData<Uplo
     url: `/api/v1/user/avatar`,
     method: "post",
     data: data,
-  })
-}
-
-/** 获取用户列表 */
-export function getUserListApi(page: PageQuery): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: `/api/v1/users`,
-    method: "post",
-    data: page,
-  })
-}
-
-/** 获取用户地区 */
-export function getUserAreasApi(page: PageQuery): Promise<IApiResponseData<any>> {
-  return http.request<IApiResponseData<any>>({
-    url: `/api/v1/user/areas`,
-    method: "post",
-    data: page,
   })
 }
 

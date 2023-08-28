@@ -23,36 +23,37 @@
       <div class="table-title">{{ tableTitle }}</div>
       <div class="operation-container">
         <!-- 表格菜单 -->
-        <!--        <div class="status-menu" v-if="tabList.length !== 0">-->
-        <!--          <template v-for="item of tabList" :key="item.count">-->
-        <!--            <span @click="checkTabType(item.count)" :class="isActive(item.count)">-->
-        <!--              {{ item.label }}-->
-        <!--            </span>-->
-        <!--          </template>-->
-        <!--        </div>-->
-        <div class="flex-between">
-          <el-button
-            v-if="props.showAddButton"
-            type="primary"
-            size="default"
-            icon="plus"
-            @click="formVisibility = true"
-          >
-            新增{{ tableName }}
-          </el-button>
-          <el-button
-            type="danger"
-            size="default"
-            icon="Delete"
-            v-if="checkedColumnFields.filter((item) => item.type === 'selection').length > 0"
-            :disabled="selectionIds.length === 0"
-            @click="removeVisibility = true"
-          >
-            批量删除
-          </el-button>
+        <div class="status-menu" v-if="tabList.length !== 0">
+          <template v-for="item of tabList" :key="item.count">
+            <span @click="checkTabType(item.count)" :class="isActive(item.count)">
+              {{ item.label }}
+            </span>
+          </template>
         </div>
+
         <!-- 表格操作 -->
-        <div class="flex-between">
+        <div class="flex-between align-right">
+          <div class="flex-between">
+            <el-button
+              v-if="props.showAddButton"
+              type="primary"
+              size="default"
+              icon="plus"
+              @click="handleFormVisibility(null)"
+            >
+              新增{{ tableName }}
+            </el-button>
+            <el-button
+              v-if="checkedColumnFields.filter((item) => item.type === 'selection').length > 0"
+              type="danger"
+              size="default"
+              icon="Delete"
+              :disabled="selectionIds.length === 0"
+              @click="removeVisibility = true"
+            >
+              批量删除
+            </el-button>
+          </div>
           <div style="margin-left: 0.5rem; margin-right: 0.5rem">
             <el-tooltip content="刷新表格" placement="top">
               <el-button type="primary" icon="RefreshRight" circle @click="onSearchList" />
@@ -219,7 +220,7 @@
           </template>
         </el-form-item>
       </el-form>
-      <template #footer v-if="formStatus !== 'view'">
+      <template #footer v-if="showEditButton">
         <el-button @click="formVisibility = false">取消</el-button>
         <el-button type="primary" @click="onSaveForm(formData)">确定</el-button>
       </template>
@@ -228,7 +229,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue"
+import { computed, defineComponent, getCurrentInstance, onMounted, reactive, ref } from "vue"
 import { builderFormRender, Condition, defaultPaginationData, FormField, Pagination, Sort } from "@/utils/render"
 import { Column, ElMessage, FormInstance, FormRules, TableInstance } from "element-plus"
 import { MenuDetails } from "@/api/types"
@@ -258,6 +259,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showEditButton: {
+    type: Boolean,
+    default: true,
+  },
   tableTitle: {
     type: String,
     default: "",
@@ -265,6 +270,12 @@ const props = defineProps({
   tableName: {
     type: String,
     default: "",
+  },
+  defaultOrder: {
+    type: Object,
+    default: () => {
+      return {}
+    },
   },
 })
 
@@ -303,8 +314,6 @@ const isActive = (status) => {
   return status === type.value ? "active-status" : "normal-status"
 }
 
-const defaultOrder = { id: "asc" }
-
 const tableTitle = props.tableTitle ? props.tableTitle : useRoute().meta.title
 const tableName = props.tableName ? props.tableName : useRoute().meta.title
 const formTitle = computed(() => {
@@ -335,7 +344,7 @@ const getDropdownItemStyle = computed(() => {
 // 表单数据定义
 const formFields = ref<FormField[]>([])
 const formVisibility = ref(false)
-const formStatus = ref("add")
+const formStatus = ref("")
 
 // 表单规则定义
 const formRef = ref<FormInstance | null>(null)
@@ -365,7 +374,7 @@ const searchFormRef = ref<FormInstance | null>(null)
 // 搜索条件,{k:v}
 const searchData = ref<any>({})
 // 排序条件,{k:v}
-const orderData = ref<any>(defaultOrder)
+const orderData = ref<any>({})
 // 条件查询 (key,value)
 const conditions = reactive<Condition[]>([])
 const sorts = reactive<Sort[]>([])
@@ -466,55 +475,19 @@ function handleFormVisibility(row: any) {
   resetForm(row)
 }
 
-// 行数据状态改变回调
-function handleStatusChange(row: any, event: string) {
-  console.log("handleStatusChange", row, event)
-  switch (event) {
-    case "add":
-      formStatus.value = event
-      handleFormVisibility(null)
-      break
-    case "edit":
-      formStatus.value = event
-      handleFormVisibility(row)
-      break
-    case "view":
-      formStatus.value = event
-      handleFormVisibility(row)
-      break
-    case "delete":
-      formStatus.value = event
-      onDelete(row)
-      break
-    default:
-      props.handleApi(event, row).then((res) => {
-        ElMessage.success("操作成功")
-      })
-      break
-  }
-  // ElMessageBox.confirm(
-  //   `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style="color:var(--el-color-primary)">${
-  //     row.username
-  //   }</strong>用户吗?`,
-  //   "系统提示",
-  //   {
-  //     confirmButtonText: "确定",
-  //     cancelButtonText: "取消",
-  //     type: "warning",
-  //     dangerouslyUseHTMLString: true,
-  //     draggable: true,
-  //   }
-  // )
-  //   .then(() => {
-  //     ElMessage({
-  //       message: "已成功修改用户状态",
-  //       type: "success",
-  //     })
-  //   })
-  //   .catch(() => {
-  //     row.status === 0 ? (row.status = 1) : (row.status = 0)
-  //   })
-}
+// 表格点击事件 查看、新增、编辑、删除、启用、停用
+type actionEvent = "add" | "edit" | "view" | "delete" | "enable" | "disable" | "onSaveForm"
+
+// function onClickAction(event: actionEvent, data: any) {
+//   console.log("onClickAction", event, data)
+//   switch (event) {
+//     case "onSaveForm":
+//       onSaveForm(data)
+//       break
+//     default:
+//       break
+//   }
+// }
 
 // 分页大小改变回调
 function handleSizeChange(val: number) {
@@ -587,14 +560,14 @@ function resetForm(row) {
     formData.value = {}
   }
 
-  formFields.value = props.getFormFields(row)
   console.log("resetForm", formData.value)
+  formFields.value = props.getFormFields(row)
   formRef.value?.resetFields()
 }
 
 function resetSearch() {
   searchData.value = {}
-  orderData.value = defaultOrder
+  orderData.value = props.defaultOrder
   tableRef.value?.clearSort()
   tableRef.value?.clearSelection()
   onSearchList()
@@ -603,7 +576,7 @@ function resetSearch() {
 function resetTable() {
   checkAllColumns.value = true
   isIndeterminate.value = false
-  columnFields.value = props.getColumnFields(handleStatusChange)
+  columnFields.value = props.getColumnFields()
   checkedColumnFields.value = columnFields.value.filter((column) => column.hidden != true)
   console.log("columnFields", columnFields.value)
   console.log("checkedColumnFields", checkedColumnFields.value)
@@ -614,6 +587,25 @@ onMounted(() => {
   resetSearch()
   resetTable()
   onSearchList()
+})
+
+defineExpose({
+  handleSortChange,
+  handleDragChange,
+  handleCheckAllChange,
+  handleCheckedColumnFieldsChange,
+  handleCheckedColumnChange,
+  handleSelectionChange,
+  handleSizeChange,
+  handleCurrentChange,
+  handleFormVisibility,
+  onSaveForm,
+  onDelete,
+  onDeleteByIds,
+  onSearchList,
+  resetSearch,
+  resetTable,
+  resetForm,
 })
 </script>
 

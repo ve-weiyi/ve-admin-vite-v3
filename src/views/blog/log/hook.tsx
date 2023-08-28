@@ -1,7 +1,7 @@
-import { onMounted, reactive, ref } from "vue"
+import { ComponentInternalInstance, getCurrentInstance, onMounted, reactive, ref } from "vue"
 import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
 import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
-import { OperationLog } from "@/api/types"
+import { FixedDir } from "element-plus/es/components/table-v2/src/constants"
 import { Timer } from "@element-plus/icons-vue"
 
 import {
@@ -11,11 +11,9 @@ import {
   findOperationLogListApi,
   updateOperationLogApi,
 } from "@/api/operation_log"
-import { FixedDir } from "element-plus/es/components/table-v2/src/constants"
+import { OperationLog } from "@/api/types"
 
 const align = "center"
-
-type onChangeListener = (row: any, event: string) => void
 
 const tagType = (type) => {
   switch (type) {
@@ -55,7 +53,9 @@ const options = [
   },
 ]
 
-function getColumnFields(onChange: onChangeListener): Column[] {
+// 表格展示列信息
+function getColumnFields(): Column[] {
+  const instance = getCurrentInstance()
   return [
     {
       key: "selection",
@@ -156,11 +156,11 @@ function getColumnFields(onChange: onChangeListener): Column[] {
               type="primary"
               size="small"
               icon="view"
-              onClick={() => onChange(row, "view")}
+              onClick={() => instance.exposed.handleFormVisibility(row)}
             >
               查看
             </el-button>
-            <el-popconfirm title="确定删除吗？" onConfirm={() => onChange(row, "delete")}>
+            <el-popconfirm title="确定删除吗？" onConfirm={() => instance.exposed.onDelete(row)}>
               {{
                 reference: () => (
                   <el-button text type="danger" size="small" icon="delete">
@@ -176,6 +176,7 @@ function getColumnFields(onChange: onChangeListener): Column[] {
   ]
 }
 
+// 搜索条件
 function getSearchFields(): FormField[] {
   return [
     {
@@ -196,19 +197,20 @@ function getSearchFields(): FormField[] {
   ]
 }
 
-function getFormFields(row: OperationLog): FormField[] {
+// 表单字段
+function getFormFields(model: OperationLog): FormField[] {
   return [
     {
       field: "opt_module",
       label: "操作模块",
     },
     {
-      field: "opt_url",
-      label: "请求地址",
-    },
-    {
       field: "opt_desc",
       label: "操作描述",
+    },
+    {
+      field: "request_url",
+      label: "请求地址",
     },
     {
       field: "request_method",
@@ -237,18 +239,14 @@ function getFormFields(row: OperationLog): FormField[] {
       field: "created_at",
       label: "操作日期",
       render: (field, model) => {
-        return (
-          <div>
-            {/* <span>{model.created_at.substring(0, 10)}</span> */}
-          </div>
-        )
+        return <span>{new Date(model.created_at).toLocaleString()}</span>
       },
     },
   ]
 }
 
 function handleApi(event: string, data: any) {
-  console.log("list")
+  console.log("event", event)
   switch (event) {
     case "create":
       return createOperationLogApi(data)

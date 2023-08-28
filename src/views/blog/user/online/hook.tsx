@@ -2,7 +2,7 @@ import dayjs from "dayjs"
 import { Column, ElMessageBox } from "element-plus"
 import { reactive, ref, computed, onMounted } from "vue"
 import { ElTag, ElMessage } from "element-plus"
-import { findUserListApi } from "@/api/admin"
+import { findUserListApi } from "@/api/user"
 
 interface Pagination {
   total?: number

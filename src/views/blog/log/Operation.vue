@@ -6,6 +6,8 @@
       :get-form-fields="getFormFields"
       :handle-api="handleApi"
       :show-add-button="false"
+      :show-edit-button="false"
+      :default-order="defaultOrder"
       table-name="日志"
     />
   </div>
@@ -15,6 +17,8 @@
 import TablePage from "@/components/TablePage/TablePage.vue"
 import { useTableHook } from "./hook"
 import { onMounted } from "vue"
+
+const defaultOrder = { id: "desc" }
 
 const {
   getSearchFields,

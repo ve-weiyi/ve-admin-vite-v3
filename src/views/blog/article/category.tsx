@@ -3,7 +3,7 @@ import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
 import {
   createCategoryApi,
-  deleteByIdsCategoryApi,
+  deleteCategoryByIdsApi,
   deleteCategoryApi,
   findCategoryListApi,
   updateCategoryApi,
@@ -174,7 +174,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteByIdsCategoryApi(ids).then((res) => {
+    deleteCategoryByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()
