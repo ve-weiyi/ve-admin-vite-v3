@@ -126,7 +126,7 @@ function getColumnFields(): Column[] {
     },
     {
       key: "created_at",
-      title: "操作日期",
+      title: "创建时间",
       dataKey: "created_at",
       width: 0,
       align: align,

@@ -24,6 +24,7 @@
       <div class="operation-container">
         <!-- 表格菜单 -->
         <div class="status-menu" v-if="tabList.length !== 0">
+          <span>状态</span>
           <template v-for="item of tabList" :key="item.count">
             <span @click="checkTabType(item.count)" :class="isActive(item.count)">
               {{ item.label }}
@@ -34,6 +35,8 @@
         <!-- 表格操作 -->
         <div class="flex-between align-right">
           <div class="flex-between">
+            <!-- 通过data属性传递参数 -->
+            <slot name="operation" :selectionIds="selectionIds" :checkedColumnFields="checkedColumnFields"></slot>
             <el-button
               v-if="props.showAddButton"
               type="primary"
@@ -204,12 +207,9 @@
     </el-dialog>
 
     <!-- 角色-菜单对话框 -->
-    <el-dialog v-model="formVisibility" @close="resetForm" class="dialog-container">
+    <el-dialog v-model="formVisibility" class="dialog-container">
       <template #header>
         <div class="dialog-title-container">
-          <!--          <el-icon>-->
-          <!--            <MoreFilled />-->
-          <!--          </el-icon>-->
           {{ formTitle }}
         </div>
       </template>
@@ -221,7 +221,7 @@
         </el-form-item>
       </el-form>
       <template #footer v-if="showEditButton">
-        <el-button @click="formVisibility = false">取消</el-button>
+        <el-button @click="handleFormHidden">取消</el-button>
         <el-button type="primary" @click="onSaveForm(formData)">确定</el-button>
       </template>
     </el-dialog>
@@ -271,6 +271,12 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  tabList: {
+    type: Array,
+    default: () => {
+      return []
+    },
+  },
   defaultOrder: {
     type: Object,
     default: () => {
@@ -285,24 +291,7 @@ const emit = defineEmits([
   // 'eventName',
 ])
 
-const tabList = [
-  {
-    label: "全部",
-    count: null,
-  },
-  {
-    label: "待审核",
-    count: 1,
-  },
-  {
-    label: "已通过",
-    count: 2,
-  },
-  {
-    label: "未通过",
-    count: 3,
-  },
-]
+const tabList = reactive(props.tabList)
 
 const type = ref(null)
 const checkTabType = (count: number) => {
@@ -311,21 +300,19 @@ const checkTabType = (count: number) => {
   onSearchList()
 }
 const isActive = (status) => {
-  return status === type.value ? "active-status" : "normal-status"
+  return status === type.value ? "status-menu-active" : "status-menu-normal"
 }
 
 const tableTitle = props.tableTitle ? props.tableTitle : useRoute().meta.title
 const tableName = props.tableName ? props.tableName : useRoute().meta.title
 const formTitle = computed(() => {
-  switch (formStatus.value) {
-    case "add":
-      return `新增${tableName}`
-    case "edit":
-      return `编辑${tableName}`
-    case "view":
+  if (formData.value.id) {
+    if (!props.showAddButton) {
       return `查看${tableName}`
-    default:
-      return `编辑${tableName}`
+    }
+    return `编辑${tableName}`
+  } else {
+    return `新增${tableName}`
   }
 })
 
@@ -387,7 +374,7 @@ function onSearchList() {
 
   // 搜索条件
   for (const key in searchData.value) {
-    const item = searchFields.value[key]
+    const item = searchFields.value.find((v) => v.field === key)
     const value = searchData.value[key]
     conditions.push({
       flag: item?.flag || "and",
@@ -454,25 +441,6 @@ function onDeleteByIds(ids: number[]) {
     removeVisibility.value = false
     onSearchList()
   })
-}
-
-function onSaveForm(row) {
-  formRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      if (row.id === 0) {
-        onCreate(row)
-      } else {
-        onUpdate(row)
-      }
-    } else {
-      console.error("表单校验不通过", fields)
-    }
-  })
-}
-
-function handleFormVisibility(row: any) {
-  formVisibility.value = true
-  resetForm(row)
 }
 
 // 表格点击事件 查看、新增、编辑、删除、启用、停用
@@ -553,6 +521,30 @@ function handleCheckedColumnChange(val: boolean, element: any) {
   columnFields.value.filter((item) => item.title === element.title)[0].hidden = !val
 }
 
+function onSaveForm(row) {
+  formRef.value?.validate((valid: boolean, fields: any) => {
+    if (valid) {
+      if (row.id === 0) {
+        onCreate(row)
+      } else {
+        onUpdate(row)
+      }
+    } else {
+      console.error("表单校验不通过", fields)
+    }
+  })
+}
+
+function handleFormHidden() {
+  formVisibility.value = false
+  resetForm(null)
+}
+
+function handleFormVisibility(row: any) {
+  formVisibility.value = true
+  resetForm(row)
+}
+
 function resetForm(row) {
   if (row != null) {
     formData.value = row
@@ -562,7 +554,6 @@ function resetForm(row) {
 
   console.log("resetForm", formData.value)
   formFields.value = props.getFormFields(row)
-  formRef.value?.resetFields()
 }
 
 function resetSearch() {

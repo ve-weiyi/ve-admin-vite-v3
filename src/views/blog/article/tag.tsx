@@ -1,7 +1,7 @@
 import { reactive, ref, computed, onMounted } from "vue"
 import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
 import { ElTag, ElMessage } from "element-plus"
-import { createTagApi, deleteByIdsTagApi, deleteTagApi, findTagListApi, updateTagApi } from "@/api/tag"
+import { createTagApi, deleteTagByIdsApi, deleteTagApi, findTagListApi, updateTagApi } from "@/api/tag"
 
 interface Pagination {
   total?: number
@@ -168,7 +168,7 @@ export function useTableHook() {
 
   function onDeleteByIds(ids: number[]) {
     console.log("onDeleteByIds", ids)
-    deleteByIdsTagApi(ids).then((res) => {
+    deleteTagByIdsApi(ids).then((res) => {
       ElMessage.success("批量删除成功")
       removeVisibility.value = false
       onSearchList()

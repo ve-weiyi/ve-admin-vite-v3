@@ -116,7 +116,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue"
 import { getHomeInfoApi } from "@/api/blog"
-import { getUserAreasApi } from "@/api/user"
+import { findUserListAreasApi } from "@/api/user"
 import Calender from "@/views/blog/home/components/Calender.vue"
 import LineChart from "@/views/blog/home/components/LineChart.vue"
 import ChinaMap from "@/views/blog/home/components/ChinaMap.vue"
@@ -237,7 +237,7 @@ const getData = () => {
 const type = ref(1)
 const listUserArea = () => {
   // 发送请求获取用户地域分布数据
-  getUserAreasApi({}).then((res) => {
+  findUserListAreasApi({}).then((res) => {
     // userAreaMap.series[0].data = res.data
     areaData.value = res.data.list
   })

@@ -1,261 +1,191 @@
-import { reactive, ref, computed, onMounted } from "vue"
-import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
-import { ElTag, ElMessage } from "element-plus"
-import { createFriendLinkApi, deleteFriendLinkByIdsApi, deleteFriendLinkApi, findFriendLinkListApi, updateFriendLinkApi } from "@/api/friend_link"
+import { ComponentInternalInstance, getCurrentInstance, onMounted, reactive, ref } from "vue"
+import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
+import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
+import { FixedDir } from "element-plus/es/components/table-v2/src/constants"
+import { ElTag } from "element-plus"
+import { Timer } from "@element-plus/icons-vue"
 
-interface Pagination {
-  total?: number
-  currentPage?: number
-  pageSizes?: number[]
-  pageSize?: number
-  layout?: string
-}
+import {
+  createFriendLinkApi,
+  deleteFriendLinkByIdsApi,
+  deleteFriendLinkApi,
+  findFriendLinkListApi,
+  updateFriendLinkApi,
+} from "@/api/friend_link"
+import { FriendLink } from "@/api/types"
 
-/** 默认的分页参数 */
-const defaultPaginationData: Pagination = {
-  total: 0,
-  currentPage: 1,
-  pageSizes: [10, 20, 50],
-  pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper",
-}
 const align = "center"
 
+// 表格展示列信息
+function getColumnFields(): Column[] {
+  const instance = getCurrentInstance()
+  return [
+    {
+      key: "selection",
+      type: "selection",
+      title: "批量操作",
+      width: 60,
+      align: align,
+    },
+    {
+      key: "id",
+      title: "id",
+      dataKey: "id",
+      width: 70,
+      align: align,
+      sortable: true,
+    },
+    {
+      key: "link_avatar",
+      title: "链接头像",
+      dataKey: "link_avatar",
+      width: 100,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <img src={row.link_avatar} width="40" height="40" />
+          </div>
+        )
+      },
+    },
+    {
+      key: "link_name",
+      title: "链接名称",
+      dataKey: "link_name",
+      width: 120,
+      align: align,
+    },
+    {
+      key: "link_address",
+      title: "链接地址",
+      dataKey: "link_address",
+      width: 120,
+      align: align,
+    },
+    {
+      key: "link_intro",
+      title: "链接介绍",
+      dataKey: "link_intro",
+      width: 140,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <div v-html={row.link_intro}></div>
+          </div>
+        )
+      },
+    },
+    {
+      key: "created_at",
+      title: "创建时间",
+      dataKey: "created_at",
+      width: 170,
+      align: align,
+      sortable: true,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <el-icon style="margin-right: 2px">
+              <Timer />
+            </el-icon>
+            <span>{new Date(row.created_at).toLocaleString()}</span>
+          </div>
+        )
+      },
+    },
+    {
+      key: "operation",
+      title: "操作",
+      width: 140,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            {
+              <el-button type="primary" size="default" onClick={() => instance.exposed.handleFormVisibility(row)}>
+                编辑
+              </el-button>
+            }
+            <el-popconfirm title="确定删除吗？" onConfirm={() => instance.exposed.onDelete(row)}>
+              {{
+                reference: () => (
+                  <el-button type="danger" size="default">
+                    删除
+                  </el-button>
+                ),
+              }}
+            </el-popconfirm>
+          </div>
+        )
+      },
+    },
+  ]
+}
+
+// 搜索条件
+function getSearchFields(): FormField[] {
+  return [
+    {
+      type: RenderType.Input,
+      label: "链接名称",
+      field: "link_name",
+      flag: "and",
+      rule: "like",
+    },
+  ]
+}
+
+// 表单字段
+function getFormFields(model: FriendLink): FormField[] {
+  return [
+    {
+      type: RenderType.Input,
+      field: "link_avatar",
+      label: "链接头像",
+    },
+    {
+      type: RenderType.Input,
+      field: "link_name",
+      label: "链接名称",
+    },
+    {
+      type: RenderType.Input,
+      field: "link_address",
+      label: "链接地址",
+    },
+    {
+      type: RenderType.Input,
+      field: "link_intro",
+      label: "链接介绍",
+    },
+  ]
+}
+
+function handleApi(event: string, data: any) {
+  console.log("event", event)
+  switch (event) {
+    case "create":
+      return createFriendLinkApi(data)
+    case "update":
+      return updateFriendLinkApi(data)
+    case "delete":
+      return deleteFriendLinkApi(data)
+    case "deleteByIds":
+      return deleteFriendLinkByIdsApi(data)
+    case "list":
+      return findFriendLinkListApi(data)
+    default:
+      return
+  }
+}
+
 export function useTableHook() {
-  // 数据绑定
-  const removeVisibility = ref(false)
-  const addOrEditVisibility = ref(false)
-
-  // 表格加载状态
-  const loading = ref(true)
-  // 表单数据定义
-  const formRef = ref<FormInstance | null>(null)
-  const formData = reactive({
-    id: 0,
-    linkName: "",
-    linkAvatar: "",
-    linkAddress: "",
-    linkIntro: "",
-    created_at: null,
-  })
-  const formRules: FormRules = reactive({
-    linkName: [{ required: true, trigger: "blur", message: "请输入友链名称" }],
-    linkAvatar: [{ required: true, trigger: "blur", message: "请输入友链头像" }],
-    linkAddress: [{ required: true, trigger: "blur", message: "请输入友链地址" }],
-  })
-
-  // 搜索表单数据定义
-  const searchFormRef = ref<FormInstance | null>(null)
-  const searchData = reactive({
-    linkName: "",
-    status: null,
-  })
-
-  // 表格数据定义
-  const tableData = ref([])
-  const selectionIds = reactive([])
-  const pagination = reactive({ ...defaultPaginationData })
-
-  // eslint-disable-next-line no-undef
-  const conditions = reactive<Condition[]>([])
-  // eslint-disable-next-line no-undef
-  const sorts = reactive<Sort[]>([])
-
-  const resetForm = (row) => {
-    if (row != null) {
-      formData.id = row.id
-      formData.linkName = row.linkName
-      formData.linkAvatar = row.linkAvatar
-      formData.linkAddress = row.linkAddress
-      formData.linkIntro = row.linkIntro
-      formData.created_at = row.created_at
-    } else {
-      formData.id = 0
-      formData.linkName = ""
-      formData.linkAvatar = ""
-      formData.linkAddress = ""
-      formData.linkIntro = ""
-      formData.created_at = null
-    }
-    formRef.value?.resetFields()
-  }
-
-  const resetSearch = () => {
-    searchData.linkName = ""
-    searchData.status = null
-    onSearchList()
-  }
-
-  const applySearch = () => {
-    conditions.length = 0
-    sorts.length = 0
-    if (searchData.linkName != "") {
-      conditions.push({
-        flag: "AND",
-        field: "link_name",
-        value: searchData.linkName,
-        rule: "like",
-      })
-    }
-    if (searchData.status != null) {
-      conditions.push({
-        flag: "AND",
-        field: "status",
-        value: searchData.status,
-        rule: "=",
-      })
-    }
-  }
-
-  // eslint-disable-next-line no-undef
-  function onSearchList() {
-    applySearch()
-
-    loading.value = true
-    findFriendLinkListApi({
-      page: pagination.currentPage,
-      page_size: pagination.pageSize,
-      sorts: sorts,
-      conditions: conditions,
-    }).then((res) => {
-      tableData.value = res.data.list
-      pagination.total = res.data.total
-      pagination.currentPage = res.data.page
-      loading.value = false
-    })
-  }
-
-  function onSave(row) {
-    formRef.value?.validate((valid: boolean, fields: any) => {
-      if (valid) {
-        if (row.id === 0) {
-          onCreate(row)
-        } else {
-          onUpdate(row)
-        }
-      } else {
-        console.error("表单校验不通过", fields)
-      }
-    })
-  }
-
-  function onCreate(row) {
-    console.log("onCreate", row)
-    createFriendLinkApi(row).then((res) => {
-      ElMessage.success("创建成功")
-      addOrEditVisibility.value = false
-      onSearchList()
-    })
-  }
-
-  function onUpdate(row) {
-    console.log("onUpdate", row)
-    updateFriendLinkApi(row).then((res) => {
-      ElMessage.success("更新成功")
-      addOrEditVisibility.value = false
-      onSearchList()
-    })
-  }
-
-  function onDelete(row) {
-    console.log("onDelete", row)
-    deleteFriendLinkApi(row).then((res) => {
-      ElMessage.success("删除成功")
-      removeVisibility.value = false
-      onSearchList()
-    })
-  }
-
-  function onDeleteByIds(ids: number[]) {
-    console.log("onDeleteByIds", ids)
-    deleteFriendLinkByIdsApi(ids).then((res) => {
-      ElMessage.success("批量删除成功")
-      removeVisibility.value = false
-      onSearchList()
-    })
-  }
-
-  // 分页大小改变回调
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`)
-    pagination.pageSize = val
-    onSearchList()
-  }
-
-  // 分页回调
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`)
-    pagination.currentPage = val
-    onSearchList()
-  }
-
-  // 批量选择回调
-  function handleSelectionChange(rows: any[]) {
-    console.log("handleSelectionChange", rows)
-    selectionIds.length = 0
-    rows.forEach((item) => {
-      selectionIds.push(item.id)
-    })
-  }
-
-  // 行数据状态改变回调
-  function onChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
-      }</strong>用户吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true,
-      }
-    )
-      .then(() => {
-        ElMessage({
-          message: "已成功修改用户状态",
-          type: "success",
-        })
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0)
-      })
-  }
-
-  const handleAddOrEdit = (row: any) => {
-    addOrEditVisibility.value = true
-    resetForm(row)
-  }
-
-  onMounted(() => {
-    onSearchList()
-  })
   return {
-    loading,
-    removeVisibility,
-    addOrEditVisibility,
-    formRef,
-    formData,
-    formRules,
-    searchFormRef,
-    searchData,
-    tableData,
-    selectionIds,
-    pagination,
-    resetForm,
-    resetSearch,
-    onSearchList,
-    onSave,
-    onCreate,
-    onUpdate,
-    onDelete,
-    onDeleteByIds,
-    onChange,
-    handleAddOrEdit,
-    handleSizeChange,
-    handleCurrentChange,
-    handleSelectionChange,
+    getColumnFields,
+    getSearchFields,
+    getFormFields,
+    handleApi,
   }
 }

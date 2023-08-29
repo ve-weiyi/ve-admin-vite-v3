@@ -8,10 +8,13 @@ import {
   updateArticleApi,
   findArticleListDetailsApi,
 } from "@/api/article"
+import { getCurrentInstance } from "vue"
 
 const align = "center"
 
-function getColumnFields(onChange: (row: any, event: string) => void): Column[] {
+function getColumnFields(): Column[] {
+  const instance = getCurrentInstance()
+  const exposed = instance.exposed
   return [
     {
       key: "selection",
@@ -110,7 +113,7 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
             inactive-color="#F4F4F5"
             active-value={true}
             inactive-value={false}
-            onClick={() => onChange(row, "is_top")}
+            onClick={() => exposed.onUpdate(row)}
           />
         )
       },
@@ -148,7 +151,7 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
               type="primary"
               size="small"
               icon="Plus"
-              onClick={() => onChange(row, "add")}
+              onClick={() => exposed.handleFormVisibility(row, "add")}
             >
               新增
             </el-button>
@@ -158,11 +161,11 @@ function getColumnFields(onChange: (row: any, event: string) => void): Column[] 
               type="primary"
               size="small"
               icon="editPen"
-              onClick={() => onChange(row, "edit")}
+              onClick={() => exposed.handleFormVisibility(row, "edit")}
             >
               修改
             </el-button>
-            <el-popconfirm title="确定删除吗？" onConfirm={() => onChange(row, "delete")}>
+            <el-popconfirm title="确定删除吗？" onConfirm={() => exposed.onDelete(row)}>
               {{
                 reference: () => (
                   <el-button text type="danger" size="small" class="operation-button" icon="delete">

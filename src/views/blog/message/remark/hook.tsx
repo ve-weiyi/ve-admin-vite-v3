@@ -1,207 +1,187 @@
-import { reactive, ref, computed, onMounted } from "vue"
-import { Column, ElMessageBox, FormInstance, FormRules } from "element-plus"
-import { ElTag, ElMessage } from "element-plus"
-import { findRemarkListApi } from "@/api/remark"
+import { ComponentInternalInstance, getCurrentInstance, onMounted, reactive, ref } from "vue"
+import { Column, ElMessage, ElMessageBox, FormInstance, FormRules, TableInstance } from "element-plus"
+import { defaultPaginationData, Pagination, Sort, Condition, FormField, RenderType } from "@/utils/render"
+import { FixedDir } from "element-plus/es/components/table-v2/src/constants"
+import { ElTag } from "element-plus"
+import { Timer } from "@element-plus/icons-vue"
 
-interface Pagination {
-  total?: number
-  currentPage?: number
-  pageSizes?: number[]
-  pageSize?: number
-  layout?: string
-}
+import {
+  createRemarkApi,
+  deleteRemarkByIdsApi,
+  deleteRemarkApi,
+  findRemarkListApi,
+  updateRemarkApi,
+} from "@/api/remark"
+import { Remark } from "@/api/types"
 
-/** 默认的分页参数 */
-const defaultPaginationData: Pagination = {
-  total: 0,
-  currentPage: 1,
-  pageSizes: [10, 20, 50],
-  pageSize: 10,
-  layout: "total, sizes, prev, pager, next, jumper",
-}
 const align = "center"
 
-export function useTableHook() {
-  // 表格加载状态
-  const loading = ref(true)
-  // 表单数据定义
-  const formRef = ref<FormInstance | null>(null)
-  const formData = reactive({
-    username: "",
-    password: "",
-  })
-  const formRules: FormRules = reactive({
-    username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
-    password: [{ required: true, trigger: "blur", message: "请输入密码" }],
-  })
-
-  // 搜索表单数据定义
-  const searchFormRef = ref<FormInstance | null>(null)
-  const searchData = reactive({
-    type: null,
-    username: "",
-    isReview: null,
-  })
-
-  // 表格数据定义
-  const tableData = ref([])
-  const selectionIds = reactive([])
-  const pagination = reactive({ ...defaultPaginationData })
-
-  // eslint-disable-next-line no-undef
-  const conditions = reactive<Condition[]>([])
-  // eslint-disable-next-line no-undef
-  const sorts = reactive<Sort[]>([])
-
-  const resetForm = (formEl) => {
-    if (!formEl) return
-    formEl.resetFields()
-    onSearchList()
-  }
-
-  const resetSearch = () => {
-    searchData.type = null
-    searchData.username = ""
-    searchData.isReview = null
-    onSearchList()
-  }
-
-  const applySearch = () => {
-    conditions.length = 0
-    sorts.length = 0
-    if (searchData.username != "") {
-      conditions.push({
-        flag: "AND",
-        field: "username",
-        value: searchData.username,
-        rule: "like",
-      })
-    }
-    if (searchData.type != null) {
-      conditions.push({
-        flag: "AND",
-        field: "type",
-        value: searchData.type,
-        rule: "=",
-      })
-    }
-    if (searchData.isReview != null) {
-      conditions.push({
-        flag: "AND",
-        field: "is_review",
-        value: searchData.isReview,
-        rule: "=",
-      })
-    }
-  }
-  // eslint-disable-next-line no-undef
-  function onSearchList() {
-    applySearch()
-
-    loading.value = true
-    findRemarkListApi({
-      page: pagination.currentPage,
-      page_size: pagination.pageSize,
-      sorts: sorts,
-      conditions: conditions,
-    }).then((res) => {
-      tableData.value = res.data.list
-      pagination.total = res.data.total
-      pagination.currentPage = res.data.page
-      loading.value = false
-    })
-  }
-
-  function onCreate(row) {
-    console.log("onCreate", row)
-  }
-
-  function onUpdate(row) {
-    console.log("onUpdate", row)
-  }
-
-  function onDelete(row) {
-    console.log("onDelete", row)
-    // commentIdList.value = selection.map((item) => item.id)
-  }
-
-  function onDeleteByIds(ids: number[]) {
-    console.log("onDeleteByIds", ids)
-    // commentIdList.value = selection.map((item) => item.id)
-  }
-
-  // 分页大小改变回调
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`)
-    pagination.pageSize = val
-    onSearchList()
-  }
-
-  // 分页回调
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`)
-    pagination.currentPage = val
-    onSearchList()
-  }
-
-  // 批量选择回调
-  function handleSelectionChange(rows: any[]) {
-    console.log("handleSelectionChange", rows)
-    selectionIds.length = 0
-    rows.forEach((item) => {
-      selectionIds.push(item.id)
-    })
-  }
-
-  // 行数据状态改变回调
-  function onChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${row.status === 0 ? "停用" : "启用"}</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
-      }</strong>用户吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true,
+// 表格展示列信息
+function getColumnFields(): Column[] {
+  const instance = getCurrentInstance()
+  return [
+    {
+      key: "selection",
+      type: "selection",
+      title: "批量操作",
+      width: 60,
+      align: align,
+    },
+    {
+      key: "id",
+      title: "id",
+      dataKey: "id",
+      width: 70,
+      align: align,
+      sortable: true,
+    },
+    {
+      key: "avatar",
+      title: "头像",
+      dataKey: "avatar",
+      width: 80,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <img src={row.avatar} width="40" height="40" />
+          </div>
+        )
+      },
+    },
+    {
+      key: "message_content",
+      title: "留言内容",
+      dataKey: "message_content",
+      width: 140,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+           <div v-html={row.message_content}></div>
+          </div>
+        )
       }
-    )
-      .then(() => {
-        ElMessage({
-          message: "已成功修改用户状态",
-          type: "success",
-        })
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0)
-      })
-  }
+    },
+    {
+      key: "ip_address",
+      title: "IP地址",
+      dataKey: "ip_address",
+      width: 80,
+      align: align,
+    },
+    {
+      key: "ip_source",
+      title: "IP来源",
+      dataKey: "ip_source",
+      width: 80,
+      align: align,
+    },
+    {
+      key: "is_review",
+      title: "状态",
+      dataKey: "is_review",
+      width: 80,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <span>
+              {row.is_review === true && <ElTag type="success">正常</ElTag>}
+              {row.is_review === false && <ElTag type="warning">审核中</ElTag>}
+            </span>
+          </div>
+        )
+      },
+    },
+    {
+      key: "created_at",
+      title: "创建时间",
+      dataKey: "created_at",
+      width: 170,
+      align: align,
+      sortable: true,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            <el-icon style="margin-right: 2px">
+              <Timer />
+            </el-icon>
+            <span>{new Date(row.created_at).toLocaleString()}</span>
+          </div>
+        )
+      },
+    },
+    {
+      key: "operation",
+      title: "操作",
+      width: 140,
+      align: align,
+      cellRenderer: (row: any) => {
+        return (
+          <div>
+            {row.is_review === false && (
+              <el-button type="success" size="default" onClick={() => instance.exposed.handleFormVisibility(row)}>
+                通过
+              </el-button>
+            )}
+            <el-popconfirm title="确定删除吗？" onConfirm={() => instance.exposed.onDelete(row)}>
+              {{
+                reference: () => (
+                  <el-button type="danger" size="default">
+                    删除
+                  </el-button>
+                ),
+              }}
+            </el-popconfirm>
+          </div>
+        )
+      },
+    },
+  ]
+}
 
-  onMounted(() => {
-    onSearchList()
-  })
+// 搜索条件
+function getSearchFields(): FormField[] {
+  return [
+    {
+      type: RenderType.Input,
+      label: "用户昵称",
+      field: "nickname",
+      flag: "and",
+      rule: "like",
+    },
+  ]
+}
+
+// 表单字段
+function getFormFields(model: Remark): FormField[] {
+  return []
+}
+
+function handleApi(event: string, data: any) {
+  console.log("event", event)
+  switch (event) {
+    case "create":
+      return createRemarkApi(data)
+    case "update":
+      return updateRemarkApi(data)
+    case "delete":
+      return deleteRemarkApi(data)
+    case "deleteByIds":
+      return deleteRemarkByIdsApi(data)
+    case "list":
+      return findRemarkListApi(data)
+    default:
+      return
+  }
+}
+
+export function useTableHook() {
   return {
-    loading,
-    formRef,
-    formData,
-    formRules,
-    searchFormRef,
-    searchData,
-    tableData,
-    selectionIds,
-    pagination,
-    resetForm,
-    resetSearch,
-    onSearchList,
-    onCreate,
-    onUpdate,
-    onDelete,
-    onDeleteByIds,
-    onChange,
-    handleSizeChange,
-    handleCurrentChange,
-    handleSelectionChange,
+    getColumnFields,
+    getSearchFields,
+    getFormFields,
+    handleApi,
   }
 }

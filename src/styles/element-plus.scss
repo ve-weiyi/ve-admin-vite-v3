@@ -104,16 +104,19 @@
   color: #999;
 }
 
-.normal-status {
+.status-menu span {
+  margin-right: 24px;
+}
+
+.status-menu-normal {
   cursor: pointer;
   margin-right: 24px;
 }
 
-.active-status {
+.status-menu-active {
   cursor: pointer;
   color: #333;
   font-weight: bold;
-  margin-right: 24px;
 }
 
 .dropdown-item-active {
