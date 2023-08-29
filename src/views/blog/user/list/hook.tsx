@@ -73,54 +73,37 @@ function getColumnFields(): Column[] {
       align: align,
       sortable: true,
     },
-    {
-      key: "opt_module",
-      title: "系统模块",
-      dataKey: "opt_module",
-      width: 100,
-      align: align,
-    },
-    {
-      key: "opt_type",
-      title: "操作类型",
-      dataKey: "opt_type",
-      width: 100,
-      align: align,
-    },
-    {
-      key: "opt_desc",
-      title: "操作描述",
-      dataKey: "opt_desc",
-      width: 140,
-      align: align,
-    },
-    {
-      key: "request_method",
-      title: "请求方式",
-      dataKey: "request_method",
-      width: 100,
+        {
+      key: "avatar",
+      title: "头像",
+      dataKey: "avatar",
+      width: 60,
       align: align,
       cellRenderer: (row: any) => {
-        return <el-tag type={tagType(row.request_method)}>{row.request_method}</el-tag>
+        return (
+          <div>
+            <img src={row.avatar} width="40" height="40" />
+          </div>
+        )
       },
     },
     {
       key: "nickname",
-      title: "操作人员",
+      title: "昵称",
       dataKey: "nickname",
-      width: 140,
+      width: 100,
       align: align,
     },
     {
       key: "ip_address",
-      title: "登录ip",
+      title: "注册ip",
       dataKey: "ip_address",
-      width: 140,
+      width: 0,
       align: align,
     },
     {
       key: "ip_source",
-      title: "登录地址",
+      title: "注册地址",
       dataKey: "ip_source",
       width: 0,
       align: align,

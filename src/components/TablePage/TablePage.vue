@@ -11,7 +11,7 @@
             />
           </template>
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="align-right">
           <el-button type="primary" icon="Search" @click="onSearchList">搜索</el-button>
           <el-button icon="Refresh" @click="resetSearch">重置</el-button>
         </el-form-item>
@@ -606,6 +606,7 @@ defineExpose({
 
   :deep(.el-card__body) {
     padding-bottom: 2px;
+    width: 100%;
   }
 }
 </style>

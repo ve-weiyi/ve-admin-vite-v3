@@ -8,7 +8,7 @@
       :show-add-button="false"
       :show-edit-button="false"
       :default-order="defaultOrder"
-      model-name="日志"
+      model-name="用户"
     />
   </div>
 </template>

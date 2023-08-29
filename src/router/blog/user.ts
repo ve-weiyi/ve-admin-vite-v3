@@ -9,7 +9,7 @@ export default {
   children: [
     {
       path: "list",
-      component: () => import("@/views/blog/user/UserList.vue"),
+      component: () => import("@/views/blog/user/list/UserList.vue"),
       name: "list",
       meta: { title: "用户列表", keepAlive: true, elIcon: "user-filled" },
     },
