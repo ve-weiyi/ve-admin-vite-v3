@@ -5,7 +5,7 @@
       :get-search-fields="getSearchFields"
       :get-form-fields="getFormFields"
       :handle-api="handleApi"
-      table-name="文章"
+      model-name="文章"
     />
   </div>
 </template>

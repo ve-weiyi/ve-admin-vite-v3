@@ -21,15 +21,15 @@ export default {
     },
     {
       path: "category",
-      component: () => import("@/views/blog/article/Category.vue"),
+      component: () => import("@/views/blog/article/category/Category.vue"),
       name: "article/category",
-      meta: { title: "标签管理", noCache: true },
+      meta: { title: "分类管理", noCache: true },
     },
     {
       path: "tag",
-      component: () => import("@/views/blog/article/Tag.vue"),
+      component: () => import("@/views/blog/article/tag/Tag.vue"),
       name: "article/tag",
-      meta: { title: "分类管理", noCache: true },
+      meta: { title: "标签管理", noCache: true },
     },
   ],
 }

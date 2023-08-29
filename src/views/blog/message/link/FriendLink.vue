@@ -6,7 +6,7 @@
       :get-form-fields="getFormFields"
       :handle-api="handleApi"
       :default-order="defaultOrder"
-      table-name="友链"
+      model-name="友链"
     >
     </TablePage>
   </div>
@@ -18,7 +18,6 @@ import { useTableHook } from "./hook"
 import { onMounted } from "vue"
 
 const defaultOrder = { id: "desc" }
-
 
 const { getSearchFields, getColumnFields, getFormFields, handleApi } = useTableHook()
 

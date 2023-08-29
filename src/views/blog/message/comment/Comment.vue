@@ -9,7 +9,7 @@
       :show-edit-button="false"
       :default-order="defaultOrder"
       :tab-list="tabList"
-      table-name="评论管理"
+      model-name="评论管理"
     >
       <template #operation="{ selectionIds, checkedColumnFields }">
         <el-button

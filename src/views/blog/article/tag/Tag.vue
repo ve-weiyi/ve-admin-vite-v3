@@ -5,11 +5,10 @@
       :get-search-fields="getSearchFields"
       :get-form-fields="getFormFields"
       :handle-api="handleApi"
-      :show-add-button="false"
-      :show-edit-button="false"
       :default-order="defaultOrder"
-      model-name="日志"
-    />
+      model-name="标签"
+    >
+    </TablePage>
   </div>
 </template>
 
@@ -20,18 +19,9 @@ import { onMounted } from "vue"
 
 const defaultOrder = { id: "desc" }
 
-const {
-  getSearchFields,
-  getColumnFields,
-  getFormFields,
-  handleApi,
-} = useTableHook()
+const { getSearchFields, getColumnFields, getFormFields, handleApi } = useTableHook()
 
-onMounted(() => {
-
-})
+onMounted(() => {})
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

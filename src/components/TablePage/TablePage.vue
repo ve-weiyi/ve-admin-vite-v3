@@ -267,7 +267,7 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  tableName: {
+  modelName: {
     type: String,
     default: "",
   },
@@ -304,7 +304,7 @@ const isActive = (status) => {
 }
 
 const tableTitle = props.tableTitle ? props.tableTitle : useRoute().meta.title
-const tableName = props.tableName ? props.tableName : useRoute().meta.title
+const tableName = props.modelName ? props.modelName : useRoute().meta.title
 const formTitle = computed(() => {
   if (formData.value.id) {
     if (!props.showAddButton) {
