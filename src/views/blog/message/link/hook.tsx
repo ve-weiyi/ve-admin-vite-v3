@@ -67,7 +67,7 @@ function getColumnFields(): Column[] {
       key: "link_intro",
       title: "链接介绍",
       dataKey: "link_intro",
-      width: 140,
+      width: 0,
       align: align,
       cellRenderer: (row: any) => {
         return (

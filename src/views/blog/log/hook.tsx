@@ -128,7 +128,7 @@ function getColumnFields(): Column[] {
       key: "created_at",
       title: "创建时间",
       dataKey: "created_at",
-      width: 0,
+      width: 170,
       align: align,
       sortable: true,
       cellRenderer: (row: any) => {

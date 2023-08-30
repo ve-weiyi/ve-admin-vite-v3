@@ -67,14 +67,14 @@ function getColumnFields(): Column[] {
       key: "ip_address",
       title: "IP地址",
       dataKey: "ip_address",
-      width: 80,
+      width: 140,
       align: align,
     },
     {
       key: "ip_source",
       title: "IP来源",
       dataKey: "ip_source",
-      width: 80,
+      width: 0,
       align: align,
     },
     {
